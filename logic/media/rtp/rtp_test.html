@@ -1,0 +1,803 @@
+<!doctype HTML public "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>Columbia RTP Library Example User Code</title>
+</head>
+<body bgcolor=white text=black>
+<br>
+
+<H1><a href="rtp_api.html">Columbia RTP Library</a> Example User Code</H1>
+<br>August 21, 1997
+<P><a href="rtp_api.hrml">Go back to library</a>
+<P><H2>Sample Code to Use RTP</H2>
+<P>
+
+The following code is a test program that initiates a single member of
+an RTP session that is able to send and receive RTP packets, displays
+all packets received, and periodically displays membership
+information.  The member initiates its CSRC list with 3 imaginary
+contributing members (whose SSRCs are chosen randomly).
+
+The code is fully functional except that the encryption / decryption
+algorithms have been removed since the code used cannot be made publicly
+available.  
+<P>
+<H2>Contents:</H2>
+<OL>
+<LI> <a href="#sched">Scheduler</a>
+<LI> <a href="#rtpsched"><tt>RTPSchedule()</tt> function</a>
+<LI> <a href="#callbacks">Callback functions</a>
+<LI> <a href="#mainfunc">The <tt>main()</tt> function</a>
+<LI> <a href="#rtplibuse">Use of the RTPLib functionality</a>
+</OL>
+
+
+<H3>/* rtp_test.c: test ability to send / receive data 
+
+Copyright 1997 Lucent Technologies; all rights reserved
+*/</H3><pre>
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;sys/time.h&gt;
+#include &lt;string.h&gt;
+#include &lt;math.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netinet/in.h&gt;
+#include &lt;arpa/inet.h&gt; 
+#include &lt;sys/uio.h&gt;
+#include "rtp_api.h"
+#include "rtp_api_ext.h"
+
+#include "rtp_crypt.h"
+
+#define DEFAULT_MULTI "224.119.10.10"
+#define DEFAULT_PORT 5076
+
+#define RTPSTAMPRATE 1.0
+
+
+#define MAX_SCHEDULE 100
+
+#ifndef FALSE
+#define FALSE 0
+#define TRUE 1
+#endif
+
+</pre><H3>/* Below are functions that implement the scheduler */</H3>
+<H2><a name="sched">/* Scheduler */</a></H2><pre>
+
+typedef struct {
+  int Active;
+  struct timeval activate_time;
+  int32 opaque;
+} sched_item;
+
+</pre><H3>/* Allow scheduling of up to MAX_SCHEDULE items */</H3><pre>
+sched_item sched[MAX_SCHEDULE];
+  
+
+</pre><H3>/* Scheduler initialization routine */</H3><pre>
+void InitSched(){
+  int i;
+  for (i=0; i&lt;MAX_SCHEDULE; i++){
+    sched[i].Active = FALSE;
+  }
+  return;
+}
+
+</pre><H3>/* FindInactive locates an empty slot on the scheduler array so
+   that a new item can be scheduled there */</H3><pre>
+int FindInactive(){
+  int i;
+  for (i=0; i &lt; MAX_SCHEDULE;i++){
+    if (!sched[i].Active){
+      return i;
+    }
+  }
+  return -1;
+}
+
+
+</pre><H3>/* Returns an item that is ready to be activated.  Note that this does
+   not return the items in any particular chronological order. */</H3><pre>
+int FindReady(){
+  int i;
+  struct timeval curtime;
+  gettimeofday(&amp;curtime, NULL);
+  for (i=0; i&lt;MAX_SCHEDULE; i++){
+    if (sched[i].Active &amp;&amp; (sched[i].activate_time.tv_sec &lt; curtime.tv_sec ||
+	(sched[i].activate_time.tv_sec == curtime.tv_sec &amp;&amp;
+	 sched[i].activate_time.tv_usec &lt; curtime.tv_usec))){
+      sched[i].Active = FALSE;
+      return i;
+    }
+  }
+  return -1;
+}
+</pre>
+
+<H2>/* <A NAME="rtpsched"><tt>RTPSchedule()</tt> function</a> */</H2>
+<H3>/* The scheduling routine */</H3><pre>
+void RTPSchedule(context cid, int32 opaque, struct timeval *tp){
+  struct timeval curtime;
+  int i = FindInactive();
+  if (i &lt; 0){
+    printf("error: no more room in scheduler\n");
+    exit(1);
+  }
+  sched[i].Active = TRUE;
+  sched[i].activate_time = *tp;
+  sched[i].opaque = opaque;
+
+  gettimeofday(&amp;curtime, NULL);
+  printf("Scheduled for %f seconds\n", (float) (tp-&gt;tv_sec - curtime.tv_sec) +
+	 (float) (tp-&gt;tv_usec - curtime.tv_usec) / 1000000);
+  return;
+}
+
+</pre><H2>/* <A NAME="callbacks">Callback functions</a> */</H2>
+<H3>/* The callback function to be used when a new member joins
+   the session */</H3><pre>
+void ReportNewMember(context cid, person id_no, unsigned int flags){
+  int32 new_ssrc;
+  int err;
+  err = RTPMemberInfoGetSSRC(cid, id_no, &amp;new_ssrc);
+  if (err != RTP_OK){
+    printf("%s\n", RTPStrError());
+  }
+  printf("New Member number %ld: SSRC %x\n", id_no, (int)new_ssrc);
+  return;
+}
+
+</pre><H3>/* The callback function to be used when a member expires
+   from the session */</H3><pre>
+void ReportExpMember(context cid, person id_no, unsigned int flags){
+  int32 new_ssrc;
+  int err;
+  err = RTPMemberInfoGetSSRC(cid, id_no, &amp;new_ssrc);
+  if (err != RTP_OK){
+    printf("%s\n", RTPStrError());
+  }
+  printf("Exp Member number %ld: SSRC %x\n", id_no, (int)new_ssrc);
+  return;
+}
+
+</pre><H3>/* The callback function to be used when a member becomes 
+   or returns to being a sender */</H3><pre>
+void ReportNewSender(context cid, person id_no, unsigned int flags){
+  int32 new_ssrc;
+  int err;
+  err = RTPMemberInfoGetSSRC(cid, id_no, &amp;new_ssrc);
+  if (err != RTP_OK){
+    printf("%s\n", RTPStrError());
+  }
+  printf("New SENDER number %ld: SSRC %x\n", id_no, (int)new_ssrc);
+  return;
+}
+
+
+</pre><H3>/* The callback function to be used when a sender expires
+   or returns to being a sender */</H3><pre>
+void ReportExpSender(context cid, person id_no, unsigned int flags){
+  int32 new_ssrc;
+  int err;
+  err = RTPMemberInfoGetSSRC(cid, id_no, &amp;new_ssrc);
+  if (err != RTP_OK){
+    printf("%s\n", RTPStrError());
+  }
+  printf("Exp SENDER number %ld: SSRC %x\n", id_no, (int)new_ssrc);
+  return;
+}
+
+</pre><H3>/* The callback function to be used when a member's SDES info
+   changes */</H3><pre>
+void ReportChangedMemberInfo(context cid, person id_no, memberinfo field,
+			     char *new, char *old, unsigned int flags){
+  printf("Person %ld: SDES field %d changed from %s to %s\n",
+	 id_no, field, old ? old : "(NULL)", new);
+  return;
+}
+
+</pre><H3>/* The callback function to be used when 2 SSRCs are found
+   to collide */</H3><pre>
+void ReportCollision(context cid, person id_1, person id_2,
+		     unsigned int flags){
+  printf("Persons %ld and %ld colliding\n", id_1, id_2);
+  return;
+}
+
+</pre><H3>/* The callback function to be used when a member's liveness status
+   changes */</H3></re>
+void ReportMemberAlive(context cid, person id_no, int alive,
+		       unsigned int flags){
+  printf("Person %ld: %s\n", id_no, alive ? "alive" : "timed out");
+  return;
+}
+
+</pre><H3>/* Describe Usage is called when the user incorrectly entered something on
+   command line */</H3><pre>
+void DescribeUsage(int help){
+  fprintf(stderr, "Usage: rtp_test [-help] [-tMin] [-S [tsec]] [-e[1]] [-r[0]] [[addr]/[port]]\n");
+  if (help){
+    fprintf(stderr, "-help : this help message\n");
+    fprintf(stderr, "-tMin: run rtp_test for min minutes\n");
+    fprintf(stderr, "-S[dsec] : send RTP packets at rate of 10 per dsec seconds.  default is 10\n");
+    fprintf(stderr, "-e : Turn on encryption (-e1 encrypts only SDES info) default is off\n");
+    fprintf(stderr, "-r : Reconsideration, -r0 turns reconsideration off.  Default is on\n");
+    fprintf(stderr, "[addr]/[port] : address (multicast or unicast) and / or port to use.\n");
+    fprintf(stderr, "Default address is multicast %s, default port is %d\n",
+	    DEFAULT_MULTI, DEFAULT_PORT);
+  }
+  exit(2);
+}
+
+</pre><H2>/* <A NAME="mainfunc">The <tt>main()</tt> function</a> */</H2><pre>
+
+void main(int argc, char **argv){
+  char addr[20];
+  int i, j, parts, ssrc_count, fromlen, count, rtpcount, runtime, encryption,
+    reconsideration, is_sender, sendrate, port;
+  struct timeval curtime, endtime, next_RTP_send, last_RTP_send, tinytime;
+  person cur_mem;
+  member_iterator the_iter;
+  rtcp_bye_block byeblock;
+  double rtptimechange;
+  char usekey[9] = "DESKEY01\0";
+  char payload[1000], theload[10000], *pktparts[100];
+  rtp_packet rtppkt;
+  rtcp_packet rtcppkt;
+  rtcp_report_block the_block;
+  rtcp_sdes_item cur_item;
+  struct sockaddr fromaddr;
+  context my_context;
+  int32 csrc_list[10], csrcguy, cur_ssrc;
+  int loaduse;
+  rtperror the_err;
+  socktype rtpsock, rtcpsock;
+  int maxfd = 0;
+  fd_set selection;
+
+  </pre><H3>/* Establish default encryption / time, etc. */</H3>
+  <H3>/* Default is encryption not used */</H3><pre>
+  encryption = 2; 
+</pre><H3>/* run for 10 min */</H3><pre>  runtime = 10; 
+</pre><H3>/* Set reconsideration to on by default */</H3><pre>  reconsideration = 3; 
+</pre><H3>/* By default, not a sender */</H3><pre>  is_sender = FALSE; 
+  sendrate = 10;
+  port = DEFAULT_PORT;
+  sprintf(addr, "%s", DEFAULT_MULTI);
+    
+
+  for (i=1; i&lt; argc; i++){
+    if (argv[i][0] == '-'){
+      if (strlen(argv[i]) == 1){
+	fprintf(stderr, "rtp_test: option must follow a '-'\n");
+	DescribeUsage(FALSE);
+      }
+      switch(argv[i][1]){
+      case 'S':
+	is_sender = TRUE;
+	if (strlen(argv[i])==2){
+	  break;
+	}
+	sendrate = atoi(argv[i]+2);
+	break;
+      case 't':
+	if (strlen(argv[i]) == 2){
+	  fprintf(stderr, "rtp_test: option t requires integer\n");
+	  DescribeUsage(FALSE);
+	}
+	runtime = atoi(argv[i]+2);
+	break;
+      case 'h':
+	DescribeUsage(TRUE);
+      case 'e':
+	encryption = 0;
+	if (strlen(argv[i]) &gt; 2){
+	  if (argv[i][2] == '1'){
+	    encryption = 1;
+	  }
+	}
+	break;
+      case 'r':
+	reconsideration = 1;
+	if (strlen(argv[i]) &gt; 2){
+	  if (argv[i][2] == '0'){
+	    reconsideration = 0;
+	  }
+	}
+	break;
+      default:
+	fprintf(stderr, "rtp_test: illegal option -- %c\n", argv[i][1]);
+	DescribeUsage(FALSE);
+      }
+    }
+    else {
+      j = 1;
+      if (argv[i][0] != '/'){
+	strncpy(addr, argv[i], 20);
+	for (j=0; j&lt;20 &amp;&amp; addr[j]!='\0'; j++){
+	  if (addr[j] == '/'){
+	    addr[j] = '\0';
+	    j++;
+	    break;
+	  }
+	}
+      }
+      if (argv[i][j] != '\0'){
+	port = atoi(argv[i]+j);
+      }
+    }
+  }
+  printf("Using address %s/%d\n", addr, port);
+
+	  
+
+  </pre><H3>/* The following is used if RTP is going to track memory allocation 
+   (useful for debugging memory leaks */</H3><pre>
+#ifdef _RTP_WATCH_ALLOCATION  
+  InitMallocs();
+#endif
+
+  tinytime.tv_sec = 0;
+  tinytime.tv_usec = 100000;
+
+  </pre><H3>/* Initialize the scheduler */</H3><pre>
+  InitSched();
+  gettimeofday(&amp;curtime, NULL);
+  endtime = curtime;
+  next_RTP_send = curtime;
+
+
+
+  endtime.tv_sec += 60 * runtime;
+  </pre><H3>/* Receiver has 3 CSRCs */</H3><pre>
+  for (i=0; i&lt;3; i++){
+    csrc_list[i] = (int32) curtime.tv_usec + i;
+  }
+
+  </pre>
+<H2>/* <A NAME="rtplibuse">Use of the RTPLib functionality</a> */</H2>
+<H3>/* Start a new context */</H3><pre>
+  the_err = <a href="rtp_api.html#rtpcreate">RTPCreate</a>(&amp;my_context);
+  if (the_err != RTP_OK){
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  }
+
+  </pre><H3>/* Install the callback functions */</H3><pre>
+  the_err = <a href="rtp_api.html#callbacks">RTPSetNewMemberCallBack</a>(my_context, &amp;ReportNewMember);
+  if (the_err != RTP_OK){
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  }
+  the_err = <a href="rtp_api.html#callbacks">RTPSetExpiredMemberCallBack</a>(my_context, &amp;ReportExpMember);
+  if (the_err != RTP_OK){
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  }
+  the_err = <a href="rtp_api.html#callbacks">RTPSetNewSenderCallBack</a>(my_context, &amp;ReportNewSender);
+  if (the_err != RTP_OK){
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  } 
+  the_err = <a href="rtp_api.html#callbacks">RTPSetChangedMemberInfoCallBack</a>(my_context,
+					    &amp;ReportChangedMemberInfo);
+  if (the_err != RTP_OK){
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  }
+  the_err = <a href="rtp_api.html#callbacks">RTPSetExpiredSenderCallBack</a>(my_context, &amp;ReportExpSender);
+  if (the_err != RTP_OK){
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  }
+  the_err = <a href="rtp_api.html#callbacks">RTPSetCollidedMemberCallBack</a>(my_context, &amp;ReportCollision);
+  if (the_err != RTP_OK){
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  }
+
+  </pre><H3>/* Set the address that we are sending RTP / RTCP packets to.
+     If it's a multicast address, we are going to join the
+     group on that address. */</H3><pre>
+  the_err = <a href="rtp_api.html#rtpsessionget">RTPSessionSetAddr</a>(my_context, htonl(inet_addr(addr)));
+  if (the_err != RTP_OK){
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  }
+
+  </pre><H3>/* Our FreeBSD machine is hidden behind a firewall.  We need to set
+     the local address for it to work correctly.  NOTE: The local
+address has been altered within this code. */</H3><pre>
+#ifdef _RTP_ARCH_FreeBSD
+  the_err = <a href="rtp_api.html#rtpsessionget">RTPSessionSetLocalAddr</a>(my_context, ntohl(inet_addr("0.0.0.0")));
+  if (the_err != RTP_OK){
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  }
+#endif
+
+  </pre><H3>/* Here, we pick a random CNAME for the receiver */</H3><pre>
+  gethostname(payload, 1000);
+  sprintf(theload, "I am %s:%ld",payload, curtime.tv_usec);
+  the_err = <a href="rtp_api.html#rtpsetmember">RTPMemberInfoSetSDES</a>(my_context, 0, 1, theload);
+  if (the_err != RTP_OK){
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  }
+
+
+  </pre><H3>/* Set the CSRC list for the local member */</H3><pre>
+  the_err = <a href="rtp_api.html#rtpsessionget">RTPSessionSetCSRCList</a>(my_context, csrc_list, 3);
+  if (the_err != RTP_OK){ 
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  } 
+  for (i=0; i&lt;3; i++){
+    </pre><H3>/* Set CNAMEs for each of the CSRC members. */</H3>
+    <H3>/* First, we need to retrieve the CSRC member's unique ID */</H3><pre>
+    the_err = <a href="rtp_api.html#rtpsessionget">RTPSessionGetUniqueIDForCSRC</a>(my_context, csrc_list[i], &amp;csrcguy);
+    if (the_err != RTP_OK){
+      printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+    }
+    </pre><H3>/* Now set the CNAME */</H3><pre>
+    sprintf(theload, "I am CSRC %d from %s:%ld", i, payload, 
+	    curtime.tv_usec);
+    the_err = <a href="rtp_api.html#rtpsetmember">RTPMemberInfoSetSDES</a>(my_context, csrcguy, 1, theload);
+    if (the_err != RTP_OK){
+      printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+    }
+  }
+
+
+  </pre><H3>/* Set the port (for sending and receiving) */</H3><pre>
+  the_err = <a href="rtp_api.html#rtpsessionget">RTPSessionSetPort</a>(my_context, port);
+  if (the_err != RTP_OK){
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  }
+  
+			      
+
+  </pre><H3>/* Install encryption functions */</H3><pre>
+  the_err = <a href="rtp_api.html#rtpsessionget">RTPSessionSetEncryptionFuncs</a>(my_context,
+					 &amp;RTPInit,
+    					 &amp;RTPEncrypt,
+					 &amp;RTPDecrypt); 
+  if (the_err != RTP_OK){
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  }
+
+  </pre><H3>/* Set encryption to what user specified */</H3><pre>
+  the_err = <a href="rtp_api.html#rtpsessionget">RTPSessionSetEncryption</a>(my_context, encryption);
+  if (the_err != RTP_OK){
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  }
+
+  </pre><H3>/* Set reconsideration to what user specified */</H3><pre>
+  the_err = <a href="rtp_api.html#rtpsessionget">RTPSessionSetReconsideration</a>(my_context, reconsideration);
+
+
+  </pre><H3>/* Set the encryption key */</H3><pre>
+  the_err = <a href="rtp_api.html#rtpsessionget">RTPSessionSetKey</a>(my_context, (void*) usekey);
+
+  </pre><H3>/* RTPStamprates are initialized by default, but we can change the
+     rate if we want to */</H3><pre>
+  the_err = <a href="rtp_api.html#rtpsessionget">RTPSessionSetRTPStampRate</a>(my_context, 3, RTPSTAMPRATE);
+  if (the_err != RTP_OK){
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  }
+
+  </pre><H3>/* Open the connection (and become a member of the RTP / RTCP session */</H3><pre>
+  the_err = <a href="rtp_api.html#rtpopen">RTPOpenConnection</a>(my_context);
+  if (the_err != RTP_OK){
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  }
+
+
+
+  </pre><H3>/* Get the sockets being used for RTP send and RTCP send / receive */</H3><pre>
+  the_err = <a href="rtp_api.html#rtpsessionget">RTPSessionGetRTPSocket</a>(my_context, &amp;rtpsock);
+  if (the_err != RTP_OK){
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  }
+  if (maxfd < rtpsock.sock)
+    maxfd = rtpsock.sock;
+  the_err = <a href="rtp_api.html#rtpsessionget">RTPSessionGetRTCPSocket</a>(my_context, &amp;rtcpsock);
+  if (the_err != RTP_OK){
+    printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+  }
+  if (maxfd < rtcpsock.sock)
+    maxfd = rtcpsock.sock;
+
+  count = 0;
+  rtpcount = 0;
+  </pre><H3>/* Now go into receiver / sender mode for the specified amount of time */</H3><pre>
+  while (curtime.tv_sec &lt; endtime.tv_sec){
+
+  </pre><H3>/* Get my SSRC and print it to the screen */</H3><pre>
+    <a href="rtp_api.html#rtpsetmember">RTPMemberInfoGetSSRC</a>(my_context, 0, &amp;cur_ssrc);
+    if (the_err != RTP_OK){
+      printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+    }
+    printf("My SSRC is %x\n", (int)cur_ssrc);
+
+    </pre><H3>/* First, see if anything on the schedule is ready to be executed */</H3><pre>
+    gettimeofday(&amp;curtime, NULL);
+    i = FindReady();
+    if (i != -1){
+      <a href="rtp_api.html#timed">RTPExecute</a>(my_context, sched[i].opaque); 
+    }
+
+    </pre><H3>/* Now check the RTP and RTCP sockets for incoming packets
+       using a .1 second blocking select call (as set in the <em>tinytime</em> variable) */</H3><pre>
+    
+    FD_ZERO(&amp;selection);
+    FD_SET(rtpsock.sock, &amp;selection);
+    FD_SET(rtcpsock.sock, &amp;selection);
+    the_err = select(maxfd + 1, &amp;selection, NULL, NULL, &amp;tinytime); 
+    if (the_err &lt; 0){
+      printf("select error: %d\n", errno);
+      exit(1);
+    }
+    if (FD_ISSET(rtpsock.sock, &amp;selection)){
+
+      </pre><H3>/* There is something on the RTP socket */</H3><pre>
+      loaduse = 10000; 
+
+      </pre><H3>/* Receive the RTP packet (RTP membership info will be handled
+	 internally automatically by this call */</H3><pre>
+      the_err = <a href="rtp_api.html#rtpreceive">RTPReceive</a>(my_context, rtpsock.sock, theload, &amp;loaduse);
+      
+      </pre><H3>/* First make sure this packet wasn't sent by me */</H3><pre>
+      if (the_err == RTP_PACKET_LOOPBACK){
+	printf("Got my own RTP packet\n");
+      }
+      
+      </pre><H3>/* Now check for an error */</H3><pre>
+      else if (the_err != RTP_OK){
+	printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+      }
+
+      </pre><H3>/* Everything ok.  So let's display the packet's contents to stdout */</H3><pre>
+      else {
+	</pre><H3>/* First convert the byte stream to an easily-readable
+	   RTP packet structure */</H3><pre>
+	rtppkt = <a href="rtp_api.html#rtppacketops">RTPGetRTPPacket</a>(theload, loaduse);
+
+	rtpcount++;
+	
+
+	</pre><H3>/* First, some details about the packet */</H3><pre>
+	printf("%d: RTP len=%d v=%d p=%d x=%d cc=%d m=%d pt=%d\n",
+	       (int)rtpcount, 
+	       (int)loaduse, 
+	       (int)rtppkt.RTP_header-&gt;version, 
+	       (int)rtppkt.RTP_header-&gt;p, 
+	       (int)rtppkt.RTP_header-&gt;x, 
+	       (int)rtppkt.RTP_header-&gt;cc, 
+	       (int)rtppkt.RTP_header-&gt;m, 
+	       (int)rtppkt.RTP_header-&gt;pt); 
+
+	</pre><H3>/* Now print the payload out as well */</H3><pre>
+	memcpy(payload, rtppkt.payload, (int) rtppkt.payload_len);
+	payload[rtppkt.payload_len] = '\0'; 
+	printf("%s\n", payload); 
+      }
+    }
+
+    if (FD_ISSET(rtcpsock.sock, &amp;selection)){
+      </pre><H3>/* There is something on the RTCP socket */</H3><pre>
+
+      loaduse = 10000;
+
+      </pre><H3>/* Receive the RTP packet (RTP membership info will be handled
+	 internally automatically by this call */</H3><pre>
+      the_err = <a href="rtp_api.html#rtpreceive">RTPReceive</a>(my_context, rtcpsock.sock, theload, &amp;loaduse);
+
+      </pre><H3>/* First make sure this packet wasn't sent by me */</H3><pre>
+      if (the_err == RTP_PACKET_LOOPBACK){
+	printf("Got my own RTCP packet\n");
+      }
+      </pre><H3>/* Now check for an error */</H3><pre>
+      else if (the_err != RTP_OK){
+	printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+      }
+
+      </pre><H3>/* Everything ok.  So let's display the packet's contents to stdout */</H3><pre>
+      else {
+	printf("Got RTCP pkt len %d\n", (int)loaduse);
+
+	</pre><H3>/* RTCP packets come in as a compound packet.  We first 
+	   split the compound packet into parts, and then
+	   process each part individually */</H3><pre>
+
+	parts = <a href="rtp_api.html#rtcppacketops">RTPSplitCompoundRTCP</a>(theload, pktparts, loaduse);
+	for (i=0; i &lt; parts; i++){
+
+	  </pre><H3>/* Convert the byte stream into an easily-readable RTCP packet 
+	     structure */</H3><pre>
+	  rtcppkt = <a href="rtp_api.html#rtcppacketops">RTPGetRTCPPacket</a>(pktparts[i]);
+
+	  </pre><H3>/* Now figure out what type the current RTCP packet is */</H3><pre>
+	  switch (rtcppkt.overlay-&gt;pt){
+	  case 200: 
+	    </pre><H3>/* This is an SR packet */</H3><pre>
+	    printf(" (SR ssrc=0x%x p=%d count=%d len=%d\n",
+		   (int)rtcppkt.overlay-&gt;rtcp_hdr_variant.sr.ssrc,
+		   (int)rtcppkt.overlay-&gt;p,
+		   (int)rtcppkt.overlay-&gt;rc,
+		   (int)rtcppkt.overlay-&gt;len);
+	    printf("ntp=%ld.%ld ts=%ld psent=%ld osent=%ld\n",
+		   (long)rtcppkt.overlay-&gt;rtcp_hdr_variant.sr.ntp_stamp_msw,
+		   (long)rtcppkt.overlay-&gt;rtcp_hdr_variant.sr.ntp_stamp_lsw,
+		   (long)rtcppkt.overlay-&gt;rtcp_hdr_variant.sr.rtp_stamp,
+		   (long)rtcppkt.overlay-&gt;rtcp_hdr_variant.sr.pkt_count,
+		   (long)rtcppkt.overlay-&gt;rtcp_hdr_variant.sr.oct_count);
+	    for (j=0; j&lt;rtcppkt.overlay-&gt;rc;j++){
+	      the_block = <a href="rtp_api.html#rtcppacketops">RTPGetReportBlock</a>(&amp;rtcppkt, j);
+	      printf("  (ssrc=%x fraction=%d lost=%ld last_seq=%ld jit=%ld lsr=%ld dlsr=%ld)\n",
+		     (int)the_block.ssrc,
+		     (int)the_block.frac_lost,
+		     (long)the_block.cum_lost,
+		     (long)the_block.highest_seqno,
+		     (long)the_block.jitter,
+		     (long)the_block.lsr,
+		     (long)the_block.dlsr);
+	    }
+	    printf(" )\n");
+	    
+	    break;
+
+	  case 201:
+	    </pre><H3>/* This is an RR packet */</H3><pre>
+	    printf(" (RR ssrc=0x%x p=%d count=%d len=%d\n",
+		   (int)rtcppkt.overlay-&gt;rtcp_hdr_variant.rr.ssrc,
+		   (int)rtcppkt.overlay-&gt;p,
+		   (int)rtcppkt.overlay-&gt;rc,
+		   (int)rtcppkt.overlay-&gt;len);
+	    for (j=0; j&lt;rtcppkt.overlay-&gt;rc;j++){
+	      the_block = <a href="rtp_api.html#rtcppacketops">RTPGetReportBlock</a>(&amp;rtcppkt, j);
+	      printf("  (ssrc=%x fraction=%d lost=%ld last_seq=%ld jit=%ld lsr=%ld dlsr=%ld)\n",
+		     (int)the_block.ssrc,
+		     (int)the_block.frac_lost,
+		     (long)the_block.cum_lost,
+		     (long)the_block.highest_seqno,
+		     (long)the_block.jitter,
+		     (long)the_block.lsr,
+		     (long)the_block.dlsr);
+	    }
+	    printf(" )\n");
+	    
+	    break;
+
+	  case 202:
+	    </pre><H3>/* This is an SDES packet */</H3><pre>
+	    printf(" (SDES p=%d count=%d len=%d\n",
+		   (int)rtcppkt.overlay-&gt;p,
+		   (int)rtcppkt.overlay-&gt;rc,
+		   (int)rtcppkt.overlay-&gt;len);
+	    if (rtcppkt.overlay-&gt;rc == 0){
+	      printf(" )\n");
+	      break;
+	    }
+	    cur_ssrc = 0;
+	    ssrc_count = 0;
+	    cur_item = InitSDESItemIter(&amp;rtcppkt);
+	    while (ssrc_count &lt; rtcppkt.overlay-&gt;rc &amp;&amp; cur_item.type != 0){
+	      if (cur_ssrc != cur_item.ssrc){
+		cur_ssrc = cur_item.ssrc;
+		printf("(src=0x%x ", (int)cur_item.ssrc); 
+	      }
+	      printf("F%d=", cur_item.type); 
+	      for (j=0; j&lt;cur_item.len;j++){
+		printf("%c",cur_item.description[j]);
+	      }
+	      printf(" ");
+	      cur_item = GetNextItem(&amp;cur_item);
+	      while (cur_item.type == 0 &amp;&amp; ssrc_count &lt; rtcppkt.overlay-&gt;rc){
+		ssrc_count++;
+		if (ssrc_count &lt; rtcppkt.overlay-&gt;rc){
+		  cur_item = GetNextItem(&amp;cur_item);
+		}
+		printf(" )\n");
+	      }
+	    }
+	    printf(" )\n");
+	    break;
+
+	  case 203:
+	    </pre><H3>/* This is a BYE packet */</H3><pre>
+	    printf(" (BYE p=%d count=%d len=%d\n",
+		   (int)rtcppkt.overlay-&gt;p,
+		   (int)rtcppkt.overlay-&gt;rc,
+		   (int)rtcppkt.overlay-&gt;len);
+	    for (ssrc_count = 0; ssrc_count &lt; rtcppkt.overlay-&gt;rc; 
+		 ssrc_count++){
+	      byeblock = <a href="rtp_api.html#rtcppacketops">RTPGetByeBlock</a>(&amp;rtcppkt, ssrc_count);
+	      printf("for %x, ", (int)byeblock.ssrccsrc);
+	    }
+	    printf(" )\n");
+	  }
+	
+	}
+      }
+      
+      </pre><H3>/* List the current members in the session by unique ID and ssrc
+	 and (if it exists) the CNAME */</H3><pre>
+      printf("My members:\n");
+
+      </pre><H3>/* Initialize an iterator over the current list of members */</H3><pre>
+      <a href="rtp_api.html#rtpsessionget">RTPSessionGetMemberList</a>(my_context, &amp;the_iter);
+
+      </pre><H3>/* RTPCurrentMember() will place the unique ID of the current
+	 member in cur_mem */</H3><pre>
+      while (<a href="rtp_api.html#iterfuncs">RTPCurrentMember</a>(my_context, &amp;the_iter, &amp;cur_mem) == RTP_OK){
+
+	</pre><H3>/* Obtain the ssrc for the member with unique ID cur_mem */</H3><pre>
+	<a href="rtp_api.html#rtpsetmember">RTPMemberInfoGetSSRC</a>(my_context, cur_mem, &amp;cur_ssrc);
+	printf("%ld : ssrc %x :", cur_mem, (int) cur_ssrc);
+
+	</pre><H3>/* Get the SDES info for the member with unique ID cur_mem
+	   (if it's available) */</H3><pre>
+	if (<a href="rtp_api.html#rtpsetmember">RTPMemberInfoGetSDES</a>(my_context, cur_mem, RTP_MI_CNAME, payload)
+	    != RTP_OK){
+	  sprintf(payload, "NO-INFO");
+	}
+	else if (payload==NULL){
+	  sprintf(payload, "NULL");
+	}
+	printf(": CNAME %s\n", payload);
+	
+	
+	</pre><H3>/* Go on to the next member */</H3><pre>
+	<a href="rtp_api.html#iterfuncs">RTPNextMember</a>(my_context, &amp;the_iter, &amp;cur_mem);
+      }
+    }
+    fflush(0);
+    
+    </pre><H3>/* If I am a sender, then send a packet when it's the
+appropriate time */</H3><pre>
+
+    if (is_sender &amp;&amp; (next_RTP_send.tv_sec &lt; curtime.tv_sec ||
+	      (next_RTP_send.tv_sec == curtime.tv_sec &amp;&amp;
+	       next_RTP_send.tv_usec &lt;= curtime.tv_usec))){
+	       
+      count++;
+      sprintf(theload, "This is packet %d", count);
+      printf("Sending %s\n", theload);
+      
+      rtptimechange = ((double) (curtime.tv_sec - last_RTP_send.tv_sec) *
+		       1000000 + (double) (curtime.tv_usec -
+					   last_RTP_send.tv_usec)) /
+      RTPSTAMPRATE;
+      the_err = <a href="rtp_api.html#rtpsend">RTPSend</a>(my_context, (int32) rtptimechange, 0, 3,
+			theload, strlen(theload));
+      if (the_err != RTP_OK){
+	printf("%s\n", <a href="rtp_api.html#strerr">RTPStrError</a>());
+      }
+      next_RTP_send.tv_usec += (long int)
+	(((double)sendrate/10.0 - floor((double)sendrate/10.0)) * 1000000);
+      if (next_RTP_send.tv_usec &gt; 1000000){
+	next_RTP_send.tv_sec++;
+	next_RTP_send.tv_usec -= 1000000;
+      }
+      next_RTP_send.tv_sec += (long int)floor((double)sendrate / 10.0);
+      last_RTP_send = curtime;
+    }
+  }
+  
+  </pre><H3>/* Terminate the connection.  This will send a BYE packet announcing
+     that we have left the session. */</H3><pre>
+  the_err = <a href="rtp_api.html#rtpclose">RTPCloseConnection</a>(my_context);
+  if (the_err != RTP_OK){
+    printf("CloseConn failed: error %d\n", the_err);
+  }
+  the_err = <a href="rtp_api.html#rtpdestroy">RTPDestroy</a>(my_context);
+  if (the_err != RTP_OK){
+    printf("Error %d raised\n", the_err);
+  }
+
+  </pre><H3>/* If we were performing allocation debugging in RTP, print out
+     the results here */</H3><pre>
+#ifdef _RTP_WATCH_ALLOCATION  
+  CheckMallocs();
+#endif
+  exit(0);
+}
+</pre>
+
+<P><a href="rtp_api.html">Go back to library</a>
+</body>
+</html>

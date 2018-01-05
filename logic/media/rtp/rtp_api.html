@@ -1,0 +1,3211 @@
+<!doctype HTML public "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>RTP Library API Specification</title>
+</head>
+<body bgcolor=white text=black>
+<br>
+
+<p>
+<h1><a NAME="0.0.1.0.0.0.0">RTP Library API Specification</a></h1>
+<br>June, 1998<p>
+<P>Copyright &copy; 1998 Lucent Technologies; all rights reserved
+<h2>Table of Contents</h2>
+
+<ol>
+ <li> <a href="#introduction"> Introduction </a>
+ <li> <a href="#ack"> Acknowledgements </a>
+ <li> <a href="#genop">Basic Operation</a>
+   <ol type=a start=1>
+    <li> <a href="#init">Initialization</a>
+    <li> <a href="#send">Sending and Receiving Packets</a>
+    <li> <a href="#closing">Closing the Connection and Session</a>
+    <li> <a href="#memberinfo">Accessing Member Information</a>
+    <li> <a href="#callbks">Callback Functions</a>
+    <li> <a href="#timed"> Timed Events </a>
+    <li> <a href="#strerr"> String Error </a>
+    <li> <a href="#iterators">Using Iterator Functions</a>
+    <li> <a href="#rrinfo">Obtaining RR Information</a>
+    <li> <a href="#uinfo">User Info Fields</a>
+   </ol>
+ <li> <a href="#adv">Advanced Functions</a>
+   <ol type=a start=1>
+    <li> <a href="#rtcpparse">RTCP Packet Parsing</a>
+    <li> <a href="#pti">Adding New Payload Types</a>
+    <li> <a href="#encrypf">Encryption</a>
+    <li> <a href="#headx">Header Extensions</a>
+    <li> <a href="#recon">Reconsideration</a>
+    <li> <a href="#csrc">CSRC</a>
+   </ol>
+ <li> <a href="#thread"> Thread Issues </a>
+ <li> <a href="#functions"> Functions </a>
+  <ol type=a start=1>
+    <li> <a href="#rtpcreate">RTPCreate()</a>
+    <li> <a href="#rtpdestroy">RTPDestroy()</a>
+    <li> <a href="#rtpopen">RTPOpenConnection()</a>
+    <li> <a href="#rtpclose">RTPCloseConnection()</a>
+    <li> <a href="#rtpsend">RTPSend()</a>
+    <li> <a href="#rtpsendvector">RTPSendVector()</a>
+    <li> <a href="#rtpsessionaddsend">RTPSessionAddSendAddr()</a>
+    <li> <a href="#rtpsessionremovesend">RTPSessionRemoveSendAddr()</a>
+    <li> <a href="#rtpsessionsetrecv">RTPSessionSetReceiveAddr()</a>
+    <li> <a href="#rtpsessiongetrecv">RTPSessionGetReceiveAddr()</a>
+    <li> <a href="#sg_setencryption">RTPSessionSetEncryption()</a></li>
+    <li> <a href="#sg_getencryption">RTPSessionGetEncryption()</a></li>
+    <li> <a href="#sg_funcencryption">RTPSessionSetEncryptionFuncs()</a></li>
+    <li> <a href="#sg_settimestamp">RTPSessionSetRTPStampRate()</a></li>
+    <li> <a href="#sg_gettimestamp">RTPSessionGetRTPStampRate()</a></li>
+    <li> <a href="#sg_setsetkey">RTPSessionSetKey()</a></li>
+    <li> <a href="#sg_setgetkey">RTPSessionGetKey()</a></li>
+    <li> <a href="#sg_setrecon">RTPSessionSetReconsideration()</a></li>
+    <li> <a href="#sg_getrecon">RTPSessionGetReconsideration()</a></li>
+    <li> <a href="#sg_setbw">RTPSessionSetBandwidth()</a></li>
+    <li> <a href="#sg_getbw">RTPSessionGetBandwidth()</a></li>
+    <li> <a href="#sg_setuinfo">RTPSessionSetUserInfo()</a></li>
+    <li> <a href="#sg_getuinfo">RTPSessionGetUserInfo()</a></li>
+    <li> <a href="#sg_getmemberlist">RTPSessionGetMemberList()</a></li>
+    <li> <a href="#sg_getsocket">RTPSessionGetRTPSocket()</a></li>
+    <li> <a href="#sg_getrtcpsock">RTPSessionGetRTCPSocket()</a></li>
+    <li> <a href="#csrc_handling">CSRC Handling Functions</a></li>
+    <li> <a href="#addcontrib">RTPSessionAddToContributorList()</a></li>
+    <li> <a href="#removecontrib">RTPSessionRemoveFromContributorList()</a></li>
+    <li> <a href="#addcsrc">RTPSessionAddToCSRCList()</a></li>
+    <li> <a href="#removecsrc">RTPSessionRemoveFromCSRCList()</a></li>
+    <li> <a href="#getidforCSRC">RTPSessionGetUniqueIDForCSRC()</a></li>
+    <li> <a href="#getcsrclist">RTPSessionGetCSRCList()</a></li>
+    <li> <a href="#setupdatecallback">RTPSetUpdateMemberCallBack()</a></li>
+    <li> <a href="#setinfocallback">RTPSetChangedMemberInfoCallBack()</a></li>
+    <li> <a href="#setcollidedcallback">RTPSetCollidedMemberCallBack()</a></li>
+    <li> <a href="#setrevertingcallback">RTPSetRevertingIDCallBack()</a></li>
+    <li> <a href="#senderrcallback">RTPSetSendErrorCallBack()</a></li>
+    <li> <a href="#currentmember">RTPCurrentMember()</a></li>
+    <li> <a href="#nextmember">RTPNextMember()</a></li>
+    <li> <a href="#rtpreceive">RTPReceive()</a></li>
+    <li> <a href="#getrtppacket">RTPGetRTPPacket()</a></li>
+    <li> <a href="#getcsrc">RTPPacketGetCSRC()</a></li>
+    <li> <a href="#rtcpsplit">RTPSplitCompoundRTCP()</a></li>
+    <li> <a href="#rtcpget">RTPGetRTCPPacket()</a></li>
+    <li> <a href="#getreportblock">RTPGetReportBlock()</a></li>
+    <li> <a href="#getbyeblock">RTPGetByeBlock()</a></li>
+    <li> <a href="#initsdesiter">InitSDESItemIter()</a></li>
+    <li> <a href="#nextsdes">GetNextItem()</a></li>
+    <li> <a href="#rtpmi_g_status">RTPMemberInfoGetStatus()</a></li>
+    <li> <a href="#rtpmi_s_sdes">RTPMemberInfoSetSDES()</a></li>
+    <li> <a href="#rtpmi_g_sdes">RTPMemberInfoGetSDES()</a></li>
+    <li> <a href="#rtpmi_g_rtpaddr">RTPMemberInfoGetRTPAddr()</a></li>
+    <li> <a href="#rtpmi_g_rtcpaddr">RTPMemberInfoGetRTCPAddr()</a></li>
+    <li> <a href="#rtpmi_s_ntp">RTPMemberInfoSetNTP()</a></li>
+    <li> <a href="#rtpmi_g_ntp">RTPMemberInfoGetNTP()</a></li>
+    <li> <a href="#rtpmi_s_rtp">RTPMemberInfoSetRTP()</a></li>
+    <li> <a href="#rtpmi_g_rtp">RTPMemberInfoGetRTP()</a></li>
+    <li> <a href="#rtpmi_s_pktcnt">RTPMemberInfoSetPktCnt()</a></li>
+    <li> <a href="#rtpmi_g_pktcnt">RTPMemberInfoGetPktCnt()</a></li>
+    <li> <a href="#rtpmi_s_rpktcnt">RTPMemberInfoSetRTCPPktCnt()</a></li>
+    <li> <a href="#rtpmi_g_rpktcnt">RTPMemberInfoGetRTCPPktCnt()</a></li>
+    <li> <a href="#rtpmi_s_octcnt">RTPMemberInfoSetOctCnt()</a></li>
+    <li> <a href="#rtpmi_g_octcnt">RTPMemberInfoGetOctCnt()</a></li>
+    <li> <a href="#rtpmi_s_ssrc">RTPMemberInfoSetSSRC()</a></li>
+    <li> <a href="#rtpmi_g_ssrc">RTPMemberInfoGetSSRC()</a></li>
+    <li> <a href="#rtpmi_s_ui">RTPMemberInfoSetUserInfo()</a></li>
+    <li> <a href="#rtpmi_g_ui">RTPMemberInfoGetUserInfo()</a></li>
+    <li> <a
+    href="#si_getfirstrr">RTPSenderInfoGetFirstReceiverReport()</a></li>
+    <li> <a
+    href="#si_getnextrr">RTPSenderInfoGetNextReceiverReport()</a></li>
+    <li> <a href="#si_localrr">RTPSenderInfoGetLocalReception()</a></li>
+    <li> <a href="#rtpfindmember">RTPFindMember()</a>
+    <li> <a href="#rtpmostrecenttime">RTPMostRecentRTPTime()</a>
+    <li> <a href="#rtcpmostrecenttime">RTPMostRecentRTCPTime()</a>
+    <li> <a href="#rtpmostrecentperson">RTPMostRecentRTPPerson()</a>
+    <li> <a href="#rtcpmostrecentperson">RTPMostRecentRTCPPerson()</a>
+    <li> <a href="#rtcpmostrecentaddr">RTPMostRecent()</a>
+  </ol>
+ <li> <a href="#examples"> Example Code</a>
+</ol>
+
+<h2><a name="introduction">Introduction</a></h2>
+
+<p>The RTP Library provides a high level interface for developing
+applications that make use of the Real Time Transport Protocol
+(RTP). This protocol was developed in the Audio/Video Working Group of
+the <a href="http://www.ietf.org">Internet Engineering Task Force
+(IETF)</a>, and has been published as <a
+href="ftp://ftp.isi.edu/in-notes/rfc1889.txt">RFC1889</a>. This
+library is based on the most recent version of the specification,
+incorporating some of the newest features, including RTCP scalability
+algorithms. </p>
+
+<p>This document describes the visible C programmer API for the library.</p>
+
+<h2><a name="ack">Acknowledgements</a></h2>
+
+The RTP Library was developed at Lucent Technologies, in cooperation
+with Prof. Henning Schulzrinne from Columbia University, Jonathan
+Lennox from Columbia University, Daniel Rubenstein from
+U. Mass. Amherst, and Jonathan Rosenberg from Bell
+Laboratories.
+
+<h2><a name="genop">General Operation</a></h2>
+
+This section overviews the basics for using the library.
+
+<h3><a name="init"> Initialization</a> </h3>
+
+<p> A number of calls must be made to initialize the library. The first of
+    the first of these is RTPCreate(), which establishes a context. A
+      context is an identifer used by the library to determine which
+      RTP session a function call is to be associated with. An
+      application can run many sessions at the same time, each created
+      with a separate call to RTPCreate, resulting in a different
+      context for each. Most library functions accept a context as the
+      first argument. </p>
+
+    <p> Once RTPCreate has been called to initialize the session, the
+    addresses for the session must be set. The library supports
+    unicast (single point to point), multi-unicast (multiple unicast
+    point to points),multicast, and hybrids. There are two sets of addresses
+    used by the library. The first is the <em>send set</em>. This is a
+    list of unicast and/or multicast addresses, port numbers, and ttl
+    values (ttl values are only defined for multicast, of
+    course). Whenever a packet is sent by the application, the library
+    will transmit the packet to all the addresses listed in the send
+    set. This allows for unicast (by setting a single unicast
+      address/port value), multicast (by setting a single multicast
+      address/port pair), multi-unicast (by setting many unicast
+      address/port pairs), and hybrids. </p>
+
+    <p> The library also has a receive set defined. This set contains
+      but one address/port pair, which can be multicast or unicast. It
+      is the address that the library expects to receive packets
+      on. The behavior is defined as follows: </p>
+    <ol>
+      <li> If the address is unicast, but does not correspond to a
+	local interface, the library instead binds to INADDR_ANY, so
+	that it will accept packets on any interface.</li>
+      <li> If the address is unicast, and is a local interface, the
+	library will only accept packets on this interface.</li>
+      <li> If the address is multicast, the library will bind to
+	INADDR_ANY, and then join the multicast group. This way, it
+	will accept packets that are either unicast OR multicast for
+	the given port.</li>
+      <li> If the address is NULL, the library will bind to
+	INADDR_ANY.</li>
+      <li> If the port is zero, the library will use a dynamic
+	port. Since the RTP and RTCP ports must be consecutive, the
+	libary will try random pairs of dynamically assigned ports
+	(above 49152) until it finds a pair. If a pair cannot be
+	allocated, it will return an error. </li>
+    </ol>
+
+    <p>All addresses are specified as strings. These must be of the
+      form "A.B.C.D" (dotted-quad), or a hostname "machine.domain". If
+      the string is a hostname, the library will attempt to resolve
+      the name to an address using DNS.</p>
+
+    <p> There are a number of other initialization functions that are
+      available. Most are optional. The ones which will generally need
+      to be used are: </p>
+
+    <ol>
+      <li>RTPSessionSetBandwidth(). RTCP packets are sent at a rate
+	that depends on the session bandwidth. This is a global
+	parameter for the RTP session, obtained out of band from some
+	other means (SAP or SIP, for example). The application should
+	set this value before calling RTPOpenConnection() in order to
+	ensure proper RTCP transmission rates. If it is not set, the
+	default rate of 120 kbps.</li>
+      <li>RTPMemberInfoSetSDES(). One RTCP packet type, SDES, contains
+	information about each user. This includes the name, email,
+	and CNAME for the user. It is the responsibility of the
+	application to set these fields. In particular, the CNAME
+	field MUST be set prior to calling RTPOpenConnection. All of
+	the other SDES fields are optional. </li>
+    </ol> 
+
+    <p> Once the addresses for the session have been set, the function
+      RTPOpenConnection() is called. This actually binds the receive
+      sockets, and causes the library to join the multicast
+      groups. After this, the library is ready to accept and send
+      packets. </p>
+
+<h3><a name="send"> Sending and Receiving Packets</a> </h3>
+
+<p> Sending packets is fairly straightforward. The RTPSend() function
+      is used to tell the library to send an RTP packet. It requires
+      the user to pass a pointer to a buffer, a length, a value for
+      the marker field in the RTP header, an increment for the
+      timestamp, and the context. The library will take the buffer,
+      add the RTP header, perform any required operations, and send
+      the packet. The library will automatically send RTCP
+      packets. The initial timestamp and sequence number are chosen
+      randomly. </p>
+
+<p> If an application needs to send an RTP packet that is stored in a
+      scatter gather structure, it can make use of the RTPSendVector,
+      which is the writev equivalent of RTPSend. </p>
+
+<p> Receiving packets is a little more complex. In order to know if a
+      packet is available for reading, a process can block, it can
+      poll, or use any other kind of mechanism. Since the library does
+      not dictate this policy, it is up to the user to determine when
+      data is available for reading. To do this, the library allows
+      the user access to the receive sockets. There are two: one for
+      RTP, one for RTCP. The functions RTPSessionGetRTPSocket and
+      RTPSessionGetRTCPSocket are used to do this. They take as input
+      the context and a pointer to a socket. When they return, the
+      socket has been filled in. The use may then check for the
+      presence on an RTP packet on these sockets in any fashion; using
+      select, for example. </p>
+
+<p> When a packet is present on either socket, the application should
+      call the function RTPReceive(). This function takes the context, the
+      socket on which data is present, a pointer to a buffer, and a pointer
+      to a length value. The length value should be initialized to the
+      amount of room in the buffer. The library will read and process the
+      RTP or RTCP packet. For RTCP, it will perform all statistics
+      collection and parsing. Generally, there will be no further action
+      required from the user. For an RTP packet, the library will also
+      update some statistics and variables. The buffer will be filled
+      in with the entire RTP/RTCP packet, including the header.</p>
+
+<p> Once RTPReceive is complete, the user may want to access data in
+      the packet if it is an RTP packet. However, the packet in the
+      original buffer used in the RTPReceive still contains the
+      header. To gain access to the header fields, and the payload,
+      the function RTPGetRTPPacket() is provided. This function
+      accepts the buffer as an input, and returns a pointer to an RTP
+      packet structure. This pointer is of type rtp_packet, and
+      contains fields for the various RTP headers, and a pointer to
+      the payload. The user can then access these fields for whatever
+      purposes it likes. </p>
+
+<h3><a name="closing">Closing the Connection and Session</a></h3>
+
+    <p>When the application has decided to terminated and/or leave the
+      RTP session, it should do two things. First, the function
+      RTPCloseConnection should be called. This will close all active
+      receive sockets, send a BYE packet, and then close all send
+      sockets. It does not delete internal storage or statistics that
+      have been collected, however. RTPCloseConnection accepts a
+      reason string. This string is sent in the BYE packet. If set to
+      NULL, the library will not include any reason in the BYE.</p>
+
+    <p>To actually destroy all internal information about the session,
+      the function RTPDestroy is provided. It takes the context as its
+      sole argument, and frees all memory associated with the
+      context.</p>
+
+
+<h3><a name="memberinfo"> Accessing Member Information</a> </h3>
+
+    <p> Many of the RTP Library functions provide support for
+      accessing information about the other members of the
+      session. Each user is assigned a unique identifier by the
+      library, of type <em>person</em>. Unlike the SSRC, which can
+      change due to collisions, the unique identifier stays
+      constant. Most of the member information elements are accessed
+      by passing the unique id to the library. </p>
+
+    <p> There are a number of ways to obtain the unique id for a
+      member. These include:</p>
+      
+
+    <ol>
+      <li> CallBack functions: The library provides for callback
+	functions that the library calls when certain events
+	occur. These events include things like new member, timeouts,
+	new sender, etc. The functions are provided with the unique id
+	of the person associated with the event. This allows
+	applications to access membership information easily at the
+	time when it is likely to be most needed. </li>
+      <li> List Iterators. The library allows the application to
+	obtain the list of current group members. This list
+	 is provided by returning the unique
+	identifiers for the users. </li>
+      <li> Most Recent. The library provides two function calls for
+	obtaining the member who sent the most recently received RTP
+	and RTCP packets (RTPMostRecentRTPPerson and RTPMostRecentRTCPPerson). </li>
+      <li> Local. The local member (i.e., the member that the
+	application is sending packets on behalf of) is always known
+	by the unique identifier 0. </li>
+      <li> Finding. The library provides a function, RTPFindMember,
+	that allows an application to obtain a unique id for a member
+	based on the value of an SDES field. The function accepts a
+	context, an SDES field, and a value. It also accepts a pointer
+	to a person, which is set to the unique ID of the first member
+	whose SDES field has the given value. This function is most
+	useful for finding members based on CNAME. When multiple
+	sessions are used, the CNAME of the user stays the same across
+	sessions. An application will most likely need to access
+	sender report information (timestamps in particular) based
+	solely on CNAME.</li>
+    </ol>
+	
+    <p>Once the unique identifier has been obtained, it can be used to
+      access a host of different pieces of information. These include:
+      </p>
+
+    <ol>
+      <li>SDES. The function RTPMemberInfoGetSDES() takes a unique id,
+    an SDES field, and a pointer to a buffer. The library will copy
+    the SDES item into the buffer.</li>
+      <li>SR Info. There are a host of functions for getting the
+	information present in sender reports from a member. These
+	functions are of the form RTPMemberInfoGetX, where X is one of
+	{NTPStamp,RTPStamp,PktCount,OctCount}, which correspond to the
+	elements in a sender report from that member. 
+	If the member is not a sender,
+	these will return zero.</li>
+      <li>SSRC. The function RTPMemberInfoGetSSRC() returns the SSRC
+	for a member. </li>
+      <li>RR. Each member in a group sends out receiver reports for
+	each sender. The library records all the information in
+	receiver reports from every group member. To obtain
+	information from a receiver report, the application must
+	provide both the unique identifier for the member who sent the
+	receiver report, AND the SSRC for the sender that the RR
+	refers to. </li>
+	<li>Member Status. The function RTPMemberInfoGetStatus()
+	returns the state of the member (pending, expired, confirmed),
+	and whether they are an active sender.
+    </ol>
+	
+<h3><a name="callbks">Callback Functions</a> </h3>
+
+    <p>Certain events happen during an RTP session which are of
+      interest to the application. To alert the application of these
+      events, callback functions are used. There are four callbacks
+      which will generally be needed by the application. Two others
+      are more advanced, and should not usually be needed. The three
+      basic ones are:</p>
+    <ol>
+      <li>MemberUpdateCallBack: When the status of a member changes,
+	this callback is called, along with a flag indicating the new
+	status. Member status is discussed below.</li>
+      <li>ChangedMemberInfoCallBack. When a session member sends an
+	SDES packet, and the information in the packet is different
+	from the last SDES packet, this function is called. This is
+	useful for finding when the NOTE field changes, for
+	example.</li>
+      <li>ChangedMemberAddressCallBack. When the library receives a packet
+	from a member, and that packet is from a different network address
+	than the last packet received from the member, this function is
+	called reporting the new address.</li>
+      <li>RevertingIDCallBack: This functions usage is a little
+	complex, but is needed. Each member of the group is assigned a
+	unique ID, as described above. If a member is involved in an
+	SSRC collision, they may leave the group, change their SSRC
+	and rejoin with the new SSRC. When they rejoin, they may send
+	an RTP packet before an RTCP packet. The library will see a
+	new SSRC, and not realize that this is a rejoined member. So,
+	it assigns this member a unique ID. When the RTCP packet shows
+	up, the library realizes that this is the same member, who now
+	has two unique ID's. The library will then call this callback,
+	and indicate both ID's. The library will also destroy all
+	membership records associated with the new ID, and combine the
+	statistics with the old one. However, the library allows the
+	application to set a piece of the membership record (user
+	info, described below). If this information is a pointer to
+	some memory in application space, the user must free this
+	memory, or make a copy of the pointer, since the library will
+	destroy its own copy of the pointer. This is the main
+	motivation for this callback. Note that if the library never
+	makes use of the user info field, it need not set this
+	callback function. </li>
+    </ol>
+
+    <p>Each member in the group has two states. The first is its
+    member state, and is one of six: pending, confirmed, expired,
+    pending contributor, confirmed contributor, and expired
+    contributor. A member is pending if it has sent a single packet
+    (RTP or RTCP), or appeared in a sender report or receiver
+    report. The member is confirmed if it has sent more than one RTP
+    or RTCP packets, or a CNAME is received. The member is a pending
+    contributor if they have appeared in the CSRC list once in a RTP
+    data packet. The member is a confirmed contributor if they have
+    appeared twice in the CSRC list of a data packet, or have had a
+    CNAME sent for them in an SDES packet.  RTP has a
+    provision for member timeouts, which occur if a member has sent
+    neither an RTP or RTCP packet over the last 5 RTCP transmission
+    periods. When a confirmed member times out, they change state to
+    expired. The statistics and user information are not destroyed,
+    but they are not counted as part of the group. When a pending
+    member times out, they are destroyed. Similarly, if a confirmed
+      contributor has not appeared in an CSRC list, or an SDES packet
+    been received for them in the last 5 RTCP transmission periods,
+      they become a pending contributor. A pending contributor in the
+      same scenario is destroyed. </p>
+
+    <p>Pending members are not used in group size estimation. This
+    helps prevent encrypted packets being mistakenly considered as
+    from a new random SSRC. A member in any of the pending states is
+      not used towards group size estimation, and neither are expired
+      members. The group size estimate is used by the library in
+      computing the interval between RTCP packet transmissions. </p>
+
+      <p>If an expired member "comes back" by sending a packet, they
+      revert back to the confirmed state. 
+
+      <p>Orthogonal to a member's status as pending, confirmed, or
+      expired, they can be in one of three sending states: not,
+      purported, or confirmed. A member is in the not state if it has
+      never sent a data packet, never send an SR packet, and never
+      appeared in a receiver report block. A purported sender is a
+      member who has sent an RTP packet but is not a confirmed member,
+      or a member who has sent an SR or appeared in a receiver report
+      block, but never sent a packet. These senders are purported
+      because they, or someone else, has claimed them to be senders,
+      but this has not yet been verified by a data packet. A sender is
+      confirmed if they are a confirmed member and have sent an RTP
+      data packet in the last RTCP transmission interval. A confirmed
+      sender will time out, and become purported, after not sending a
+      data packet in the last RTCP transmission interval. After four
+      more transmission intervals, it will move from purported to
+      not. At this point, any statistics about this member are
+      destroyed. The library uses the count of confirmed senders in
+      determining the frequency of RTCP packet transmissions. </p>
+
+      <p>When a members status changes in any way, the MemberUpdateCallBack is
+      called. The function is passed a flag which indicates what the
+      status change is. The flags are described in rtp_api.h</p>
+
+      <p>To set the callback functions, there are six
+      RTPSetXXXCallBack functions, each of which sets the appropriate
+      callback. These are passed the context and the a pointer to the
+      function, written by the user, to be used for callback.</p>
+
+      <p>The library also defines two advanced callback functions. The
+      first is CollidedMemberCallBack. When two users have an SSRC
+      collision, this function is called by the library. The library
+      will automatically handle the resolution of the collision. The
+      callback is available if the presence of a collision needs to be
+      known by the application.</p>
+
+      <p>The second advanced callback is SendErrorCallBack. The
+      library supports sending data to multiple receive
+      destinations. Internally to the library, each supports a
+      separate connected socket. Should one of the peers on a socket
+      go down, or no longer be responding on the given port, certain
+      systems provide notification when trying to send, even on
+      connectionless sockets. When the library tries to send data to a
+      socket, and it gets some kind of error indication, this callback
+      is called. The function is passed the IP address and port that
+      the error was reported from. The library will not close sockets
+      that continually report errors. It is up to the application to
+      turn them off with RTPRemoveSendAddr.</p>
+     
+     <h3><a name="iterators"> Using Iterator Functions</a> </h3>
+
+     <p>There are cases where the application would like to obtain a
+     list of things, such as a list of the current session members, or
+     a list of the current session senders. To support this in a
+     scalable manner, the library supports the concept of
+     iterators. An <em>iterator</em> is an object that represents a
+     list of members and a
+     pointer to one of the members on the list. Once an
+     iterator is obtained, it can be used to cycle through the
+     list. Two functions are used for this. RTPCurrentMember returns
+     the current member of the list, and RTPNextMember advances the
+     pointer to the next member, and returns it as well. Note that
+     successive calls to RTPCurrentMember will not advance the
+     pointer, whereas RTPNextMember will.</p>
+
+     <p>To get an iterator, the function RTPSessionGetMemberList is
+     provided. It takes as input the context, and a
+     pointer to an iterator. The function fills in the iterator and
+     initializes it. Afterwards, the list can be walked through with
+     RTPCurrentMember and RTPNextMember. Once the end of the list is
+     reached, both functions return an error condition. Note that the
+     state of the iterator WILL NOT BE MAINTAINED ACROSS CALLS TO
+     OTHER LIBRARY FUNCTIONS. The iterator is meant to be used in one
+     shot, during a single application operation. Library functions
+     may modify these lists and make the pointers contained in the
+     iterator invalid.</p>
+
+    <p>Note that RTPCurrentMember and RTPNextMember return a unique-id
+      to represent the member. The member information functions,
+      described above, can then be used to obtain the desired
+      information, including member status.</p>
+
+<h3><a name="timed">Timed Events</a></h3>
+Two RTP related events must occur which are timed. They are:
+<ol>
+<li> RTCP reports must be sent periodically.
+<li> BYE packets may be reconsidered for transmission.
+</ol>
+
+<p>To support scheduling, timed events are handled by two
+functions, RTPSchedule and RTPExecute. The first of these functions is
+written by the user. It is called by the RTP library to request
+scheduling of events at some predetermined time. The user is
+responsible for writing the function to schedule the event with
+whatever mechanism is appropriate for the application. The second
+function is part of the RTP library, and is to be called upon
+execution of the timed event. The specific formats of the functions
+are:
+
+<P><pre>
+void RTPSchedule(context cid, rtp_opaque_t opaque, struct timeval *tp);
+
+rtperror RTPExecute(context cid, rtp_opaque_t opaque);
+
+</pre>
+
+<P>The RTP library will call RTPSchedule, and pass it the context
+<em>cid</em> and an opaque piece of data, <em>opaque</em>. It will also pass
+the time for which the scheduled event is to occur, <em>tp</em>. At the
+appropriate time, <em>tp</em>, the application should call RTPExecute, and
+pass it the opaque token provided in the call to RTPSchedule, in addition to
+the context.
+
+<P>This general mechanism allows for the RTP library to schedule
+arbitrary timed events. All information about the nature of the events
+is kept internal. The opaque data is used internally to identify
+particular events.  <tt>RTPExecute()</tt> cannot be called from within
+a callback function in the same context.  <P>
+
+<h3><a name="strerr">RTPStrError</a></h3>
+
+The format of the call is :
+<pre>
+char *RTPStrError();
+</pre><P>
+<tt>RTPStrError</tt> returns an error message associated with the 
+most recent error that was raised by the RTP library (not including
+<tt>RTP_OK</tt>, which represents a lack of error.  This error
+message is more detailed than the error number returned by a function
+that returns type <tt>rtperror</tt> in that it also states the
+calling function and often offers details about the context and
+other values that might have induced the error.
+
+<h3><a name="rrinfo"> Obtaining RR Information</a> </h3>
+
+    <p>RTCP receiver reports (RR's) contain information from each
+      receiver, about each sender. The library stores all of this
+      information, and makes it available to the application if
+      needed. Reception quality for the local member is obtained in
+      the same way its obtained for all other members.</p>
+
+    <p>To get reception quality information, the application must
+      provide the identifier of the user <em>about</em> whom the
+      reception reports are desired. The library routines operator via 
+      an iterator. The initialization routine gets the first receiver
+      report about the particular user. Another routine cycles through 
+      the reception reports on each call, returning receiver reports
+      from different receivers about the given sender. Once the
+      iterator is complete, an error value is returned. </p>
+
+    <p> The iterators return a pointer to a receiver report
+      structure. This structure contains all of the relevant
+      information from the receiver reports. </p>
+
+    <p> RTPSenderInfoGetFirstReceiverReport(context cid, person p,
+    receiver_report_iterator *the_iterator, receiver_report *report)
+    is used to initialize the iterator. It also fills in the receiver
+    report structure with the first receiver report for the given
+    person p. An error is returned if the person is not a sender. To
+    get the next report blcok, the user must call
+    RTPSenderInfoGetNextReceiverReport(context cid, person p,
+    receiver_report_iterator *the_iterator, receiver_report *report)
+      to get the next one.
+
+    <p> When used with a person value of 0, the library returns
+      receiver reports received about the local member. In addition,
+      receiver reports sent by the local member will appear on the
+      list of receiver reports returned by the above functions. These
+      represent the state sent in actual reports, not the most recent
+      information the local member has about the given sender</p>
+
+    <p> To obtain the most recent statistics about other senders, as
+    observed by the local member, the function
+    RTPSenderInfoGetLocalReception(context cid, person p,
+    receiver_report *report) is used. It takes the given person and a
+      pointer to a receiver report structure, and fills it in. The
+      resulting receiver report is the <em>receiver report which would 
+	be sent at that point in time for the given sender</em>. Note
+      that since the library doesn't send a receiver report at this
+      point, the actual receiver report generated will differ when it
+      is sent.</p>
+
+<h3><a name="uinfo"> User Info Fields</a> </h3>
+
+    <p>In many cases, it would be very desirable to not have the
+      application maintain an actual list of members of its own, since
+      the library already does this. However, most applications will
+      need to establish additional information associated with each
+      member (such as a pointer to a window in the GUI). To support
+      this, the library allows the application to set a pointer in the
+      internal list of members. This pointer can point to memory
+      allocated and used by the application. The pointer can be
+      obtained from the library using some API functions. </p>
+
+    <p>In particular, the function RTPMemberInfoSetUserInfo takes the
+      context, a unique-id, and a pointer as an argument. The pointer
+      is stored internally in the record associated with that
+      member. The function RTPMemberInfoGetUserInfo can then be used
+      to retrieve this pointer. It takes the context, the unique-id of
+      the member, and a pointer to the user info pointer as an
+      argument. The library will then write the value of the
+      pointer.</p>
+
+    <p>As an example of the usage of this field, consider an
+      application which lists the current group members in a GUI, and
+      highlights those members who are currently senders. When a
+      member times out, they are removed from the window. To support
+      this, an application can set the MemberUpdateCallBack to be
+      called. When a new user appears, the library will call the
+      callback. The application can then create a new window in the
+      GUI, and place a pointer to it in the user info field with the
+      above RTPMemberInfoSetUserInfo function. Some time later, if the
+      member becomes a sender, the callback is called once more. The
+      library can the retrieve the pointer to the window, and use it
+      to change the members name to bold. This allows the application
+      to not even store the pointers to the windows in application
+      space. It can rely totally on storage in the library.</p>
+
+    <p>The library also allows the application to store a pointer for
+      each session. This pointer is set using RTPSessionSetUserInfo
+      and read using RTPSessionGetUserInfo. Its usage is similar to
+      the MemberInfo versions.</p>
+
+    <p>A word of caution on the usage of these pointers. When a member
+      is to be deleted by the library, its member record is
+      destroyed. This includes the pointer which might have been set
+      by RTPMemberInfoSetUserInfo. If the application does not keep a
+      copy of this pointer, or does not free the memory when the
+      callback is called to indicate the member is to be deleted,
+      memory leaks WILL occur. Similarly, a reverting ID event (due to a
+      collision of SSRC) will cause memerber records to be
+      destroyed. When the callback for this is invoked, the
+      application should free the memory associated with the
+      member. The same is true for the session user info. Before
+      invoking RTPDestroy, the application should free any memory
+      associated with the session user info pointer.</p>
+
+<h2><a name="adv"> Advanced Functions</a> </h2>
+
+    <p>The library provides a number of advanced functions which should
+    almost never be needed. However, they are provided to add
+      additional flexibility.</p>
+
+<h3><a name="rtcpparse"> RTCP Packet Parsing</a> </h3>
+
+    <p>When an RTCP packet arrives, it is automatically parsed by the
+      library, and the information stored in internal state. The
+      functions described above detail how to access this
+      information.</p>
+
+    <p>When debugging, or when circumstances require direct access to
+      the RTCP packet, the library provides functions for parsing the
+      RTCP packets. These same functions are used by the library
+      itself to parse them. Parsing RTCP is somewhat complex because
+      of the many optional parts and layered structure. The various
+      functions generally break the packets into components which can
+      then be processed by subsequent functions.</p>
+
+    <p>The first function is int RTPSplitCompoundRTCP(char
+      *rtcppacket, char *indpkts[], long len). It takes the raw RTCP
+      packet received on the socket, and splits it into the individual
+      RTCP packets (this is because an RTCP data packet can contain
+      many RTCP packets inside of it). The user must pass a pointer to
+      an array of char *, with sufficient memory allocated. This array
+      will be written with pointers to the places in the raw data
+      stream where each RTCP packet starts. The function returns the
+      number of RTCP packets found. The third argument is the amount
+      of memory allocated by the application in the indpackets array.</p>
+
+    <p>The next function is rtcp_packet RTPGetRTCPPacket(char
+    *rtcppacket). It takes a pointer to an individual RTCP packet
+    character string that composes the RTCP packet. It returns a
+    pointer to an rtcp_packet. This is a structure which contains the
+    various common header fields (version, type, count, etc.) and the
+      parts specific to the particular RTCP packet. The rtcp_packet
+      structure has two parts. The first is an <em>overlay</em>. The
+      overlay is an RTCP data structure that is overlaid right ontop
+      of the packet character stream. It simply provides structure to
+      the data stream. The second part is the nonoverlay, and contains
+      pointers and fields to parts of the packet which can only be
+      obtained based on the values of the overlay parts of the
+      packet.</p>
+
+    <p>With the rtcp_packet structure, the application can access the
+      common RTCP header fields, and some of the fields of the
+      packet-specific header, depending on the packet type. See the
+      data structure, defined in rtp.h, for more details.</p>
+
+    <p>If the given packet is SDES, it can contain many chunks (each
+      of which represents a different SSRC), and within a chunk,
+      different items. The functions rtcp_sdes_item
+      InitSDESItemIter(rtcp_packet *rtcpsdes) and 
+      rtcp_sdes_item GetNextItem(rtcp_sdes_item *prev_item) are used
+      to access this information. First, the InitSDESItemiter function
+      is called. It returns an rtcp_sdes_item. This contains the SSRC
+      for the item, the type,length, and string for the item, and a
+      chunk number. The item can be obtained directly from this
+      function. Calling GetNextItem will return the next item in the
+      SDES packet. The application must provide the previous item as
+      an input. When the iterator reaches the end of the items for a
+      given chunk, it returns an item of type 0. This is an indication
+      of the end of items for a chunk. To see if more iterations are
+      possible, the application should check the chunk number against
+      the chunk count in the RTCP packet header.</p>
+
+    <p>If the given packet is a sender or receiver report, it can
+      contain multiple receive blocks. The function
+      rtcp_report_block RTPGetReportBlock(rtcp_packet *rtcprrsr, int
+      blockno) can be used to get blocks. The function takes as input
+      the rtcp_packet structure, and a block number. The number of
+      blocks in the packet can be obtained from the report count
+      field. The function returns a report block, which contains the
+      receiver information. The sender information can be obtained
+      directly from the rtcp_packet structure.</p>
+
+    <p>If the given packet is a BYE packet, it can contain multiple
+      SSRC and a reason code. The function rtcp_bye_block
+      RTPGetByeBlock(rtcp_packet *rtcpbye, int blockno) can be used to
+      get the blockno'th SSRC in the packet.</p>
+
+    <p>These routines should generally be used instead of trying to
+      access the data directly, since they perform the necessary byte
+      reordering. </p>
+
+<h3><a name="pti"> Adding New Payload Types</a> </h3>
+
+    <p>The RTP library supports new payload types. The only reason
+      that the library needs to even worry about payload types is the
+      generation of sender reports. Sender reports contain an RTP
+      timestamp, and the corresponding wall-clock time, in order to
+      allow media synchronization. The library computes this
+      correlation by storing the value of the RTP and wallclock times
+      when the first packet is sent. Whenever a sender report is sent,
+      the library looks at the wall time, computes the time elapsed
+      since the initial wallclock time, converts this difference to
+      RTP timestamp values, and computes an RTP timestamp by adding
+      this difference to the initial RTP timestamp. This conversion
+      requires that the library know how many RTP clock cycles are in
+      a wallclock cycle (which is 1us).</p>
+
+    <p> The library compes preconfigured with this conversion value
+      for all of the defined payload types in RFC1890. However, if the
+      user uses new payload types, or redefines existing ones, the
+      library must be informed of the new clock conversion. To support
+      this, RTPSessionSetRTPStampRate and RTPSessionGetRTPStampRate
+      are provided by the library. The set function takes the context,
+      a payload type number, and the number of microseconds per RTP
+      tick. This will then be used by the library as the conversion
+      factor for the given payload type. It is possible to override
+      existing definitions. The get version of the function returns
+      the currently defined number of micro-seconds per tick for a
+      given payload type. If the user has defined none, it will return
+      the default value as specified in RFC1890. For undefined payload
+      types, it returns zero.</p>
+
+<h3><a name="encrypf"> Encryption</a> </h3>
+
+    <p>RTP supports encryption of RTP and RTCP packets. The library
+      supports three modes:</p>
+    <ol>
+      <li>No encryption: This is the default. Neither RTP or RTCP
+	packets are encrypted.</li>
+      <li>Full encryption: RTP and RTCP packets are fully
+	encrypted.</li>
+      <li>Partial encryption: RTP and non-SDES RTCP packets are
+	encrypted. SDES RTCP packets are sent by themselves,
+	unencrypted.</li>
+    </ol>
+
+    <p>To select a mode of operation, the function
+      RTPSessionSetEncryption is provided. It takes the context, and
+      an encryption mode, as arguments. To get the current encryption
+      mode, the function RTPSessionGetEncryption is provided.</p>
+
+    <p>The library itself does not perform the encryption. This is due
+      to a variety of factors, not the least of which are the legal
+      ramifications of providing software that performs it. The
+      library therefore requires the user to provide functions which
+      do the encryption. These functions are set using the library function
+      RTPSessionSetEncryptionFuncs. The format of the call is:</p>
+<pre>
+    rtperror RTPSessionSetEncryptionFuncs(context cid, 
+				 void (*init)(context, void*),
+				 void (*encrypt)(context, char*, int, void*),
+				 void (*decrypt)(context, char*, int, void*));
+</pre>
+
+    <p>Three functions must be provided by the user. The
+      initialization function takes a context and a key, represented
+      as a void pointer. The encryption function must accept the
+      context, a pointer to a buffer, the size of the buffer in bytes,
+      and a key, represented as a void pointer. The decryption
+      function takes the same arguments as the encrypted. The
+      functions must place the result in the same buffer. The library
+      will call the initialization function whenever the key
+      changes.</p>
+
+    <p>To set the key, the function RTPSessionSetKey is called. It
+      takes the context and a key, represented as a void pointer. This
+      pointer is copied into the context. Whenever the encryption
+      functions are called, the pointer is passed to it. This allows
+      the format and size of the key to be completely opaque to the
+      library. The application must keep track of the size of the key.</p>
+
+<h3><a name="headx"> Header Extensions</a> </h3>
+
+    <p>The RTP library does not currently support header extensions.</p>
+
+<h3><a name="recon"> Reconsideration</a> </h3>
+
+    <p>The newest RTP specification contains an algorithm called
+      reconsideration. This algorithm improves the RTCP transmission
+      algorithm with large multicast groups. It causes a group member
+      to back-off transmission of its RTCP packets when it sees
+      increasing group sizes. The reconsideration algorithm is
+      actually a class of algorithms, including conditional,
+      unconditional, and hybrid. By default, unconditional
+      reconsideration is enabled. This algorithm will generally cause
+      the RTCP packet interval to increase by about 15% compared to no
+      reconsideration.</p>
+
+      <p>Two functions allow the application to get/set the
+      reconsideration algorithm. RTPSessionSetReconsideration and
+      RTPSessionGetReconsideration set and get the mode of the
+      algorithm. The library supports three modes: unconditional,
+      conditional, and none. There is usually no reason for an
+      application to change this from unconditional.</p>
+
+<h3><a name="csrc">CSRC</a></h3>
+
+<p>The RTP Library supports CSRC (Contributing Sources). These are
+needed when a bridge (known as a mixer in RTP) is being
+implemented. The CSRC list in each data packet includes the SSRC for
+each of the members whose media has been mixed to make up the data
+packet. The library allows the application to set and managed
+contributors to a mixer.</p>
+
+<p>The library maintains two lists of members: contributors and
+      CSRC. Contributors are those members that the library is
+      performing the mixing for. They may or may not be sending at any
+      point in time, so that their speech may not actually be part of
+      a particular data packet. For this reason, the SSRC for a
+      contributor will not appear in every data packet. However, SDES
+      items for each contributor are always sent in each RTCP
+      packet. The CSRC are the set of members contributing actively to
+      data packets. This list is copied in the CSRC list section of
+      each data packet.</p>
+
+<p>The library allows the application to manipulate both lists. The
+      functions RTPSessionAddToContributorList() and
+      RTPSessionRemoveFromContributorList() allow contributors to be
+      added and removed from the list. The add function takes a
+      context and an ssrc value. The library will create the member,
+      and call the member status change callback. If the ssrc
+      conflicts with either the local member or another member already
+      in the group, the library also executes the appropriate
+      collision operations and calls the collision callback. The
+      application may not add a ssrc to the contributor list if it
+      already exists (in other words, multiple contributors may not
+      collide). The library will generate SDES chunks for all members
+      in the contributor list. There is no limit on the number of
+      contributors. The library will generate multiple RTCP packets,
+      if necessary, to hold the SDES information.</p>
+
+    <p>When the contributor list removal function is called, it will
+      remove the member from the contributor list, send a BYE packet
+      for them, and call the member status change callback. The
+      removal function takes a string argument, which is included as
+      the reason code in the BYE packet. If the ssrc is also a member
+      of the CSRC member list, it is removed from there also.</p>
+
+<p> To set the CSRC member list, the functions
+      RTPSessionAddToCSRCList() and RTPSessionRemoveFromCSRCList() are
+      provided. They add and remove a member from the CSRC list. There
+      is a limit of 16 members in the CSRC list. The functions take a
+      context and an ssrc. The ssrc must already correspond to a
+      member on the contributor list.</p>
+
+<p> Using these functions for a mixer applications is easy. A mixer
+      would be implemented with two sessions (each created with
+      RTPCreate()). For simplicity, we call one session the "left"
+      session, and the other the "right" session. As members appear on
+      the left side, the application is alerted via the membership
+      status change callback. The application can then call the
+      contributor list addition function to add this ssrc to the
+      contributor list on the right. It would also set up any state
+      required to perform the actual mixing operations. As data
+      arrives on the left, the application would add and remove
+      members from the CSRC list on the right, depending on which data
+      is being mixed. When a member on the left leaves the group, the
+      application removes it from the contributor list on the
+      right. The same behavior would apply for forwarding packets from
+      right to left, but reversed from above.</p>
+
+<p> Many library functions require access to the unique id for a
+      member. The library provides a function for obtaining the unique
+      ID for a contributing list member. This function is
+      RTPSessionGetUniqueIDForCSRC(). It takes the context and an ssrc
+      as a handle, and sets a unique id. The function is needed to set
+      the CNAME, NAME, or other SDES items for a CSRC member. This is
+      because the member info setting functions require a unique
+      id. For the local member, this is always zero. For contributing members,
+      it must be obtained through this function.</p>
+
+<p> When an application receives packets with CSRC, it adds them to
+      the member list, and stores any SDES items sent for them. The
+      library also has a membership status for CSRC-learned members,
+      just as it does for regular members. The status is one of
+      RTP_MEMBER_PENDING_CONTIBUTOR, RTP_MEMBER_CONFIRMED_CONTRIBUTOR,
+      and RTP_MEMBER_EXPIRED_CONTRIBUTOR. The rules about how a member
+      moves from state to state are nearly identical to regular
+      members. When either two RTP packets, or one CNAME, is received
+      for the CSRC, it is moved from PENDING to CONFIRMED. After a
+      soft timeout period, a PENDING member is deleted, and a
+      CONFIRMED member goes to EXPIRED. Should another RTP, RTCP, or
+      CNAME show up listing the member as a contributor, they will
+      return to CONFIRMED state from EXPIRED.</p>
+
+    <p>Members which are contributors locally (that is, they have been
+      set via RTPSessionAddToContributorList()) are always in the
+      RTP_MEMBER_CONFIRMED_CONTRIBUTOR state. They will never soft or
+      hard timeout.</p>
+
+    <p>All status changes for local and heard-from CSRC are reported
+      via the member status change callback.</p>
+
+<h2><a name="thread">Thread Issues</a></h2>
+
+The RTP library is not thread safe. Most of the functions access
+global data structures defined for a particular session. However,
+since state is not shared across sessions, it is safe to call
+functions for different sessions in different threads. Note, however,
+that RTPCreate and RTPDestroy are NOT thread safe either, and these
+functions must be locked by a mutex before calling if multithreading
+is used.
+
+<h2><a name="functions">Functions</a></h2>
+
+This section gives a more detailed specification of the functions
+available in the API.
+
+<h3><a name="rtpcreate">RTPCreate</a></h3>
+This function creates the <em> context</em> for an RTP session. The format
+of the call is:
+<pre>
+rtperror RTPCreate(context *the_context);
+</pre>
+<P><em>the_context</em> holds the value of the current context.</p>
+
+<p>Note that it does not actually open any sockets at this time. It
+simply allocates memory and initializes variables to prepare for the
+session. To actually open the socket so that packets may be sent, the
+user must call the <a href="#rtpopen"><tt>RTPOpenConnection()</tt></a>
+function.  <P>
+
+<p> This function is the first that should be called before any other
+      RTP library function. By using it to create multiple contexts,
+      many parallel sessions can be run on the same machine. Each
+      session has its own membership lists, address and ports,
+      statistics, etc. </p>
+
+<p>Error Codes:</p>
+<ol>
+<li>RTP_CANT_ALLOC_MEM: Sufficient memory is not available for this
+	operation.</li>
+</ol>
+
+<h3><a name="rtpdestroy">RTPDestroy</a></h3>
+This function destroys any state associated with an RTP session. If
+the sockets associated with the connection were not yet released, they
+are closed before the state is destroyed. The format of the function
+call is:<P><pre>
+rtperror  RTPDestroy(context cid);
+</pre>
+<P><em>cid</em> holds the context to be destroyed.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+</ol>
+
+<h3><a name="rtpopen">RTPOpenConnection</a></h3> 
+
+<p>This function is used to open the RTP and RTCP receive sockets for
+a connection. The receive information (address and ports)
+must have already been set prior to making this call, using
+RTPSessionSetReceiveAddr(). The destination addresses for sending
+packets may be set at any time, however. This function will also cause 
+      the library to begin sending RTCP reports. 
+
+
+<p>The format for the function call is:</p>
+<P>
+<pre>
+rtperror RTPOpenConnection(context cid);
+</pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_BAD_ADDR: No addresses have yet been set by
+	RTPSessionSetReceiveAddr.</li>
+<li>RTP_CANT_GET_SOCKET: The socket system call has failed.<li>
+<li>RTP_CANT_SET_SOCKOPT: The attempt to set socket options has
+	failed.</li>
+<li>RTP_CANT_BIND_SOCKET: The attempt to bind the socket failed.</li>
+</ol>
+
+<h3><a name="rtpclose">RTPCloseConnection</a></h3> <p>This function is
+used to close both the RTP and RTCP sockets for a connection. The
+session must be an active one, whose sockets have already been opened
+with RTPOpenConnection. Closing the connection will cause a BYE
+message to be sent out. Note that the close causes both the RTP and
+RTCP sockets to close. The format of the call is:</p>
+<pre>
+rtperror RTPCloseConnection(context cid, char *reason);
+</pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>reason</em> holds the reason code to be sent in the BYE packet.</p>
+
+
+<p>The reason is a string which is included in the BYE packet sent by
+RTPCloseConnection. If set to NULL, no reason will be included.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_CANT_CLOSE_SESSION: The system close call failed. </li>
+</ol>
+
+
+<h3><a name="rtpsend">RTPSend</a></h3>
+This function sends a packet to a session established previously with
+the RTPCreate routine.
+The format of the call is:<P>
+<pre>
+rtperror RTPSend(context cid, int32 tsinc, int8 marker,
+   int16 pti, int8 *payload, int len);
+</pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>tsinc</em> holds the timestamp increment. This is the amount
+the timestamp will increase from the previous timestamp
+transmitted. It is meaningless for the first call, as the initial
+timestamp is chosen randomly.</p>
+<P><em>marker</em> specifies the value
+of the marker bit in the header. Only the LSB is interpreted, as
+defined in the profile.holds the context to be accessed.</p>
+<P><em>pti</em> is the payload type
+identifier to be used for this session. It is up to the user to ensure
+that the value makes sense for the profile in use. RTPSend will take
+only the least significant bits of <em> pti</em>, where the number of
+bits depends on the profile. </p>
+<P><em>payload</em>  is a
+pointer to the data to be sent. </p>
+<P><em>len</em>  is the length of the data in bytes.
+
+<P>The function will automatically generate
+the sequence numbers, SSRC, version, padding, and extension fields
+based on the session variables and protocol requirements.
+<tt>RTP_Send()</tt> cannot be called from within a callback function
+in the same context.<P>
+
+<p>When this function is called for the first time, the library may
+      will choose an SSRC if it hasn't already done so.</p>
+
+<p>In the event of multiple addresses in the send list, the
+      transmission of a packet to one or several of these addresses
+      may fail. In that event, the library will call the
+      SendErrorCallBack with the address and port which caused the
+      error. It is safe to use the RTPRemoveSendAddress function from
+      within this callback to remove the address from the send list if 
+      desired. Note that the library will not return an error code if
+      a transmission error should occur.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_CANT_CALL_FUNCTION: An attempt was made to call this function
+	during the execution of a callback routine, which is
+	disallowed. Retry the function call outside of a
+	callback.</li>
+<li>RTP_BAD_ADDR: No send addresses have yet been set. </li>
+<li>RTP_CANT_ALLOC_MEM: Out of memory. </li>
+
+</ol>
+
+
+<h3><a name="rtpsendvector">RTPSendVector</a></h3>
+This function is identical to RTPSend, except that it takes an iovec rather
+than a block of text.  (Its relationship to <tt>RTPSend</tt> is thus
+analogous to the relationship between the Unix system calls <tt>write</tt>
+and <tt>writev</tt>, for example.)  The format of this call is:
+<pre>
+rtperror RTPSendVector(context cid, int32 tsinc, int8 marker,
+   int16 pti, struct iovec *payload, int vec_count);
+</pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>tsinc</em> holds the timestamp increment. This is the amount
+the timestamp will increase from the previous timestamp
+transmitted. It is meaningless for the first call, as the initial
+timestamp is chosen randomly.</p>
+<P><em>marker</em> specifies the value
+of the marker bit in the header. Only the LSB is interpreted, as
+defined in the profile.holds the context to be accessed.</p>
+<P><em>pti</em> is the payload type
+identifier to be used for this session. It is up to the user to ensure
+that the value makes sense for the profile in use. RTPSend will take
+only the least significant bits of <em> pti</em>, where the number of
+bits depends on the profile. </p>
+<P><em>payload</em>  is a
+pointer to an array of iovec structures </p>
+<P><em>vec_count</em>  is the number of iovec structures in the
+      payload array. </p>
+
+<p>
+<tt>RTPSend</tt> is currently implemented internally as a call to
+<tt>RTPSendVector</tt> with a single item in the iovec.</P>
+
+<h3><a name="rtpsessionaddsend">RTPSessionAddSendAddr</a></h3>
+
+<p>This function is used to set address/port/ttl 3-tuples which the
+library will send to. The library supports an unlimited number of send
+addresses. These can be either unicast or multicast. Whenever the
+library sends a packet, either RTP or RTCP, it will send to all the
+addresses in the send address list. The format of the call is:</p>
+
+<p><pre>
+rtperror RTPSessionAddSendAddr(context cid, char *addr, u_int16 port, u_int8 ttl)
+</pre></p>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>addr</em> holds the address to send to. This should be a string 
+    version of a dotted quad "135.180.1.1" for example, or a hostname, 
+    "enterprise" or "enterprise.startrek.org". </p>
+<P><em>port</em> specifies the destination port number.</p>
+<P><em>ttl</em> is the TTL value placed in multicast packets.</p>
+
+<p> Every time this function is called with a distinct 3-tuple
+(actually, for unicast, the ttl field is ignored, so its a distinct
+2-tuple), the address is added to a list internal to the library.<p>
+
+<p>A port number of zero is illegal, and will result in an error.</p>
+
+<p>The library will actually create and bind the sockets to the
+      destination address in this call. The sockets are then stored
+      internally and used for subsequent data transmissions with
+      RTPSend.</p>
+
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_BAD_PORT: An attempt was made to use port number 0.</li>
+<li>RTP_CANT_ALLOC_MEM: Out of memory. </li>
+<li>RTP_BAD_ADDR:The given address is neither a dotted quad nor a
+	valid DNS name.</li>
+<li>RTP_CANT_GET_SOCKET: The socket system call has failed.<li>
+<li>RTP_CANT_SET_SOCKOPT: The attempt to set socket options has
+	failed.</li>
+</ol>
+
+
+<h3><a name="rtpsessionremovesend">RTPSessionRemoveSendAddr</a></h3>
+
+<p>This function removes an address from the send list. The format of
+the function call is:</p>
+
+<p><pre>
+rtperror RTPSessionRemoveSendAddr(context cid, char *addr, u_int16 port, u_int8 ttl);
+</p></pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>addr</em> holds the address to send to. This should be a string 
+    version of a dotted quad "135.180.1.1" for example, or a hostname, 
+    "enterprise" or "enterprise@startrek.org". </p>
+<P><em>port</em> specifies the destination port number.</p>
+<P><em>ttl</em> is the TTL value placed in multicast packets.</p>
+
+The semantics of the addr, port, and ttl fields are the same as for
+RTPSessionAddSendAddr. The function will search through its internal
+list of send addresses. Any address which matches the address,port,and
+ttl for multicast, or the address and port for unicast, will be
+removed from the send list. No BYE packet is sent.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_BAD_ADDR: No addresses have yet been set by
+	RTPSessionSetReceiveAddr, the given address is not on the list 
+	previously set.</li>
+</ol>
+
+
+<h3><a name="rtpsessionsetrecv">RTPSessionSetReceiveAddr</a></h3>
+
+<p>This function sets the address that the library will listen on for
+RTP and RTCP packets. The format of the function call is:</p>
+
+<p><pre>
+rtperror RTPSessionSetReceiveAddr(context cid, char *addr, u_int16 port);
+</p></pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>addr</em> holds the address listen on.</p>
+<P><em>port</em> specifies the port number to listen on, in host byte order.</p>
+
+The following rules apply:</p>
+    <ol>
+      <li> If the address is unicast, but does not correspond to a
+	local interface, the library instead binds to INADDR_ANY, so
+	that it will accept packets on any interface.</li>
+      <li> If the address is unicast, and is a local interface, the
+	library will only accept packets on this interface.</li>
+      <li> If the address is multicast, the library will bind to
+	INADDR_ANY, and then join the multicast group. This way, it
+	will accept packets that are either unicast OR multicast for
+	the given port.</li>
+      <li> If the address is NULL, the library will bind to
+	INADDR_ANY.</li>
+      <li> If the port is zero, the library will use a dynamic
+	port. Since the RTP and RTCP ports must be consecutive, the
+	libary will try random pairs of dynamically assigned ports
+	(above 49152) until it finds a pair. If a pair cannot be
+	allocated, it will return an error. </li>
+    </ol>
+
+    <p>All addresses are specified as strings. These must be of the
+      form "A.B.C.D" (dotted-quad), or a hostname "machine.domain". If
+      the string is a hostname, the library will attempt to resolve
+      the name to an address using DNS.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_FIXED_WHEN_OPEN: The receive address information cannot be
+	changed once the connection has been opened with
+	RTPSessionOpen.</li>
+<li>RTP_BAD_ADDR: The provided address is either not a dotted quad, or 
+	cannot be resolved in DNS.</li>
+<li>RTP_CANT_ALLOC_MEM: Out of memory. </li>
+</ol>
+
+
+<h3><a name="rtpsessiongetrecv">RTPSessionGetReceiveAddr</a></h3>
+
+<p>This function retrieves the current address/port that the library
+is listening for packets on. Its most important use is to retrieve the
+actual port number used for RTP packets when RTPSessionSetReceiveAddr
+was called with a zero port number (indicating the desire for dynamic
+ports). After RTPOpenConnection is called, this function will retrieve
+the port that is actually being used.</p>
+
+<p>The format of the call is:</p>
+
+<p><pre>
+rtperror RTPSessionGetReceiveAddr(context cid, char *addr, u_int16 *port); 
+</p></pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>addr</em> holds an array where the address will be written into.</p>
+<P><em>port</em> holds a word where the port will be written into.</p>
+
+<p><em>addr</em> should point to a buffer with sufficient memory
+to hold the IP address or domain name which was used to set the
+receive address. <em>port</em> should point to an u_int16, to which
+the port number used will be written.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_BAD_ADDR: No address has yet been set with RTPSessionSetReceiveAddr.</li>
+</ol>
+
+<P><a name="sg_setencryption"><h3>RTPSessionSetEncryption</h3></a>
+
+<p>This function sets the encryption for the library (NOTE: not supported 
+    in the first release!)</p>
+
+<p>The format of the function call is:</p>
+
+<P><pre>
+rtperror RTPSessionSetEncryption(context cid, encryption_t value)
+</pre></p>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>vlaue</em> holds the desired encyption mode. Allowable values
+      are RTP_ENCRYPTION_FULL, RTP_ENCRYPTION_PARTIAL, and
+      RTP_ENCRYPTION_NONE.</p>
+
+<p> When <em>value</em> is set to RTP_ENCRYPTION_FULL, it tells the RTP library
+to encrypt all packets. A value of RTP_ENCRYPTION_PARTIAL tells the
+RTP library to use encryption for only RTCP packets of type SDES.
+A value of RTP_ENCRYPTION_NONE tells the RTP library not to encrypt
+any packets. This is the default. </p>
+
+<p>The actual encryption to be performed is selected by the user using
+<tt>RTPSessionSetEncryptionFuncs()</tt>.  The user has the option to
+supply an initialization function that gets called whenever the key is
+changed (see <a href="#setkey"><tt>RTPSessionSetKey()</tt></a>), and 
+an encryption and decryption function.  If a function is
+set to NULL, then it is not used.  Each function is called with the
+parameter of the following type filled with the following values: The
+<em>context</em> parameter will contain the current context id.  The
+<em>char*</em> parameter will point to the buffer that is to be
+encrypted / decrypted, and the <em>int</em> parameter will be the
+size of this buffer in bytes.  The <em>void*</em> parameter points
+to the key to be used. The result of the encryption/decryption is
+placed back into the buffer.
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+</ol>
+
+<P><a name="sg_getencryption"><h3>RTPSessionGetEncryption</h3></a>
+
+<p>This function gets the encryption mode used for the given context.</p>
+
+<p>The format of the function call is:</p>
+
+<P><pre>
+rtperror RTPSessionGetEncryption(context cid, encryption_t *value)
+</pre></p>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>value</em> points to a encryption_t variable, to which the
+      current mode is written. Possible values
+      are RTP_ENCRYPTION_FULL, RTP_ENCRYPTION_PARTIAL, and
+      RTP_ENCRYPTION_NONE.</p>
+
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+</ol>
+
+<P><a name="sg_funcencryption"><h3>RTPSessionSetEncryptionFuncs</h3></a>
+
+<p>This function sets the encryption functions for the library (NOTE: not supported 
+    in the first release!)</p>
+
+<p>The format of the function call is:</p>
+
+<P><pre>
+rtperror RTPSessionSetEncryptionFuncs(context cid, 
+				 void (*init)(context, void*),
+				 void (*encrypt)(context, char*, int, void*),
+				 void (*decrypt)(context, char*, int, void*));
+</pre></p>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>init</em> holds the function used to initialize the encryption routines.</p>
+<P><em>encrypt</em> holds the function used to encrypt.</p>
+<P><em>decrypt</em> holds the function used to decrypt.</p>
+
+<p>The actual encryption to be performed is selected by the user using
+<tt>RTPSessionSetEncryptionFuncs()</tt>.  The user has the option to
+supply an initialization function that gets called whenever the key is
+changed (see <a href="#setkey"><tt>RTPSessionSetKey()</tt></a>), and 
+an encryption and decryption function.  If a function is
+set to NULL, then it is not used.  Each function is called with the
+parameter of the following type filled with the following values: The
+<em>context</em> parameter will contain the current context id.  The
+<em>char*</em> parameter will point to the buffer that is to be
+encrypted / decrypted, and the <em>int</em> parameter will be the
+size of this buffer in bytes.  The <em>void*</em> parameter points
+to the key to be used. The result of the encryption/decryption should be
+placed back into the buffer.
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+</ol>
+
+<P><h3><a name="sg_settimestamp">RTPSessionSetRTPStampRate</a></h3>
+The format of the call is:</p>
+
+<P><pre>
+rtperror RTPSessionSetRTPStampRate(context cid, int32 payload_type,
+	int32 usec)
+</pre></p>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>payload_type</em> holds the payload type for which the new rate 
+      is associated.</p>
+<P><em>usec</em> holds the number of microseconds per tick of the
+      clock for this payload type.</p>
+
+<p>Each application determines the frequency of the counter of the RTP
+timestamp.  <tt>RTPSessionSetRTPStampRate()</tt> informs the
+API of the number of microseconds that occur with each increment of the RTP
+timestamp for the payload type <em>payload_type</em>.  Those
+payload types defined in RFC1890 will have default values and need not
+      be set.</p>
+
+<p>The clock rate for the RTP packets must be known in order to allow
+      the library to compute timestamp correlations in the sender
+      reports it generates. They are also needed to compute the jitter 
+    of arriving packets.</p>
+
+<p>The application may override any default values for the payload
+      types. These overrides affect only the context in which they are 
+      set.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_BAD_PROFILE: Unknown or out of range payload type </li>
+</ol>
+
+
+<P><h3><a name="sg_gettimestamp">RTPSessionGetRTPStampRate</a></h3>
+The format of the call is:</p>
+
+<pre>
+rtperror RTPSessionGetRTPStampRate(context cid, int32 payload_type,
+	int32 *usec);
+</pre>
+
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>payload_type</em> holds the payload type for which the rate is desired.</p>
+<P><em>usec</em> holds the number of microseconds per tick of the
+      clock for this payload type.</p>
+
+<P>
+<tt>RTPSessionGetRTPStampRate()</tt> retrieves the current value for
+the payload type <em>payload_type</em>. It is written into the
+      variable pointed to be usec.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_BAD_PROFILE: Unknown or out of range payload type </li>
+</ol>
+
+
+<P>
+<a name="sg_setsetkey"><h3>RTPSessionSetKey</h3></a></p>
+
+<p> The format of the call is:</p>
+
+<P><pre>
+rtperror RTPSessionSetKey(context cid, void* value)
+</pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>value</em> holds a null pointer, which is opaque data for the
+      key. </p>
+
+
+<p>Keys are used to perform encryption / decryption of the RTP and RTCP
+packets. For the set operation, value is a void pointer. It is never
+accessed by the library. When encryption or decryption is needed, this
+pointer is passed back to the encrypt/decrypt functions provided by
+the user. As such, the value can be considered an opaque token for the
+benefit of the application. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+</ol>
+
+<P>
+<a name="sg_getsetkey"><h3>RTPSessionGetKey</h3></a></p>
+
+<p> The format of the call is:</p>
+
+<P><pre>
+rtperror RTPSessionGetKey(context cid, void** value);
+</pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>value</em> holds a null pointer, which is opaque data for the
+      key. </p>
+
+<p>Keys are used to perform encryption / decryption of the RTP and RTCP
+packets. For the set operation, value is a void pointer. It is never
+accessed by the library. When encryption or decryption is needed, this
+pointer is passed back to the encrypt/decrypt functions provided by
+the user. As such, the value can be considered an opaque token for the
+benefit of the application. This function returns the key previously
+      set by RTPSessionSetKey. If not set, it returns NULL.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+</ol>
+
+<P><h3><a
+	name="sg_setrecon">RTPSessionSetReconsideration</a></h3></p>
+<p> The format of the call is:</p>
+
+<P><pre>
+rtperror RTPSessionSetReconsideration(context cid, reconsideration_t value);
+</pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>value</em> holds the desired reconsideration behavior. </p>
+
+<p>Setting the reconsideration to RTP_RECONSIDERATION_OFF turns off
+reconsideration. RTP_RECONSIDERATION_CONDITIONAL sets it to
+conditional, and RTP_RECONSIDERATION_UNCONDITIONAL sets it to
+unconditional. Unconditional is the default. This should not generally
+need to be changed.</p>
+
+<p>The reconsideration algorithm helps avoid flooding of RTCP reports
+      in large multicast groups. It is a conservative algorithm,
+      always using less bandwidth (and often substantially less) than
+      not using it. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+</ol>
+
+<P><h3><a name="sg_getrecon">RTPSessionGetReconsideration</a></h3></p>
+<p> The format of the call is:</p>
+
+<P><pre>
+rtperror RTPSessionGetReconsideration(context cid, reconsideration_t
+    *value);
+</pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>value</em> gets written with the current reconsideration behavior. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+</ol>
+
+
+<P><h3><a name="sg_setbw">RTPSessionSetBandwidth</a></h3></p>
+
+<p>The format of the call is:</p>
+
+<P><pre>
+rtperror RTPSessionSetBandwidth(context cid, float session_bwidth,
+				float rtcp_fraction);
+</pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>session_bwidth</em> holds desired bandwidth for the RTP
+      session, measured in Kb/s.</p>
+<P><em>rtcp_fraction</em> holds the percentage of the session
+      bandwidth that will be used for RTCP reports.</p>
+
+RTP attempts to maintain the use of a fixed amount of bandwidth for
+the entire session, a fraction of which is reserved for the sending of
+RTCP packets.  <em>session_bwidth</em> contains the total session
+bandwidth that is to be used by the entire RTP session, measured in
+Kb/s.  <em>rtcp_fraction</em> represents the fraction of total
+bandwidth that is to be used by RTCP packets.  The default value for
+bandwidth is 120,  and the default fraction of bandwidth used by
+RTCP packets is .05.  To change only one of either
+<em>session_bwidth</em> or <em>rtcp_fraction</em>, set the other
+parameter to a value less than 0.
+
+<p>A value of zero for the bandwidth or fraction is illegal.</p>
+
+<p>Note that this value has no effect on the ability of the
+      application to send and receive data packets. It is used solely
+      by the library for computing RTCP packet intervals.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_BAD_VALUE: A zero or negative value was used for either
+	bandwidth or fraction, or a number greater than one is used
+	for fraction.
+</ol>
+
+<P><h3><a name="sg_getbw">RTPSessionGetBandwidth</a></h3> </p>
+
+<p>The format of the call is:</p>
+
+<P><pre>
+rtperror RTPSessionGetBandwidth(context cid, float *session_bwidth,
+				float *rtcp_fraction);
+</pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>session_bwidth</em> holds desired bandwidth for the RTP
+      session, measured in Kb/s.</p>
+<P><em>rtcp_fraction</em> holds the percentage of the session
+      bandwidth that will be used for RTCP reports.</p>
+
+<p>This function writes the value of the session bandwidth and rtcp
+      fraction into the given variables. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+</ol>
+
+
+<P><h3><a name="sg_setuinfo">RTPSessionSetUserInfo</a></h3></p>
+
+<p> The format of the call is:</p>
+
+<P><pre>
+rtperror RTPSessionSetUserInfo(context cid, void* info);
+</pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>info</em> is a void pointer, which is opaque to the library.</p>
+
+<p>The variable <em>info</em> holds information that can be set by the user.
+This information is for use strictly by the application, as the RTP library
+does not access or set this field.  The user is also responsible for
+destroying this information before the session is destroyed.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+</ol>
+
+<P><h3><a name="sg_getuinfo">RTPSessionGetUserInfo</a></h3></p>
+
+<p> The format of the call is:</p>
+
+<P><pre>
+rtperror RTPSessionGetUserInfo(context cid, void** info);
+</pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>info</em> is a void pointer pointer. Its content is written
+      with the void pointer set by RTPSessionSetUserInfo.</p>
+
+
+<p>The variable <em>info</em> holds information that can be set by the user.
+This information is for use strictly by the application, as the RTP library
+does not access or set this field.  The user is also responsible for
+destroying this information before the session is destroyed.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+</ol>
+
+
+<p><a name="sg_getmemberlist"><h3>RTPSessionGetMemberList</h3></a></p>
+
+<p>The format of the call is:</p>
+
+<P><pre>
+rtperror RTPSessionGetMemberList(context cid, member_iterator *iter);
+</pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>iter</em> holds an iterator object, used to access the member
+      list. Storage for this object must be allocated by the
+      application. </p>
+
+<p>The variable <em>iter</em> is an iterator that iterates through the
+list.  Accessing members of the list can be acheived through the <a
+iterator functions.</a>.  The list contains all
+active members in the session, independent of their state. Note that
+    it is not safe to store the iterator and then attempt to use it
+    after another library function (particularly RTPReceive) has been
+    called. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+</ol>
+
+
+<h3><a name="sg_getsocket"><b>RTPSessionGetRTPSocket</b></h3>.</p>
+
+<p>The format of the call is:</p>
+<P><pre>
+rtperror RTPSessionGetRTPSocket(context cid, socktype *value);
+</pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>value</em> is a pointer to a socktype object. This object will
+      be written with the socket used for receiving RTP packets. The
+      application must allocate space for this object. </p>
+
+<p>Since it is up to the application to determine when either RTP or
+      RTCP packets are ready to be received, the sockets created by
+      the library are made accessible to the application. This call
+      allows the application to get the RTP socket. Most applications
+      will generally just <tt>select()</tt> on this and the RTCP
+      socket. Once data is ready for reading, the RTPReceive function
+      should be called. </p>
+
+<p> This function can only be called after the RTPOpenConnection
+      function is called, since that function opens the sockets in the 
+      first place</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NOSOCKET: The RTPOpenConnection function has not yet been
+	called.</li>
+</ol>
+
+
+<P><h3><a name="sg_getrtcpsock">RTPSessionGetRTCPSocket</a></h3>. </p>
+
+<p>The format of the function call is:</p>
+
+<P><pre>
+rtperror RTPSessionGetRTCPSocket(context cid, socktype *value)
+</pre></p>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>value</em> is a pointer to a socktype object. This object will
+      be written with the socket used for receiving RTCP packets. The
+      application must allocate space for this object. </p>
+
+<p>Since it is up to the application to determine when either RTP or
+      RTCP packets are ready to be received, the sockets created by
+      the library are made accessible to the application. This call
+      allows the application to get the RTCP socket. Most applications
+      will generally just <tt>select()</tt> on this and the RTP
+      socket. Once data is ready for reading, the RTPReceive function
+      should be called. </p>
+
+<p> This function can only be called after the RTPOpenConnection
+      function is called, since that function opens the sockets in the 
+      first place</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NOSOCKET: The RTPOpenConnection function has not yet been
+	called.</li>
+</ol>
+
+<h3><a name="addcontrib">RTPSessionAddToContributorList(context cid,
+	u_int32 ssrc)</a></h3>
+
+<p><em>cid</em> is the context for the session.</p>
+<p><em>ssrc</em> is the ssrc of the member to be added to the
+      contributor list.</p>
+
+<p>This function adds a member with the given ssrc to the contributor
+      list for the given context. The library will generate SDES
+      chunks for the member in subsequent RTCP packets. A member must
+      be on this list in order to be placed in the CSRC list, which
+      appears in data packets. If the ssrc is the same as that of
+      the local member, the library will send a BYE message on behalf
+      of the local user, and choose a new SSRC which does not collide
+      with the one added to the csrc list. If the ssrc is the same as
+      a member of the group, the library will note the collision and
+      call a collision callback, if set. The library will call the
+      update member status callback to indicate that this member is a
+      RTP_MEMBER_CONFIRMED_CONTRIBUTOR.</p>
+
+<p>Error codes:</p>
+<ol>
+      <li>RTP_SSRC_IN_USE: The application has attempted to add a
+	member to toeh contributor list which already is on this
+	list.</li>
+      <li>RTP_CANT_ALLOC_MEM: There was not sufficient memory to
+	allocate a new contributor structure.</li>
+      <li>RTP_UNKNOWN_CONTEXT: Unknown context</li>
+</ol>
+
+<h3><a name="removcontrib">RTPSessionRemoveFromContributorList(context
+	cid, u_int32 ssrc, char *reason)</a></h3>
+
+<p><em>cid</em> is the context for the session.</p>
+<p><em>ssrc</em> is the ssrc of the member to be removed from the
+      contributor list.</p>
+<p><em>reason</em> is a string to be included as the reason code in
+      the BYE packet. A value of NULL implies no reason code.</p>
+
+<p>This function removes the member with the given ssrc from the
+      contributor list in the given context. A BYE packet will be sent
+      for this member, with the reason code included. If reason is
+      NULL, no reason code will be sent. The ssrc must appear on the
+      contributor list to be removed. If the ssrc is also on the CSRC
+      list, it will be removed automatically from the CSRC list first.</p>
+
+<p>Error codes:</p>
+<ol>
+      <li>RTP_NO_SUCH_PERSON: The application has attempted to remove
+	a member who is not on the contributor list.</li>
+      <li>RTP_UNKNOWN_CONTEXT: Unknown context</li>
+</ol>
+
+<h3><a name="addcsrc">RTPSessionAddToCSRCList(context cid, u_int32
+	ssrc)</a></h3>
+
+<p><em>cid</em> is the context for the session.</p>
+<p><em>ssrc</em> is the ssrc of the member to be added to the
+      CSRC list.</p>
+
+<p>This function will add a member with the given ssrc to the CSRC
+      list in the given context. The member must be on the contributor
+      list. The ssrc will be present in the CSRC list of all
+      subsequent RTP packets generated, until removed. </p>
+
+<p>Error codes:</p>
+<ol>
+      <li>RTP_NO_SUCH_CONTRIBUTOR: The application has attempted to 
+	add a member to the CSRC list who is not on the contributor
+	list.</li>
+      <li>RTP_CSRC_LIST_FULL: The application has attempted to add a
+	member to the CSRC list, but it already has 15 members.</li>
+      <li>RTP_UNKNOWN_CONTEXT: Unknown context</li>
+</ol>
+
+
+<h3><a name="removecsrc">RTPSessionRemoveFromCSRCList(context cid, u_int32
+	ssrc)</a></h3>
+<p><em>cid</em> is the context for the session.</p>
+<p><em>ssrc</em> is the ssrc of the member to be removed from the
+      CSRC list.</p>
+
+<p>This function removes the member with the given ssrc from the
+      csrc member list in the given context. The ssrc must appear on the
+      csrc member list to be removed. Its ssrc will no longer appear
+      in subsequent RTP packets sent by the library.</p>
+
+<p>Error codes:</p>
+<ol>
+      <li>RTP_CSRC_LIST_NOT_SET: An attempt to remove a member from
+	the CSRC list has been made, but no member has yet been added
+	to the CSRC list.
+      <li>RTP_NO_SUCH_PERSON: The application has attempted to remove
+	a member who is not on the csrc member list.</li>
+      <li>RTP_UNKNOWN_CONTEXT: Unknown context</li>
+</ol>
+
+<h3><a name="getidforCSRC"> rtperror
+	RTPSessionGetUniqueIDForCSRC(context cid, int32 ssrc, person
+	*p)</a></h3>
+<p><em>cid</em> is the context for the session.</p>
+<p><em>ssrc</em> is the ssrc of the member for whom the unique id is desired.
+<p><em>*p</em> is a pointer to a person. It will be filled in with the
+      unique ID of the person on the contributor list whose SSRC is
+      given. Space must be allocated by the application.</p>
+
+<p>This function returns the unique ID for a contributor list member
+      whose ssrc is <em>ssrc</em>. 
+
+<p>Error codes:</p>
+<ol>
+      <li>RTP_NO_SUCH_PERSON: There is no member on the contributor
+	list with the given ssrc.
+      <li>RTP_UNKNOWN_CONTEXT: Unknown context</li>
+</ol>
+
+<h3><a name="getcsrclist"> rtperror
+	RTPSessionGetCSRCList(context cid, u_int32 *value, int32
+	*size)</a></h3>
+
+<p><em>cid</em> is the context for the session.</p>
+<p><em>*value</em> is a pointer to an array of u_int32's
+      for holding the CSRC list.</p>
+<p><em>*size</em> is a pointer to an integer that holds the amount of
+      memory allocated for the CSRC List. Upon return, it is written
+      with the amount of space actually used for the list.</p> 
+
+<p>This function copies the CSRC list into the memory pointed to by
+      value. The application must pass, via *size, the amount of space
+      available in the array for the CSRC list. The library will write
+      the CSRC list into the array, and fill in *size with the actual
+      amount of memory used.</p>
+
+<p>Error codes:</p>
+<ol>
+      <li>RTP_CSRC_LIST_NOT_SET: An attempt to get
+	the CSRC list has been made, but no member has yet been added
+	to the CSRC list.
+	<li>RTP_INSUFFICIENT_BUFFER: The amount of memory in the
+	allocated array is not sufficient to hold the CSRC list. The
+	amount needed has been set in *size.
+      <li>RTP_UNKNOWN_CONTEXT: Unknown context</li>
+</ol>
+
+<h3><a name="setupdatecallback">RTPSetUpdateMemberCallBack</a></h3>
+<p>The format of this function call is:</p>
+<p><pre> rtperror RTPSetUpdateMemberCallBack(context
+cid, void (*f)(context, person, rtpflag, char *))</pre></p>
+
+<p><em>cid</em> is the context for the session.</p>
+<p><em>*f</em> is a pointer to a function. The function prototype is
+      void f(context cid, person p, rtpflag g, char *reason).
+
+<p> This function sets the callback for when the status 
+      pertaining to a member changes. The flag rtpflag details the
+      change; see rtp_api.h for details on the flags and what they
+      signify. The function f must be written by the user, and will be 
+      called by the library when some kind of status changes.</p>
+
+<p> If this function is called with f NULL, the library will not
+      execute the callback on the given event. </p>
+
+<p>Error codes:</p>
+<ol>
+      <li>RTP_UNKNOWN_CONTEXT: Unknown context</li>
+</ol>
+
+<h3><a name="setinfocallback">RTPSetChangedMemberInfoCallBack</a></h3>
+<p>The format of this function call is:</p>
+<p><pre>rtperror RTPSetChangedMemberInfoCallBack(context cid,
+	void (*f)(context, person, memberinfo, char*,
+rtpflag))</pre></p>
+
+<p><em>cid</em> is the context for the session.</p>
+<p><em>*f</em> is a pointer to a function. The function prototype is
+      void f(context cid, person p, memberinfo m, rtpflag f).
+
+<p> This function sets the callback for when information pertaining to
+      a member changes. This information includes SDES items in
+      addition to the transport address of the user. The flag rtpflag details the
+      change; see rtp_api.h for details on the flags and what they
+      signify. The function f must be written by the user, and will be 
+      called by the library when the pertinent information
+      changes. The new information is passed to the callback in the
+      parameter m, and the person for whom the change has occurred in
+      the parameter p. </p>
+
+<p> If this function is called with f NULL, the library will not
+      execute the callback on the given event. </p>
+
+<p>Error codes:</p>
+<ol>
+      <li>RTP_UNKNOWN_CONTEXT: Unknown context</li>
+</ol>
+
+<h3><a name="setcollidedcallback">RTPSetCollidedMemberCallBack</a></h3>
+<p>The format of this function call is:</p>
+<p><pre>rtperror RTPSetCollidedMemberCallBack(context cid, 
+void (*f)(context, person, person, rtpflag))</pre></p>
+
+<p><em>cid</em> is the context for the session.</p>
+<p><em>*f</em> is a pointer to a function. The function prototype is
+      void f(context cid, person p1, person p2, rtpflag f).
+
+<p>In <tt>RTPSetCollidedMemberCallBack()</tt>, <em>f</em>
+is the function that is called when it is determined that there are
+two distinct members in the session with conflicting SSRCs.  The two
+<em>person</em> parameters of <em>f</em> contain the unique IDs of the
+colliding members.</p>
+
+<p> If this function is called with f NULL, the library will not
+      execute the callback on the given event. </p>
+
+<p>Error codes:</p>
+<ol>
+      <li>RTP_UNKNOWN_CONTEXT: Unknown context</li>
+</ol>
+
+<h3><a name="setrevertingcallback">RTPSetRevertingIDCallBack</a></h3>
+<p>The format of this function call is:</p>
+<p><pre>rtperror RTPSetRevertingIDCallBack(context cid, 
+void (*f)(context, person, person, void*, unsigned int))</pre><p>
+
+<p><em>cid</em> is the context for the session.</p>
+<p><em>*f</em> is a pointer to a function. The function prototype is
+      void f(context cid, person p1, person p2, void *d, rtpflag f).
+
+<p>In <tt>RTPSetRevertingIDCallBack()</tt>,
+<em>f</em> is the function that is called when it is determined that
+two unique IDs apply to the same member in the session (this might
+occur after an SSRC collision, for instance when the user sends RTP
+packets with a new SSRC before RTCP packets come containing the CNAME
+which can identify the member as previously being in the session).  The
+first <em>person</em> parameter in <em>f</em> contains the original
+unique ID of the member.  The second <em>person</em> parameter
+contains the unique ID that was used for the member before it was
+realized that this member already had a unique ID.  The user can
+continue to reference the member through either ID, but the API will
+henceforth use the member's original unique ID (in the first
+<em>person</em> parameter).  If user info has been set for both copies
+of the member using <tt>RTPMemberInfoSetUserInfo()</tt>, then the
+pointer to the user info for the copy of the member being destroyed
+will be placed in the <em>void*</em> parameter.  Otherwise, the
+parameter will be set to <tt>NULL</tt>.  The user should note that if
+memory was explicitly allocated for the user info for the second
+member, then it is the user's responsibility to deal with this memory
+in a fashion that does not lead to memory leaks.
+<P> In the current implementation, if the RevertingIDCallBack function
+has not been set (i.e. is <tt>NULL</tt>), then the libary will call
+the ByeMemberCallBack function in its place when 2 unique IDs are
+found to correspond to the same member in the session.  If neither
+function is set, no callback is called.  Note that when the
+ByeMemberCallBack is called in place of the RevertingIDCallBack, the
+flag parameter will still be set to <tt>RTP_FLAG_UNIQUE_ID_REMAP</tt>.
+For all other events, if a callback is not set, then the API does
+not attempt to make any other callbacks in its place.</p>
+
+<p> If this function is called with f NULL, the library will not
+      execute the callback on the given event. </p>
+
+<p>Error codes:</p>
+<ol>
+      <li>RTP_UNKNOWN_CONTEXT: Unknown context</li>
+</ol>
+
+<h3><a name="senderrcallback">RTPSetSendErrorCallBack</a></h3>
+<p>The format of the function call is:</p>
+<p><pre>rtperror RTPSetSendErrorCallBack(context cid,
+void (*f)(context, char *, u_int16, u_int8))</pre></p>
+
+<p><em>cid</em> is the context for the session.</p>
+<p><em>*f</em> is a pointer to a function. The function prototype is
+      void f(context cid, char *addr, u_int16 port, u_int8 ttl).
+
+<p>This function sets the callback that is called when a send error is 
+      encountered by the library while attempting to send a data
+      packet. As there can be many sockets to which data is being
+      sent, rather than just having RTPSend return an error, the
+      SendErrorCallBack is called instead. Whenever a send error is
+      encountered, this callback is called with the address, port, and 
+      ttl of the socket causing the problem. The application may, at
+      this time, decide to call the RTPSessionRemoveSendAddr if this
+      particular destination continually causes errors.</p>
+
+<p> If this function is called with f NULL, the library will not
+      execute the callback on the given event. </p>
+
+<p>Error codes:</p>
+<ol>
+      <li>RTP_UNKNOWN_CONTEXT: Unknown context</li>
+</ol>
+
+
+<h3><a name="currentmember">RTPCurrentMember</a>></h3>
+<p>The format of this function call is</p>
+<P>
+<pre>
+rtperror RTPCurrentMember(context cid, member_iterator *iter,
+				person *the_member);
+</pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>iter</em> is an iterator, obtained through the
+      RTPSessionGetMemberList function.</p>
+<p><em>the_member</em> is a pointer to a person indentifier. Space for 
+      this identifier must be allocated by the application.</p>
+
+
+
+<p>The RTPCurrentMember function is used to retrieve the member ID's of
+the current member in the iterator. The iterator is obtained by first
+calling RTPSessionGetMemberList. This returns an iterator object,
+which is passed to this function. The function returns the current
+member in the list.  Repeated calls to <tt>RTPCurrentMember()</tt>
+retrieves the ID of the same member each time .  A call to
+<tt>RTPNextMember()</tt> moves down the list and therefore returns a
+unique ID for a different member.
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_END_OF_LIST: There are no more members on this list. </li>
+</ol>
+
+<h3><a name="nextmember">RTPNextMember</a>></h3>
+<p>The format of this function call is</p>
+<P>
+<pre>
+rtperror RTPNextMember(context cid, member_iterator *iter,
+				person *the_member);
+</pre>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>iter</em> is an iterator, obtained through the
+      RTPSessionGetMemberList function.</p>
+<p><em>the_member</em> is a pointer to a person indentifier. Space for 
+      this identifier must be allocated by the application.</p>
+
+
+<p>The RTPNextMember function is used to retrieve the member ID of
+the next member in the iterator. The iterator is obtained by first
+calling RTPSessionGetMemberList. This returns an iterator object,
+which is passed to this function. The function returns the next
+member in the list.  Repeated calls to <tt>RTPCurrentMember()</tt>
+retrieves the ID of the same member each time. Repeated calls to
+      RTPNextMember will advance through the list and return a
+      different ID each time. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_END_OF_LIST: There are no more members on this list. </li>
+</ol>
+
+<H3><a name="rtpreceive">RTPReceive</a></H3>
+The format of the call is:
+
+<P><pre>
+rtperror RTPReceive(context cid, int socket,
+                    char *rtp_pkt_stream, int *len);
+</pre></p>
+<P><em>cid</em> holds the context to be accessed.</p>
+<P><em>socket</em> is the socket descriptor on which data has arrived</p>
+<P><em>rtp_pkt_stream</em> is a pointer to a byte array, allocated by
+      the user, where the packet will be placed when read from the
+      socket.</p>
+<P><em>len</em> is a pointer to an integer. When called, it contains
+      the length of the allocated buffer. When RTPReceive returns, it
+      contains the actual length of the packet in the buffer.</p>
+
+<p>This function is used to receive packets. Since the library does not
+specify an event handling mechanism, it is the responsibility of the
+user to make sure that RTPReceive is called whenever data is ready to
+be received on either the RTP or RTCP sockets. To do this, the user
+calls the function <a
+href="#getsocket"><tt>RTPSessionGetRTPSocket()</tt> /
+<tt>RTPSessionGetRTCPSocket()</tt></a> to obtain the RTP_SOCKET and
+RTCP_SOCKET session variables.  The user can then poll for arriving
+packets on the active sockets through a mechanism such as the select
+call.</P>
+
+<P>The function will perform all of the appropriate header processing,
+statistics collecting, and state updating.  RTPReceive returns the
+packet to the user so that the user can do any additional processing
+(e.g. playing out the payload of an RTP packet).  Note that the user
+can distinguish between RTP and RTCP packets based on the socket from
+which the packet was received.  If RTPReceive is unable to process the
+packet (perhaps because it is encrypted and the key has changed), it
+will pass the packet to the user and return with the appropriate
+error.  The user can still attempt to retrieve the information
+(e.g. try another decryption key) within the packet, but the RTP
+protocol will treat the packet as dropped for statistical purposes.
+Also, if the length of the buffer <em>rtp_pkt_stream</em> is too small
+to hold the entire packet, then the entire packet is cleared from the
+socket buffer and the error <tt>RTP_INSUFFICIENT_BUFFER</tt> is
+returned.</p>
+
+<P>If the user wishes to perform further processing on the packet that
+has arrived, they can call <a
+href="#rtppacketops"><tt>RTPPGetRTPPacket()</tt></a> or <a
+href="#rtcppacketops"><tt>RTPPGetRTCPPacket()</tt></a> on the received
+stream to respectively convert the stream to the RTP / RTCP
+      structure. </p>
+
+<P> It should be noted that for the RTCP protocol to function correctly,
+it must keep track of all RTP and RTCP packets received.  Thus, the user
+should always select on both RTP and RTCP sockets, and call RTPReceive
+on either socket.  These functions do not require a context parameter,
+and therefore a context need not be created in order for these
+functions to be used.  They can therefore be used to parse streams
+into RTP / RTCP packets outside of an RTP session established by the
+library (using <tt>RTPCreate()</tt>, etc.) </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_CANT_CALL_FUNCTION: RTPReceive has been called from a callback 
+	function, which is illegal.</li>
+<li>RTP_SOCKET_MISMATCH: RTPReceive has been called with a socket that 
+	is not valid in any context.</li>
+<li>RTP_INSUFFICIENT_BUFFER: The buffer passed to RTPReceive is not
+	large enough to hold this packet. </li>
+<li>RTP_BAD_PACKET_FORMAT: The packet is not a valid version 2 RTP
+	packet.</li>
+<li>RTP_PACKET_LOOPBACK: Received an RTP or RTCP packet which was
+	generated by the library for the local member.</li>
+</ol>
+
+<H3><a name="getrtppacket">RTPGetRTPPacket</a></H3>
+The format of the call is:
+
+<P><pre>
+rtp_packet RTPGetRTPPacket(char *rtppacket, long pktlen);
+</pre></p>
+<P><em>rtppacket</em> is a pointer to a buffer, containing a packet
+      placed there by RTPReceive.</p>
+<P><em>pktlen</em> is the length of the packet in the packet buffer </p>
+
+<p>This function converts a byte stream, representing the RTP packet,
+      into a structure that provides access to the RTP header and
+      payload. This function should be used instead of accessing the
+      fields directly as it performs byte ordering conversions when
+      needed. </p>
+
+<p> Note that no copies are done in the operation of this
+      function. The data present in the buffer rtppacket is cast into the 
+      rtp_packet structure, and the appropriate byte reordering is
+      done. </p> 
+
+<P>Error Codes:</p>
+<p>This function does not return error codes. It returns a structure
+      containing the parsed packet.</p>
+
+<h3><a name="getcsrc">RTPPacketGetCSRC</a></h3>
+<p>The format of this function call is:</p>
+
+<p><pre>u_int32 RTPPacketGetCSRC(rtp_packet *rtppkt, int csrc_no)
+</pre>
+<P>
+<P><em>rtppkt</em> contains an rtp_packet structure, obtained by
+      calling RTPGetRTPPacket. </p>
+<P><em>csrc_no</em> is the index of the CSRC which is desired. </p>
+
+<p><tt>RTPPacketGetCSRC()</tt> returns the CSRC
+of the <tt>csrc_no</tt>th item in the CSRC list in the packet, where the
+numbering of CSRCs starts at 0.  CSRC values should always be accessed
+through this function because it performs any byte reordering
+required.</p>
+
+<p> The number of CSRC in the CSRC list can be known by examing the cc
+field in the rtp_packet structure. </p>
+
+<P>Error Codes:</p>
+This function does not return any error codes. It returns an SSRC.
+
+<H3><A NAME = "rtcpsplit">RTPSplitCompoundRTCP</a></H3>
+<p>The format of this function call is:</p>
+<p><pre>int RTPSplitCompoundRTCP(char *rtcppacket, char *indpkts[], long len);</pre></p>
+<P><em>rtcppacket</em> holds the byte stream representing the RTCP
+      packet to split. This byte stream is generated by calling RTPReceive.</p>
+<P><em>indpkts</em> is an array of byte pointers. The array must be
+      allocated by the application. When the function returns, the
+      array is written with pointers to the beginning the each
+      compound RTCP packet in the actual RTCP packet.</p>
+<p><em>len</em> is the length of the packet in the buffer rtcppacket.</p>
+
+<p><tt>RTPSplitCompoundRTCP()</tt> takes in a compound RTCP packet and
+returns the number of individual RTCP packets that make up the
+compound.  <tt>indpkts[i]</tt> points to the start of the <i>i</i>th
+compound packet (indexed from 0).  It is assumed that the caller of
+the function has allocated sufficient memory for <tt>indpkts</tt> to
+store pointers to each individual RTCP packet. This function is needed 
+      to extract individual RTCP packets for processing by subsequent
+      RTCP processing functions.</p>
+
+<p>Note that most applications will not need this function. It is
+      needed only if special RTCP processing by the application is
+      required, which requires access to the RTCP packets
+      directly.</p>
+
+<P>Error Codes:</p>
+<p>This function does not return an error code. It returns the number
+      of RTCP packets found in the compound packet.</p>
+
+<H3><A NAME = "rtcpget">RTPGetRTCPPacket</a></H3>
+<p>The format of this function call is:</p>
+<p><pre>rtcp_packet RTPGetRTCPPacket(char *rtcppacket)</pre></p>
+<P><em>rtcppacket</em> holds a pointer to the byte stream representing the RTCP
+      packet to access. This pointer is obtained by calling
+      RTCPSplitCompoundRTCP, which returns pointers to individual packets.</p>
+
+<p><tt>RTPGetRTCPPacket</tt> converts a byte-stream into a packet of type
+rtcp_packet. The rtcp_packet structure contains the common header
+    fields to all RTCP packets (including the type), and a union
+    representing the information specific to individual RTCP types.For 
+    information about this structure, see rtp_api.h.</p>
+
+<p> Most applications will not need this function. </p>
+
+<P>Error Codes:</p>
+<p>This function does not return an error code. Instead, it returns an 
+      rtcp_packet structure which contains a parsed RTCP packet.</p>
+
+<H3><A NAME = "getreportblock">RTPGetReportBlock</a></H3>
+<p>The format of this function call is:</p>
+<p><pre>rtcp_report_block RTPGetReportBlock(rtcp_packet *rtcprrsr, int blockno)</pre></p>
+<P><em>rtcprrsr</em> holds a pointer to an RTCP RR or SR, for which a
+      report block is to be extracted. The rtcp_packet structure is
+      obtained via RTPGetRTCPPacket.</p>
+<p><em>blockno</em></p> contains the index of the block number desired 
+    from the RTCP packet.</p>
+
+<p><tt>RTPGetReportBlock</tt> returns a receiver report block from an
+      RTCP SR or RR packet. Both these packet types contain a variable 
+      number of reception report blocks. The number of these blocks
+      can be obtained from the rtcp_packet structure. This function is 
+      used to obtain the blockno-th block from the SR or RR. The block 
+      is returned in an rtcp_report_block structure. </p>
+
+<p>The function should be called with blockno less than the number of
+      blocks in the RTCP packet.</p>
+
+<p> Most applications will not need this function. </p>
+
+<P>Error Codes:</p>
+<p>This function does not return an error code. Instead, it returns an 
+      rtcp_report_block structure which contains a receiver report block.</p>
+
+<H3><A NAME = "getbyeblock">RTPGetByeBlock</a></H3>
+<p>The format of this function call is:</p>
+<p><pre>rtcp_bye_block RTPGetByeBlock(rtcp_packet *rtcpbye, int blockno)</pre></p>
+<P><em>rtcpbye</em> holds a pointer to an RTCP BYE packet, for which a
+      bye block is to be extracted. The rtcp_packet structure is
+      obtained via RTPGetRTCPPacket.</p>
+<p><em>blockno</em></p> contains the index of the bye block number desired 
+    from the RTCP packet.</p>
+
+<p><tt>RTPGetByeBlock</tt> returns a bye block from an
+      RTCP BYE packet. The BYE packet contains a variable number of
+      BYE blocks, each for a user mixed together by some mixer. The
+      number of bye blocks can be obtained from the rtcp_packet
+      structure. This function returns the blockno-th bye block
+      structure. </p>
+
+<p>The function should be called with blockno less than the number of
+      blocks in the RTCP packet.</p>
+
+<p> Most applications will not need this function. </p>
+
+<P>Error Codes:</p>
+<p>This function does not return an error code. Instead, it returns an 
+      rtcp_bye_block structure which contains a bye block </p>
+
+<H3><A NAME = "initsdesiter">InitSDESItemIter</a></H3>
+<p>The format of this function call is:</p>
+<p><pre>rtcp_sdes_item InitSDESItemIter(rtcp_packet *rtcpsdes)</pre></p>
+<P><em>rtcpsdes</em> holds a pointer to an RTCP SDES packet, for which 
+      one of the SDES items is desired. </p>
+
+<p><tt>InitSDESItemIter()</tt> initializes the iterating process for RTCP
+SDES packet <em>rtcpsdes</em>, and returns the first SDES field for
+the first SSRC.  <tt>GetNextItem()</tt> returns the SDES item that
+follows <em>prev_item</em>.  These functions will return items of type
+0, which indicate the end of the item list for the current SSRC.  The
+<em>sdes_item</em> structure provides the current SSRC as well as the
+current chunk number.  These fields are available to the user so that
+when the user receives an SDES item of type 0, they can then compare
+<em>chunkno</em> to the SDES packet's source count (SC) field to 
+determine whether there are any more SDES chunks in the packet.</p>
+
+
+<p> Most applications will not need this function. </p>
+
+<P>Error Codes:</p>
+<p>This function does not return an error code. Instead, it returns an 
+      rtcp_sdes_item.</p>
+
+<H3><A NAME = "nextsdes">GetNextItem</a></H3>
+<p>The format of this function call is:</p>
+<p><pre>rtcp_sdes_item GetNextItem(rtcp_sdes_item *prev_item)</pre></p>
+<P><em>prev_item</em> holds a pointer to an SDES item. The function
+      will return the SDES item which follows the given item in the
+      SDES packet.</p>
+
+<p><tt>InitSDESItemIter()</tt> initializes the iterating process for RTCP
+SDES packet <em>rtcpsdes</em>, and returns the first SDES field for
+the first SSRC.  <tt>GetNextItem()</tt> returns the SDES item that
+follows <em>prev_item</em>.  These functions will return items of type
+0, which indicate the end of the item list for the current SSRC.  The
+<em>sdes_item</em> structure provides the current SSRC as well as the
+current chunk number.  These fields are available to the user so that
+when the user receives an SDES item of type 0, they can then compare
+<em>chunkno</em> to the SDES packet's source count (SC) field to 
+determine whether there are any more SDES chunks in the packet.</p>
+
+
+<p> Most applications will not need this function. </p>
+
+<P>Error Codes:</p>
+<p>This function does not return an error code. Instead, it returns an 
+      rtcp_sdes_item.</p>
+
+<h3><a name="rtpmi_g_status">RTPMemberInfoGetStatus</a></h3>
+<p>The format of the function call is:</p>
+<p><pre>
+rtperror RTPMemberInfoGetStatus(context cid, person p, memberstatus *s, senderstatus *sender );
+</pre></p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be obtained.</p>
+<p><em>s</em> is written with the user's member status.</p>
+<p><em>sender</em> is written with the user's sender status.</p>
+
+<p> This function retrieves the member and sender status for a
+particular user.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+
+</ol>
+
+<h3><A NAME="rtpmi_s_sdes">RTPMemberInfoSetSDES</a></h3>
+<p>The format of this function call is:</p>
+<P><pre>
+rtperror RTPMemberInfoSetSDES(context cid, person p, memberinfo SDES_field,	
+	char *the_info);
+</p></pre>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be set.</p>
+<p><em>SDES_field</em> contains the SDES field identifier.</p>
+<p><em>the_info</em> contains a string with the desired value of the
+given SDES field.</p>
+
+<p>The library will take the string in the buffer <em>the_info</em>
+and copy it into the internal SDES storage for the particular
+member. Note that SDES fields can only be set for the local member
+(person 0) or users placed on the contributor list.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_SDES: An attempt was made to set an SDES item type
+which does not exist. </li>
+<li>RTP_PERSON_DATA_PROTECTED: An attempt was made to set an SDES item
+for a member who is either not the local member, or not on the
+contributor list.</li>
+</ol>
+
+<h3><A NAME="rtpmi_g_sdes">RTPMemberInfoGetSDES</a></h3>
+<p>The format of this function call is:</p>
+<P><pre>
+rtperror RTPMemberInfoGetSDES(context cid, person p, memberinfo SDES_field,
+	char *the_info);
+</p></pre>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be obtained.</p>
+<p><em>SDES_field</em> contains the SDES field identifier.</p>
+<p><em>the_info</em> contains a pointer to a buffer which will be
+written with the value of the desired SDES field.</p>
+
+<p><em>the_info</em> points to the buffer in which the SDES item data
+should be placed. The buffer must be allocated with sufficient memory
+to hold the SDES item. The library will copy the SDES item into the
+buffer. If the SDES item does not exist, the library will set the
+string to "" (this is NOT the same as a NULL pointer).</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_SDES: An attempt was made to get an SDES item type
+which does not exist. </li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+
+</ol>
+
+<h3><a name="rtpmi_g_rtpaddr">RTPMemberInfoGetRTPAddr</a></h3>
+<p>The format of the function call is:<p>
+<p><pre>
+rtperror RTPMemberInfoGetRTPAddr(context cid, person p,
+                                 char *addr, char *port);
+</pre><p>
+
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be obtained.</p>
+<p><em>addr</em> is a pointer to a string buffer, allocated by the
+application.  It is written with the dotted quad string representation of
+the transport address a particular user is sending from.</p>
+<p><em>port</em> is a pointer to a string buffer, allocated by the
+application.  It is written with a string representation of the port number
+a particular user is sending from.</p>
+
+<p> This function returns the address and port a user is sending RTP packets
+from. If the user is a contributor, the address is that of the mixer sending
+the packets. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+</ol>
+
+<h3><a name="rtpmi_g_rtcpaddr">RTPMemberInfoGetRTCPAddr</a></h3>
+<p>The format of the function call is:<p>
+<p><pre>
+rtperror RTPMemberInfoGetRTCPAddr(context cid, person p,
+                                  char *addr, char *port);
+</pre><p>
+
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be obtained.</p>
+<p><em>addr</em> is a pointer to a string buffer, allocated by the
+application.  It is written with the dotted quad string representation of
+the transport address a particular user is sending from.</p>
+<p><em>port</em> is a pointer to a string buffer, allocated by the
+application.  It is written with a string representation of the port number
+a particular user is sending from.</p>
+
+<p> This function returns the address and port a user is sending RTCP
+packets from. If the user is a contributor, the address is that of the mixer
+sending the packets. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+</ol>
+
+<h3><a name="rtpmi_s_ntp">RTPMemberInfoSetNTP</a></h3>
+<p>The format of the function call is:<p>
+<p><pre>
+rtperror RTPMemberInfoSetNTP(context cid, person p, 
+			     ntp64 NTP_time);
+</pre><p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be set.</p>
+<p><em>NTP_time</em> contains the value of the NTP timestamp which
+should be set for the given user.</p>
+
+<p>This function is used to set the value of the NTP timestamp which
+will be retrieved when calling RTPMemberInfoGetNTP. It is largely a
+no-op, and included for completeness. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+<li>RTP_PERSON_DATA_PROTECTED: An attempt was made to set information
+for a member who is either not the local member, or not on the
+contributor list.</li>
+</ol>
+
+<h3><a name="rtpmi_g_ntp">RTPMemberInfoGetNTP</a></h3>
+<p>The format of the function call is:<p>
+<p><pre>
+rtperror RTPMemberInfoGetNTP(context cid, person p,
+			     ntp64 *NTP_time);
+</pre><p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be obtained.</p>
+<p><em>NTP_time</em> contains a pointer to a buffer which will be
+written with the NTP timestamp for a particular user.</p>
+
+<p> This function is used to retrieve the NTP timestamp last reported
+in a sender report from the particular user. This timestamp is needed
+to achieve inter-media synchronization. The value of the timestamp is
+written into the buffer pointer to by NTP_time. This buffer must be
+allocated with sufficient space to hold the structure. The function
+should only be called for users which are CONFIRMED senders. The value
+of the timestamp for non-senders is undefined.</p>
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+</ol>
+
+<h3><a name="rtpmi_s_rtp">RTPMemberInfoSetRTP</a></h3>
+<p>The format of the function call is:<p>
+<p><pre>
+rtperror RTPMemberInfoSetRTP(context cid, person p, 
+		int32 rtp_stamp);
+</pre><p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be set.</p>
+<p><em>rtp_stamp</em> contains the value of the rtp timestamp that
+should be set for the user.
+
+<p> This function sets the value of the RTP timestamp returned by
+RTPMemberInfoGetRTP. This function is largely a no-op, and included
+for completeness.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+<li>RTP_PERSON_DATA_PROTECTED: An attempt was made to set information
+for a member who is either not the local member, or not on the
+contributor list.</li>
+</ol>
+
+<h3><a name="rtpmi_g_rtp">RTPMemberInfoGetRTP</a></h3>
+<p>The format of the function call is:<p>
+<p><pre>
+rtperror RTPMemberInfoGetRTP(context cid, person p,
+	 int32 *RTP_time);
+</pre><p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be set.</p>
+<p><em>RTP_time</em> points to an int32 which will be written with the
+latest RTP timestamp reported by the user in a sender report. </p>
+
+<p> This function retrieves the RTP timestamp reported in the last
+RTCP sender report for the particular user. Along with the NTP
+timestamp, it is used for inter-media synchronization. This function
+should only be called for user's which are listed as CONFIRMED
+senders. The value of the timestamp is undefined if it is called on a
+non-sender. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+</ol>
+
+
+<h3><a name="rtpmi_s_pktcnt">RTPMemberInfoSetPktCount</a></h3>
+<p>The format of the function call is:<p>
+<p><pre>
+rtperror RTPMemberInfoSetPktCount(context cid, person p, 
+		int32 count);
+</pre><p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be set.</p>
+<p><em>count</em> count contains the value of the RTP packet count
+which is to be set for this user.</p>
+
+<p> This function sets the packet count which will be returned in the
+RTPMemberINfoGetPktCount function. It is largely a no-op, and included
+for completeness.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+<li>RTP_PERSON_DATA_PROTECTED: An attempt was made to set information
+for a member who is either not the local member, or not on the
+contributor list.</li>
+</ol>
+
+
+<h3><a name="rtpmi_g_pktcnt">RTPMemberInfoGetPktCount</a></h3>
+<p>The format of the function call is:<p>
+<p><pre>
+rtperror RTPMemberInfoGetPktCount(context cid, person p,
+	 int32 *count);
+</pre><p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be set.</p>
+<p><em>count</em> count contains a pointer to an int32 which is
+written with the value of the RTP packet count reported in the last
+sender report from the given user.</p>
+
+<p> This function returns the packet count reported in the last sender
+report from the given user. This function should only be called for
+users who are CONFIRMED senders. Operation on non-confirmed senders is
+undefined.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+</ol>
+
+
+<h3><a name="rtpmi_s_rpktcnt">RTPMemberInfoSetRTCPPktCount</a></h3>
+<p>The format of the function call is:<p>
+<p><pre>
+rtperror RTPMemberInfoSetRTCPPktCount(context cid, person p, int32 count);
+</pre><p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be set.</p>
+<p><em>count</em> count contains the value of the RTCP packet count
+which is to be set for this user.</p>
+
+<p> This function sets the packet count which will be returned in the
+RTPMemberInfoGetRTCPPktCount function. It is largely a no-op, and included
+for completeness.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+<li>RTP_PERSON_DATA_PROTECTED: An attempt was made to set information
+for a member who is either not the local member, or not on the
+contributor list.</li>
+</ol>
+
+
+<h3><a name="rtpmi_g_rpktcnt">RTPMemberInfoGetRTCPPktCount</a></h3>
+<p>The format of the function call is:<p>
+<p><pre>
+rtperror RTPMemberInfoGetRTCPPktCount(context cid, person p, int32 *count);
+</pre><p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be set.</p>
+<p><em>count</em> count contains a pointer to an int32 which is
+written with the value of the RTCP packet count reported in the last
+sender report from the given user.</p>
+
+<p> This function returns the number of RTCP packets received from the
+given user so far. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+</ol>
+
+<h3><a name="rtpmi_s_octcnt">RTPMemberInfoSetOctCount</a></h3>
+<p>The format of the function call is:<p>
+<p><pre>
+rtperror RTPMemberInfoSetOctCount(context cid, person p, 
+		int32 count);
+</pre><p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be set.</p>
+<p><em>count</em> count contains the value of the octet count
+which is to be set for this user.</p>
+
+<p> This function sets the octet count which will be returned in the
+RTPMemberINfoGetOctCount function. It is largely a no-op, and included
+for completeness.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+<li>RTP_PERSON_DATA_PROTECTED: An attempt was made to set information
+for a member who is either not the local member, or not on the
+contributor list.</li>
+</ol>
+
+
+<h3><a name="rtpmi_g_octcnt">RTPMemberInfoGetOctCount</a></h3>
+<p>The format of the function call is:<p>
+<p><pre>
+rtperror RTPMemberInfoGetOctCount(context cid, person p,
+	 int32 *count);
+</pre><p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be set.</p>
+<p><em>count</em> count contains a pointer to an int32 which is
+written with the value of the RTP octet count reported in the last
+sender report from the given user.</p>
+
+<p> This function returns the octet count reported in the last sender
+report from the given user. This function should only be called for
+users who are CONFIRMED senders. Operation on non-confirmed senders is
+undefined.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+</ol>
+
+<h3><a name="rtpmi_s_ssrc">RTPMemberInfoSetSSRC</a></h3>
+<p>The format of the function call is:<p>
+<p><pre>
+rtperror RTPMemberInfoSetSSRC(context cid, person p, 
+		u_int32 ssrc);
+</pre><p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be set.</p>
+<p><em>ssrc</em> contains the ssrc to be set for the user.
+
+<p> This function sets the SSRC for a particular user. It can only be
+used for either the local member or a contributor. This function
+should almost never be used, as the SSRC for these members is managed
+through other functions. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+<li>RTP_PERSON_DATA_PROTECTED: An attempt was made to set information
+for a member who is either not the local member, or not on the
+contributor list.</li>
+</ol>
+
+<h3><a name="rtpmi_g_ssrc">RTPMemberInfoGetSSRC</a></h3>
+<p>The format of the function call is:<p>
+<p><pre>
+rtperror RTPMemberInfoGetSSRC(context cid, person p,
+	 u_int32 *ssrc);
+</pre><p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be set.</p>
+<p><em>ssrc</em> contains a pointer to an int32 which will be written
+with the SSRC for a particular user.
+
+<p> This function gets the SSRC for a particular user. The SSRC
+returned may change from call to call if a collision has occured. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+</ol>
+
+<h3><a name="rtpmi_s_ui">RTPMemberInfoSetUserInfo</a></h3>
+<p>The format of the function call is:<p>
+<p><pre>
+rtperror RTPMemberInfoSetUserInfo(context cid, person p, 
+		void* info);
+</pre><p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be set.</p>
+<p><em>info</em> contains a void pointer which is stored by the
+library.
+
+<p> This function sets the user info field for a particular
+member. This field is never used by the library. It is provided as a
+convenience to application developers, allowing them to use the
+library's member management structures to store application specific
+information. The void pointer set through this function is retrieved
+with the RTPMemberInfoGetUserInfo function call. </p>
+
+<p>The user is also responsible for destroying this
+information before the member is destroyed.  The member will be
+destroyed immediately after the <a href="#callbacks">callback function</a>
+that signals an expired member, a member that is leaving, or a member
+that is reverting back to a previous ID. </p>
+
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+</ol>
+
+<h3><a name="rtpmi_g_ui">RTPMemberInfoGetUserInfo</a></h3>
+<p>The format of the function call is:<p>
+<p><pre>
+rtperror RTPMemberInfoGetUserInfo(context cid, person p,
+		void** info);
+</pre><p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be set.</p>
+<p><em>info</em> contains a void pointer which is stored by the
+library.
+
+<p> This function retrieves the user info field for a particular
+member. This field is never used by the library. It is provided as a
+convenience to application developers, allowing them to use the
+library's member management structures to store application specific
+information. The void pointer retrieved through this function is set
+with the RTPMemberInfoSetUserInfo function call. </p>
+
+<p>The user is also responsible for destroying this
+information before the member is destroyed.  The member will be
+destroyed immediately after the <a href="#callbacks">callback function</a>
+that signals an expired member, a member that is leaving, or a member
+that is reverting back to a previous ID. </p>
+
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+</ol>
+
+
+<h3><a
+name="si_getfirstrr">RTPSenderInfoGetFirstReceiverReport</a></h3>
+<p>The format of this function call is:</p>
+<p><pre>
+rtperror RTPSenderInfoGetFirstReceiverReport(context cid, person p,
+	 receiver_report_iterator *the_iterator, receiver_report *report);
+</pre></p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the receiver report information is desired.</p>
+<p><em>the_iterator</em> contains a pointer to an iterator
+structure. It must be allocated by the application, and is written by
+the function call.</p>
+<p><em>report</em> is a pointer to the first receiver report for the
+given sender. The space must be allocated by the application, and is
+written by the function call.</p>
+
+<p>This function is used to obtain a list of receiver reports from
+various session members about a particular sender, p. The function
+initializes an iterator structure, and copies the first receiver
+report structure into <em>report</em>. The user p must be a valid
+sender in the session. If there are no receiver reports for this
+sender, the function returns RTP_END_OF_LIST.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+<li>NO_SUCH_SENDER: The unique ID listed does not correspond to a
+session sender.</li>
+<li>RTP_END_OF_LIST: No receiver reports are available for this sender.</li>
+</ol>
+
+
+<h3><a
+name="si_getnextrr">RTPSenderInfoGetNextReceiverReport</a></h3>
+<p>The format of this function call is:</p>
+<p><pre>
+rtperror RTPSenderInfoGetNextReceiverReport(context cid, person p,
+	 receiver_report_iterator *the_iterator, receiver_report *report);
+</pre></p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the receiver report information is desired.</p>
+<p><em>the_iterator</em> contains a pointer to an iterator
+structure. </p>
+<p><em>report</em> is a pointer to the first receiver report for the
+given sender. The space must be allocated by the application, and is
+written by the function call.</p>
+
+<p>This function is used to obtain a list of receiver reports from
+various session members about a particular sender, p. The function
+takes an iterator structure, obtained from
+RTPSenderInfoGetFirstReceiverReport, and returns the next receiver
+report for that sender. The function updates state in the iterator, so
+that subsequent calls return the next receiver report for the
+sender. The function copies the receiver
+report structure into <em>report</em>. The user p must be a valid
+sender in the session. If there are no more receiver reports for this
+sender, the function returns RTP_END_OF_LIST.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+<li>NO_SUCH_SENDER: The unique ID listed does not correspond to a
+session sender.</li>
+<li>RTP_END_OF_LIST: No receiver reports are available for this sender.</li>
+</ol>
+
+<h3><a
+name="si_localrec">RTPSenderInfoGetLocalReception</a></h3>
+<p>The format of this function call is:</p>
+<p><pre>
+rtperror RTPSenderInfoGetLocalReception(context cid, person p,
+	 receiver_report *report);
+</pre></p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the unique identifier for the member about
+which the information is to be obtained.</p>
+<p><em>report</em> contains a pointer to a report structure. Reception
+information is written into this structure, so space must be allocated
+by the application.</p>
+
+<p>This function is used to obtain the reception quality the local
+member has observed about a particular sender. In contrast, the
+previous functions are used to obtain reception reports sent by other
+members, reporting on reception quality for a particular sender. The
+receiver_report structure returned is what a receiver report for that
+particular sender would look like, if it were to be generated
+immediately by the local member. The user <em>p</em> must be a valid
+sender in the session.</p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique ID listed does not correspond to a
+valid session member</li>
+<li>NO_SUCH_SENDER: The unique ID listed does not correspond to a
+session sender.</li>
+</ol>
+
+
+<h3><a name="rtpfindmember">RTPFindMember</a></h3>
+<p>The format of this function call is:</p>
+<p><pre>
+rtperror RTPFindMember(context cid, memberinfo mi, char *sdes_field,
+		 person *p);
+</pre></p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>mi</em> contains the member information field which is to be
+used for a match.</p>
+<p><em>sdes_field</em> contains the text which is to be matched.</p>
+<p><em>p</em> is a pointer to a person structure. The structure is
+written with the unique id of the person whose memberinfo matched the
+given text.</p>
+
+
+<p>This function is used to obtain a handle to a person by searching
+based on a specific criteria, such as email, phone, cname, etc. It is
+useful mostly for finding users based on CNAME for correlation across
+multiple sessions. Member lists can be generically obtained by using
+the <a href="getmemberlist"><tt>RTPSessionGetMemberList()</tt></a>
+function.</p>
+
+<p> If more than one match is found, the result returned is the first
+match. If no matches exist, an error is returned and *p is not
+modified. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: No user matched the given text for the given
+memberinfo field. </li>
+</ol>
+
+<h3><a name="rtpmostrecenttime">RTPMostRecentRTPTime</a></h3>
+<p>The format of this function call is:</p>
+<p><pre>
+rtperror RTPMostRecentRTPTime(context cid, person p,
+			      struct timeval *the_time);
+</pre></p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the member for whom the most recent time is
+desired. </p>
+<p><em>the_time</em> is a pointer to a timeval structure. It must be
+allocated by the application. It is filled in by the function with the
+time of the most recent RTP packet received from the particular member.</p>
+
+<p> This function is used to obtain the time of the most recent RTP
+packet from a particular user. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique id is not valid for any member of
+the given session. </li>
+</ol>
+
+<h3><a name="rtcpmostrecenttime">RTPMostRecentRTCPTime</a></h3>
+<p>The format of this function call is:</p>
+<p><pre>
+rtperror RTPMostRecentRTCPTime(context cid, person p,
+			       struct timeval *the_time);
+</pre></p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains the member for whom the most recent time is
+desired. </p>
+<p><em>the_time</em> is a pointer to a timeval structure. It must be
+allocated by the application. It is filled in by the function with the
+time of the most recent RTCP packet received from the particular member.</p>
+
+<p> This function is used to obtain the time of the most recent RTCP
+packet from a particular user. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: The unique id is not valid for any member of
+the given session. </li>
+</ol>
+
+<h3><a name="rtpmostrecentperson">RTPMostRecentRTPPerson</a></h3>
+<p>The format of this function call is:</p>
+<p><pre>
+rtperror RTPMostRecentRTPPerson(context cid, person *p);
+</pre></p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains a pointer to a person structure. It is written
+with the unique ID of the session member who sent the last RTP packet
+received by the library.</p>
+
+<p> This function is used to obtain the unique ID of the user who was
+the last to send an RTP packet received by the library. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: No packets have been received yet by the library.</li>
+</ol>
+
+
+<h3><a name="rtcpmostrecentperson">RTPMostRecentRTCPPerson</a></h3>
+<p>The format of this function call is:</p>
+<p><pre>
+rtperror RTPMostRecentRTCPPerson(context cid, person *p){
+</pre></p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>p</em> contains a pointer to a person structure. It is written
+with the unique ID of the session member who sent the last RTCP packet
+received by the library.</p>
+
+<p> This function is used to obtain the unique ID of the user who was
+the last to send an RTCP packet received by the library. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_NO_SUCH_PERSON: No RTCP packets have been received yet by the library.</li>
+</ol>
+
+
+<h3><a name="rtpmostrecentaddr">RTPMostRecentAddr</a></h3>
+<p>The format of this function call is:</p>
+<p><pre>
+rtperror RTPMostRecentAddr(context cid, char *addr, char *port);
+</pre></p>
+<p><em>cid</em> holds the context for the session.</p>
+<p><em>addr</em> contains a pointer to a string buffer, allocated by
+the application. It is written with a dotted quad representing the IP
+address from which the last RTP or RTCP packet was received.</p>
+<p><em>port</em> contains a pointer to a string buffer, allocated by
+the application. It is written with the port number of the most recent
+packet received by the library.</p>
+
+<p> This function is used to obtain the address of the user who was
+the last to send an RTP packet received by the library. </p>
+
+<P>Error Codes:</p>
+<ol>
+<li>RTP_UNKNOWN_CONTEXT: An attempt was made to access a context that
+	is either unknown or has been previously destroyed.</li>
+<li>RTP_BAD_ADDR: No packets have yet been received by the library.</li>
+</ol>
+
+<h3><a name="strerror">RTPStrError</a></h3>
+<p>The format of this function call is:</p>
+<p><pre>
+char *RTPStrError(rtperror err);
+</pre></p>
+<p><em>err</em> holds the numerical error code for which the string is
+desired. </p>
+
+<p> This function is used to obtain a human readable string describing
+the error which caused a function to return an error. The string is
+returned by this function. </p>
+
+<P>Error Codes:</p>
+None.
+
+<h2><a name="examples">Example Code</a></h2>
+
+Example applications can be found in the code example1.c and
+example2.c.
+
+</body></html>

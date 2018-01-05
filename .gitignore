@@ -1,0 +1,7 @@
+*.[o]
+*.Po
+*.db
+/ML8-VXS.si4project
+/main/main
+/image/bin/main
+/image/etc/firmVer

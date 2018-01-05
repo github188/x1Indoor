@@ -1,0 +1,16 @@
+Changes planned for RTPLib v1.1:
+* Reverse re-consideration
+
+Other changes planned, mentioned, or thought of for some future point:
+* Clean up debugging.
+* Alternate address family support (IPv6).
+* Re-structure directory layout to make building test programs easier.
+* Add rtptest to the automake/autoconf structure.
+* Work out some way of doing regression tests.
+
+3/12/98, jdr: Should Fix CSRC RTCP transmission of SDES. When there are lots of CSRC
+(more than 32), they get split into several SDES chunks. Each SDES chunk should
+always start with the ssrc of the sender, but it does not currently do this.
+Real minor problem, but a pain to fix.
+
+

@@ -1,0 +1,4 @@
+#!/bin/sh
+cd /mnt/ml
+killall main
+./main&
