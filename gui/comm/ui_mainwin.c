@@ -88,7 +88,7 @@
 #endif
 #define MAIN_ICON_XPOS			(FORM_W-MAIN_RIGHT_W-MAIN_ICON_DISX*2-MAIN_ICON_W*3)/2	// 图标X轴起点
 
-#ifdef _E81S_UI_STYLE_
+#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 #define MAIN_ICON_YPOS			(FORM_H-TOP_DISY-3*MAIN_ICON_H-2*MAIN_ICON_DISY)/2		// 图标Y轴起点
 #else
 #define MAIN_ICON_YPOS			(FORM_H-TOP_DISY-2*MAIN_ICON_H-MAIN_ICON_DISY)/2		// 图标Y轴起点
@@ -98,7 +98,7 @@
 
 #define PAGE_LEVEL				6
 
-#ifdef _E81S_UI_STYLE_
+#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 #define MainIconNum     		9
 #define MainCallNum     		2
 #else
@@ -179,7 +179,7 @@ static uint8 g_MaxPage[PAGE_LEVEL] = {
 	MainIconNum, MainCallNum, MainCenterNum,
 	MainMonitorNum, MainBianliNum, MainMediNum};
 
-#ifdef _E81S_UI_STYLE_
+#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 const uint32 MainIconID[MainIconNum*2] =
 {
 	BID_Main1Alarm, SID_MainAlarm,
@@ -225,7 +225,7 @@ const uint32 MainIconID[MainIconNum*2] =
 };
 #endif
 
-#ifdef _E81S_UI_STYLE_
+#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 const uint32 MainCallIconID[MainCallNum*2] = 
 {
 	BID_MainCall_User, SID_MainCall_User,		
@@ -255,7 +255,7 @@ const uint32 MainCenterIconID[MainCenterNum*2] =
 	BID_MainCenter_3, SID_MainCenter_3,	
 };
 
-#ifdef _E81S_UI_STYLE_
+#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 const uint32 MainMonitorIconID_1[MainMonitorNum*2] = 
 {
 	BID_MainMonitor1_Door_1, SID_MainMonitor_Door,
@@ -288,7 +288,7 @@ const uint32 MainMonitorIconID[MainMonitorNum*2] =
 };
 #endif
 
-#ifdef _E81S_UI_STYLE_
+#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 const uint32 MainBianliIconID[MainBianliNum*2] = 
 {
 	#ifdef _JRLY_MODE_
@@ -391,7 +391,7 @@ static void change_rightkey(HWND hDlg)
 {
 	DEFEND_STATE defend_state;
 	uint32 ImageID[RIGHT_NUM_MAX] = {0, 0, BID_Right_Table, 0, 0};
-	#ifdef _E81S_UI_STYLE_
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	uint32 TextID[RIGHT_NUM_MAX] = {SID_Bj_Bf_Home, SID_MainCenter, 0, SID_Right_Sure, SID_MainBianLi_Dianti};
 	#else
 	uint32 TextID[RIGHT_NUM_MAX] = {SID_Bj_Bf_Home, SID_MainInfo, 0, SID_Right_Sure, SID_MainBianLi_Dianti};	
@@ -445,7 +445,7 @@ static void net_ontime(void)
 {
 	RECT rc;
 
-	#ifdef _E81S_UI_STYLE_
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	TOP_RC(rc);
 	#else
 	NET_RC(rc);
@@ -770,13 +770,13 @@ static void draw_top(HDC hdc)
 	RECT rc;
 	
 	// 画网络图标
-	#ifdef _E81S_UI_STYLE_
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	TOP_RC(rc);
 	#else
 	NET_RC(rc);
 	#endif
 	
-	#ifdef _E81S_UI_STYLE_	
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)	
 	DrawBmpID(hdc, 0, 0, 0, 0, BID_MAIN_TOP);
 	DrawBmpID(hdc, MAIN_NET_W, 0, 0, 0, BID_Main_Net_1+g_NetState);
 
@@ -833,7 +833,7 @@ static void draw_icon(HDC hdc)
 	for (i = 0; i < g_MaxPage[g_CurPage]; i++)
 	{
 		// 画图标
-		#ifdef _E81S_UI_STYLE_
+		#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 		if (g_CurKey == i)
 		{
 			switch (g_CurPage)
@@ -881,7 +881,7 @@ static void draw_icon(HDC hdc)
 		{
 			if (g_UnreadLylyNum)
 			{
-				#ifdef _E81S_UI_STYLE_				
+				#if (_UI_STYLE_ == _E81S_UI_STYLE_)				
 				DrawBmpID(hdc, x+NEW_HIT_DISX, y-NEW_HIT_DISY - 6, 0, 0, BID_Un_Read_1 + (g_UnreadLylyNum - 1));
 				#else				
 				DrawBmpID(hdc, x+NEW_HIT_DISX, y-NEW_HIT_DISY, 0, 0, BID_Un_Read_1 + (g_UnreadLylyNum - 1));
@@ -977,11 +977,11 @@ static void OnPaint(HWND hDlg)
 	GetClientRect(hDlg, &rc);
 	SetBkMode(hdc, BM_TRANSPARENT);
 	
-#if (_UI_STYLE_ == _V6_UI_STYLE_)
+	#if (_UI_STYLE_ == _V6_UI_STYLE_)
 	draw_bk(hdc);
 	draw_icon(hdc);
 	draw_top(hdc);
-#elif (_UI_STYLE_ == _E81S_UI_STYLE_)
+	#elif (_UI_STYLE_ == _E81S_UI_STYLE_)
 	draw_bk(hdc);
 	draw_icon(hdc);
 	draw_top(hdc);
@@ -1170,7 +1170,7 @@ static int SelectModule(HWND hDlg)
 	    case BID_MainControl_DianTi:
 	        #ifdef _DIANTI_CALL_
             // 电梯控制         
-			#ifdef _E81S_UI_STYLE_
+			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			form_show(&FrmDianti);
 			#endif
 			#endif
@@ -1220,7 +1220,7 @@ static void RightCtrlCommand(HWND hDlg, LPARAM lParam)
 				}
 			}
 			
-			#ifdef _E81S_UI_STYLE_
+			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			RECT rc;
 			MAIN_RC (rc);
 			InvalidateRect(self->hWnd, &rc, FALSE);
@@ -1273,7 +1273,7 @@ static void RightCtrlCommand(HWND hDlg, LPARAM lParam)
 			form_show(&FrmMsg);
 			break;
 
-		#ifdef _E81S_UI_STYLE_
+		#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 		case SID_MainCenter:
 		{
 			// 呼叫中心
@@ -1375,7 +1375,7 @@ static void CreateRightCtrl(HWND hDlg)
 	uint32 i;
 	uint32 ImageID[RIGHT_NUM_MAX] = {0, 0, BID_Right_Table, 0, 0};
 	
-	#ifdef _E81S_UI_STYLE_
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	uint32 TextID[RIGHT_NUM_MAX] = {SID_Bj_Bf_Home, SID_MainCenter, 0, SID_Right_Sure, SID_MainBianLi_Dianti};
 	#else
 	uint32 TextID[RIGHT_NUM_MAX] = {SID_Bj_Bf_Home, SID_MainInfo, 0, SID_Right_Sure, SID_MainBianLi_Dianti};	
@@ -1476,7 +1476,7 @@ void set_curkey(void)
 {
 	DEFEND_STATE defend_state;
 	uint32 ImageID[RIGHT_NUM_MAX] = {0, 0, BID_Right_Table, 0, 0};
-	#ifdef _E81S_UI_STYLE_
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	uint32 TextID[RIGHT_NUM_MAX] = {SID_Bj_Bf_Home, SID_MainCenter, 0, SID_Right_Sure, SID_MainBianLi_Dianti};
 	#else
 	uint32 TextID[RIGHT_NUM_MAX] = {SID_Bj_Bf_Home, SID_MainInfo, 0, SID_Right_Sure, SID_MainBianLi_Dianti};	

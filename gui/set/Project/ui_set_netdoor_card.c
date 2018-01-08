@@ -254,7 +254,7 @@ static void CreateListCtrl(HWND hDlg)
 	g_listCtrl.Width[0] = 100;
 	g_listCtrl.Width[1] = 200;
 
-	#ifdef _E81S_UI_STYLE_
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	g_listCtrl.PageCount = 8;						// ÏÔÊ¾¸öÊý
 	g_listCtrl.ImageTopBk = BID_ListCtrl_TopBK8_0;
 	g_listCtrl.ImageBk = BID_ListCtrl_BK8_0;

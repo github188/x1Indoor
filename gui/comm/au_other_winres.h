@@ -521,7 +521,7 @@ typedef struct
 {
 	//PGUI_FORM ParentFrm;							// 父窗体
 	uint8 InputNum;									// 输入框个数
-	#ifdef _E81S_UI_STYLE_
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	HWND InputhDlg[5];                         		// 输入框句柄
 	#else	
 	HWND InputhDlg[2];                         		// 输入框句柄

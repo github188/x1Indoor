@@ -468,7 +468,7 @@ static void CreateListCtrl(HWND hDlg)
 	g_listCtrl.ImageBk = BID_ListCtrl_BK5_0;
 	#endif
 	
-	#ifdef _E81S_UI_STYLE_
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	g_listCtrl.Sidebar = 0;								
 	#else
 	g_listCtrl.Sidebar = 1;							

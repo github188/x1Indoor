@@ -55,7 +55,7 @@
 #define CHAR_LEN				110
 #endif
 
-#ifdef _E81S_UI_STYLE_
+#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 #undef DIS_BMP
 #undef CENTER_W
 #undef CENTER_H
@@ -130,7 +130,7 @@ static uint32 show_win(HDC hdc)
 
 	xpos += DIS_BMP+LEFT_BMP_W;
 	
-	#ifdef _E81S_UI_STYLE_
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	DrawBmpID(hdc, xpos, ypos, 0, 0, BID_Inter_Volume0_1+g_index[0]);
 	#else
 	DrawBmpID(hdc, xpos, ypos, 0, 0, BID_Inter_Volume0+g_index[0]);
@@ -167,7 +167,7 @@ static uint32 show_win(HDC hdc)
 
 	xpos += DIS_BMP+LEFT_BMP_W;
 
-	#ifdef _E81S_UI_STYLE_
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	DrawBmpID(hdc, xpos, ypos, 0, 0, BID_Inter_Volume0_1+g_index[1]);
 	#else
 	DrawBmpID(hdc, xpos, ypos, 0, 0, BID_Inter_Volume0+g_index[1]);

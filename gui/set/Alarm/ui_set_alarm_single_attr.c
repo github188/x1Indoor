@@ -198,7 +198,7 @@ static void CreateListCtrl(HWND hDlg)
 	g_listCtrl.SideBarMode = 1;
 	g_listCtrl.fonttype = Font16X16;				// Œƒ◊÷œ‘ æ¥Û–°
 
-	#ifdef _E81S_UI_STYLE_
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	g_listCtrl.Sidebar = 0;										// ≤‡±ﬂ¿∏
 	#else
 	g_listCtrl.Sidebar = 1;										// ≤‡±ﬂ¿∏

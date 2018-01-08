@@ -38,7 +38,7 @@ extern "C" {
 #define SIDEBAR_SCRLEN			205
 #endif
 
-#ifdef _E81S_UI_STYLE_
+#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 #undef SIDEBAR_ICON_W
 #undef SIDEBAR_YDIS
 #undef SIDEBAR_SCRLEN			

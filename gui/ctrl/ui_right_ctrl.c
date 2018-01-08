@@ -801,7 +801,7 @@ static uint32 get_key_down(HWND hDlg, WPARAM wParam, LPARAM lParam)
 		case SCANCODE_F3:
 		case SCANCODE_F4: 
 		case SCANCODE_F5:
-			#ifdef _E81S_UI_STYLE_
+			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			{
 				if (SCANCODE_F1 == wParam)
 				{
@@ -863,7 +863,7 @@ static uint32 get_key_up(HWND hDlg, WPARAM wParam, LPARAM lParam)
 		case SCANCODE_F3:
 		case SCANCODE_F4: 
 		case SCANCODE_F5:
-			#ifdef _E81S_UI_STYLE_
+			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			{
 				if (SCANCODE_F1 == wParam)
 				{

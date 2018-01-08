@@ -29,7 +29,7 @@
 #define TEXT_BK_YPOS			0
 #endif
 
-#ifdef _E81S_UI_STYLE_
+#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 #undef TOP_TEXT_XPOS
 #undef TEXT_BK_YPOS
 #define TOP_TEXT_XPOS			10	
@@ -67,7 +67,7 @@ static void change_rightkey(HWND hDlg)
 *************************************************/
 static void recover_change_rightkey(HWND hDlg)
 {
-	#ifdef _E81S_UI_STYLE_
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	uint32 ImageID[RIGHT_NUM_MAX] = {0, 0, 0, 0, BID_Right_Exit};
 	uint32 TextID[RIGHT_NUM_MAX] = {0, 0, 0, SID_Storage_Format, 0};
 	#else
@@ -123,7 +123,7 @@ static void show_win(HWND hdc)
 	{
 		if (0 == i)
 		{
-			#ifdef _E81S_UI_STYLE_
+			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			DrawBmpID(hdc, xpos, ypos, LIST_CTRL_W, 0, BID_ListCtrl_TopBK8_0);	
 			#else
 			DrawBmpID(hdc, xpos, ypos, LIST_CTRL_W, 0, BID_ListCtrl_TopBK5_0);	
@@ -131,7 +131,7 @@ static void show_win(HWND hdc)
 		}
 		else
 		{
-			#ifdef _E81S_UI_STYLE_
+			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			DrawBmpID(hdc, xpos, ypos, LIST_CTRL_W, 0, BID_ListCtrl_BK8_0);	
 			#else
 			DrawBmpID(hdc, xpos, ypos, LIST_CTRL_W, 0, BID_ListCtrl_BK5_0);	
@@ -193,7 +193,7 @@ static void RightCtrlCommand(HWND hDlg, LPARAM lParam)
 	
 	switch(id)
 	{
-		#ifdef _E81S_UI_STYLE_
+		#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 		case SID_Storage_Format:
 			change_rightkey(hDlg);
 			show_msg(hDlg, IDC_Msg_Notice, MSG_QUERY, SID_Msg_Format);
@@ -257,7 +257,7 @@ static uint32 OnCommand(HWND hDlg , WPARAM wParam, LPARAM lParam)
 static void CreateRightCtrl(HWND hDlg)
 {
 	uint32 i;	
-	#ifdef _E81S_UI_STYLE_
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	uint32 ImageID[RIGHT_NUM_MAX] = {0, 0, 0, 0, BID_Right_Exit};
 	uint32 TextID[RIGHT_NUM_MAX] = {0, 0, 0, SID_Storage_Format, 0};
 	#else

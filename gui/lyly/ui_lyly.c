@@ -333,7 +333,7 @@ static void CreateListCtrl(HWND hDlg)
 	g_ListCtrl.SideBarMode = 1;
 	g_ListCtrl.KeyCallBack = (SidebarKeyCallBack)get_Sidebar_key;
 	
-	#ifdef _E81S_UI_STYLE_
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	g_ListCtrl.Sidebar = 0;							// ²à±ßÀ¸
 	#else
 	g_ListCtrl.Sidebar = 1;							// ²à±ßÀ¸

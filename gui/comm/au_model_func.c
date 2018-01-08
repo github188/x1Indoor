@@ -948,7 +948,7 @@ void show_msg(HWND hDlg , uint32 ID, AU_MSG_TYPE style, uint32 TextID)
 	{
 		case MSG_TS:
 		case MSG_QUERY:		
-			#ifdef _E81S_UI_STYLE_
+			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			info.MsgBk = BID_QueryBoxBK;
 			#endif
 			info.MsgIcon = BID_MsgQueryIcon;
@@ -957,14 +957,14 @@ void show_msg(HWND hDlg , uint32 ID, AU_MSG_TYPE style, uint32 TextID)
 		case MSG_WARNING:
 		case MSG_ERROR:
 		case MSG_HIT:
-			#ifdef _E81S_UI_STYLE_
+			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			info.MsgBk = BID_MsgBoxBK;
 			#endif
 			info.MsgIcon = BID_MsgInfoIcon;
 			break;
 			
 		case MSG_RIGHT:
-			#ifdef _E81S_UI_STYLE_
+			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			info.MsgBk = BID_MsgBoxBK;
 			info.MsgIcon = BID_MsgInfoIcon;
 			#else
@@ -973,14 +973,14 @@ void show_msg(HWND hDlg , uint32 ID, AU_MSG_TYPE style, uint32 TextID)
 			break;
 			
 		default:
-			#ifdef _E81S_UI_STYLE_
+			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			info.MsgBk = BID_MsgBoxBK;
 			#endif
 			info.MsgIcon = BID_MsgInfoIcon;
 			break;	
 	}
 
-	#ifdef _E81S_UI_STYLE_
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	if (style == MSG_TS || style == MSG_QUERY)
 	{
 		set_windowsize(&FrmMsgCtrl, FORM_QUERY_X, FORM_QUERY_Y, FORM_QUERY_W, FORM_QUERY_H);
@@ -994,7 +994,7 @@ void show_msg(HWND hDlg , uint32 ID, AU_MSG_TYPE style, uint32 TextID)
 	ui_msg_win(&info);
 }
 
-#ifdef _E81S_UI_STYLE_
+#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 /*************************************************
   Function:		show_aurine_msg_hit
   Description:  报警、新信息、新来电提示
@@ -1558,7 +1558,7 @@ void show_sys_event_hint(uint16 EventType)
 		sys_open_lcd();
 		sys_start_play_audio(SYS_MEDIA_OPER_HINT, (char *)storage_get_msg_hit(), FALSE, MSG_HIT_VOL, NULL, NULL);
 		
-		#ifdef _E81S_UI_STYLE_
+		#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 		show_aurine_msg_hit(CurWin->hWnd, IDC_FORM, MSG_MESSAGE, SID_Msg_Info_Hit);
 		#else
 		show_msg_hit(CurWin->hWnd, IDC_FORM, MSG_MESSAGE, SID_Msg_Info_Hit);
@@ -1569,7 +1569,7 @@ void show_sys_event_hint(uint16 EventType)
 		SYS_MEDIA_TYPE CurState = sys_get_media_state();
 		if (CurState == SYS_MEDIA_ALARM)
 		{
-			#ifdef _E81S_UI_STYLE_
+			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			show_aurine_msg_hit(CurWin->hWnd, IDC_Msg_Notice, MSG_CALL_MESSAGE, SID_Msg_CallIn_Hit);
 			#else
 			show_msg_hit(CurWin->hWnd, IDC_Msg_Notice, MSG_CALL_MESSAGE, SID_Msg_CallIn_Hit);
@@ -1586,7 +1586,7 @@ void show_sys_event_hint(uint16 EventType)
 			show_msg_alarm(CurWin, WID_MsgNotice);
 		}
 		*/
-		#ifdef _E81S_UI_STYLE_
+		#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 		show_aurine_msg_hit(CurWin->hWnd, IDC_Msg_Notice, MSG_ALARM, SID_Msg_Alarm_Hit);
 		#else
 		show_msg_hit(CurWin->hWnd, IDC_Msg_Notice, MSG_ALARM, SID_Msg_Alarm_Hit);
@@ -3572,7 +3572,7 @@ uint8 pageCount, uint8 count, uint8 keystate, uint8 select, uint32 curSelect)
 		}
 		else
 		{
-			#ifdef _E81S_UI_STYLE_
+			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			ypos = ypos + (curSelect*SIDEBAR_SCRLEN)/count +SIDEBAR_YDIS;
 			#else				
 			ypos = ypos + (curSelect*SIDEBAR_SCRLEN)/count;

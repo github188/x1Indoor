@@ -15,7 +15,7 @@
 
 /************************常量定义************************/
 #define MAX_PAGE1_NUM		4						// 设置界面
-#ifdef _E81S_UI_STYLE_
+#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 #define MAX_PAGE2_NUM		5						// 系统设置
 #else
 #define MAX_PAGE2_NUM		4						// 系统设置
@@ -39,7 +39,7 @@ static uint32 g_page1[MAX_PAGE1_NUM][2] =
 static uint32 g_page2[MAX_PAGE2_NUM][2] = 
 {
 	{BID_Set_Language,			SID_Set_System_language},  	
-	#ifdef _E81S_UI_STYLE_
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	{BID_Set_Date,				SID_Set_System_Time},	
 	#endif
 	{BID_Set_Screen_Light,		SID_Set_Screen_Lcd},
@@ -558,7 +558,7 @@ static void CreateListCtrl(HWND hDlg)
 	g_listCtrl.fonttype = Font16X16;				// 文字显示大小
 	g_listCtrl.Width[0] = 70;
 	g_listCtrl.Width[1] = 200;
-	#ifdef _E81S_UI_STYLE_
+	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	g_listCtrl.PageCount = 8;						// 显示个数
 	g_listCtrl.ImageTopBk = BID_ListCtrl_TopBK8_0;
 	g_listCtrl.ImageBk = BID_ListCtrl_BK8_0;

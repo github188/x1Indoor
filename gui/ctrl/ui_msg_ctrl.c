@@ -85,7 +85,7 @@
 #define HIT_TEXT_BOTTOM			114
 #endif
 
-#ifdef _E81S_UI_STYLE_
+#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 #define MSG_ICON_Y				44					// 图标Y位置
 #define MSG_ICON_X				44					// 图标X位置
 #define MSG_TEXT_DIS			30
@@ -125,7 +125,7 @@ static void ui_reflash(HWND hDlg)
 	InvalidateRect(hDlg, NULL, FALSE);
 }
 
-#ifdef _E81S_UI_STYLE_
+#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 /*************************************************
   Function:		draw_aurine_hit
   Description: 	提示报警、新来电、新信息
@@ -564,7 +564,7 @@ static void ui_msgctrl_paint(HWND hDlg, WPARAM wParam, LPARAM lParam)
 		case MSG_ERROR:								// 错误
 		case MSG_RIGHT:
 		case MSG_HIT:
-			#ifdef _E81S_UI_STYLE_
+			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			draw_aurine_msg(hdc);
 			#else	
 			draw_msg(hdc);
@@ -572,7 +572,7 @@ static void ui_msgctrl_paint(HWND hDlg, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case MSG_QUERY:								// 确认
-			#ifdef _E81S_UI_STYLE_
+			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			draw_aurine_query(hdc);
 			#else	
 			draw_query(hdc);
@@ -582,7 +582,7 @@ static void ui_msgctrl_paint(HWND hDlg, WPARAM wParam, LPARAM lParam)
 		case MSG_CALL_MESSAGE:						// 新来电、新信息、新警情
 		case MSG_MESSAGE:					
 		case MSG_ALARM:								
-			#ifdef _E81S_UI_STYLE_
+			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			draw_aurine_hit(hdc);
 			#else
 			draw_hit(hdc);
