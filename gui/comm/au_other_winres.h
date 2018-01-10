@@ -54,7 +54,6 @@ extern "C" {
 #define FORM_LEFT_W				(LCD_W - FORM_RIGHT_W)	// 左边窗体宽度
 #define FORM_LEFT_H				LCD_H					// 左边窗体高度
 
-
 //#define DEFAULT_STYLE	  		(WS_VISIBLE | WS_NONE)	// 默认窗体的风格
 //#define DEFAULT_STYLE_EX  	(WS_EX_NONE)			// 默认窗体的扩展风格
 #define DEFAULT_BN_STYLE		(WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON | BS_NOTIFY)
@@ -83,7 +82,7 @@ extern "C" {
 #define KEYBOARD_CTRL_Y         (FORM_H-KEYBOARD_CTRL_H)
 
 // 右边控件宏定义
-#define RIGHT_CTRL_X			FORM_LEFT_W
+#define RIGHT_CTRL_X			640
 #define RIGHT_CTRL_Y			0
 #define RIGHT_CTRL_W			160
 #define RIGHT_CTRL_H			480
@@ -110,11 +109,8 @@ extern "C" {
 #define VOLUME_TOTAL_W			(210+48+20)
 #define VOLUME_ALL_ICON_Y		((VIDEO_WIN_H-VOLUME_TOTAL_H)/2+150)
 #else
-#define SCREEN_WIDTH	  		1024				// 窗体的宽度
-#define SCREEN_HEIGHT     		600					// 窗体的高度
-#define LCD_W					SCREEN_WIDTH
-#define LCD_H					SCREEN_HEIGHT
-
+#define SCREEN_WIDTH	  		480						// 窗体的宽度
+#define SCREEN_HEIGHT     		272						// 窗体的高度
 #define DW_STYLE				(WS_VISIBLE | WS_NONE)	// 窗体的风格
 //#define DW_STYLE_EX			WS_EX_NONE				// 窗体的扩展风格
 #define DW_STYLE_EX				WS_EX_AUTOSECONDARYDC	// 窗体的扩展风格

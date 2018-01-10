@@ -53,6 +53,13 @@
 
 #define SYS_TYPE				V6S_JHB_VER
 
+// ====屏幕分辨率================================================
+#define _LCD_1024600_			1					//1024*600
+#define	 _LCD_800480_			2					//800*480
+
+#define _LCD_DPI_				_LCD_1024600_
+
+
 // ====UI样式定义================================================
 #define _V6_UI_STYLE_			1
 #define _E81S_UI_STYLE_			2
@@ -62,8 +69,9 @@
 #define _UI_STYLE_				_E81S_UI_STYLE_
 #elif (SYS_TYPE == V7S_JHB_VER)
 #define _UI_STYLE_				_V6_UI_STYLE_	
-#if (SYS_TYPE == V6S_JHB_VER)
+#elif (SYS_TYPE == V6S_JHB_VER)
 #define _UI_STYLE_				_V6_UI_STYLE_	
+#endif
 
 
 
