@@ -47,18 +47,6 @@
 #define ICON_SEL_DIS			6					// 选中框间距
 #define NEW_HIT_DISX			70					// 新事件提示X轴间距
 #define NEW_HIT_DISY			10					// 新事件提示Y轴间距
-#elif (_UI_STYLE_ == _A1_UI_STYLE_)
-#define TOP_DISY				20					// 图标距顶部的间距
-#define MAIN_RIGHT_W			100					// 右边控件宽度
-#define MAIN_ICON_DISX			40					// 图标X轴间距
-#define MAIN_ICON_DISY			50					// 图标Y轴间距
-#define MAIN_ICON_W				70					// 图标宽
-#define MAIN_ICON_H				70					// 图标高
-#define ICON_TEXT_DISY      	10 					// 字与图标间距
-
-#define ICON_SEL_DIS			2					// 选中框间距
-#define NEW_HIT_DISX			47					// 新事件提示X轴间距
-#define NEW_HIT_DISY			6					// 新事件提示Y轴间距
 #elif (_UI_STYLE_ == _E81S_UI_STYLE_)
 #define TOP_DISY				20					// 图标距顶部的间距
 #define MAIN_RIGHT_W			160					// 右边控件宽度
@@ -71,20 +59,7 @@
 #define ICON_SEL_DIS			2					// 选中框间距
 #define NEW_HIT_DISX			47+13				// 新事件提示X轴间距
 #define NEW_HIT_DISY			 -8					// 新事件提示Y轴间距
-
 #define MAIN_NET_W 				30					//网络图标横坐标
-#else
-#define TOP_DISY				30					// 图标距顶部的间距
-#define MAIN_RIGHT_W			100					// 右边控件宽度
-#define MAIN_ICON_DISX			50					// 图标X轴间距
-#define MAIN_ICON_DISY			60					// 图标Y轴间距
-#define MAIN_ICON_W				60					// 图标宽
-#define MAIN_ICON_H				60					// 图标高
-#define ICON_TEXT_DISY      	10 					// 字与图标间距
-
-#define ICON_SEL_DIS			5					// 选中框间距
-#define NEW_HIT_DISX			47					// 新事件提示X轴间距
-#define NEW_HIT_DISY			6					// 新事件提示Y轴间距
 #endif
 #define MAIN_ICON_XPOS			(FORM_W-MAIN_RIGHT_W-MAIN_ICON_DISX*2-MAIN_ICON_W*3)/2	// 图标X轴起点
 
@@ -985,14 +960,6 @@ static void OnPaint(HWND hDlg)
 	draw_bk(hdc);
 	draw_icon(hdc);
 	draw_top(hdc);
-	#else
-	// 4.3寸关屏时要刷黑屏,否则会隐约看到主界面的图标
-	draw_bk(hdc);
-	if (SYS_LCD_OPEN == sys_get_lcd_state())
-	{
-		draw_icon(hdc);
-		draw_top(hdc);
-	}
 	#endif
 	EndPaint(hDlg, hdc);
 }

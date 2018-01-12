@@ -34,11 +34,6 @@
 #define FORM_HIT_H				100
 #define FORM_HIT_X				(SCREEN_WIDTH - FORM_HIT_W)/2
 #define FORM_HIT_Y				(SCREEN_HEIGHT - FORM_HIT_H)/2
-#else
-#define FORM_MSG_W				214					// ¥∞ÃÂ¥Û–°
-#define FORM_MSG_H				114
-#define FORM_MSG_X				83
-#define FORM_MSG_Y				79
 #endif
 
 #define MAX_PASSWORD_LEN 6

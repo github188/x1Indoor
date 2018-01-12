@@ -63,7 +63,6 @@
 // ====UI样式定义================================================
 #define _V6_UI_STYLE_			1
 #define _E81S_UI_STYLE_			2
-#define _A1_UI_STYLE_			3
 
 #if (SYS_TYPE == E81S_JHB_VER)
 #define _UI_STYLE_				_E81S_UI_STYLE_
