@@ -14,7 +14,7 @@
 #include "gui_include.h"
 
 /************************常量定义************************/
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define	ITEM_LEN				50
 #define LIST_ITEM_DISX			40
 #define LIST_TOP_H				52
@@ -24,7 +24,7 @@
 #define INPUT_CTRL_YPOS			(LIST_TOP_H + 30)
 #define INPUT_CTRL_WPOS			DEV_ICON_W
 #define INPUT_CTRL_HPOS			DEV_ICON_H
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define	ITEM_LEN				50
 #define LIST_ITEM_DISX			10
 #define LIST_TOP_H				45

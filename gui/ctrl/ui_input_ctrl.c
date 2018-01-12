@@ -15,7 +15,7 @@
 #include "gui_include.h"
 
 /************************常量定义************************/
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define NUM_ICON_XPOS			173    				// 输入框中显示数字时x坐标
 #define NUM_ICON_YPOS			12      			// 输入框中显示数字时y坐标
 #define NUM_ICON_DISX			29    				// 输入框中显示数字的距离
@@ -29,7 +29,7 @@
 #define INPUT_TEXT1_Y           5      
 #define INPUT_TEXT1_W           61   
 #define INPUT_TEXT1_H           30  				// 输入框中提示字位置坐标
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define NUM_ICON_XPOS			173    				// 输入框中显示数字时x坐标
 #define NUM_ICON_YPOS			9      				// 输入框中显示数字时y坐标
 #define NUM_ICON_DISX			17    				// 输入框中显示数字的距离
@@ -173,9 +173,9 @@ static uint32 draw_inputctrl_num(HWND hDlg,HDC hdc, WPARAM wParam, LPARAM lParam
 		if (0 == pData->hit)
 		{
 		    SetTextColor(hdc, COLOR_COMMON_TEXT);
-			#ifdef _TFT_7_
+			#if (_LCD_DPI_ == _LCD_800480_)
 			SelectFont(hdc, GetFont(FONT_20));
-			#else
+			#elif (_LCD_DPI_ == _LCD_1024600_)
 			SelectFont(hdc, GetFont(FONT_16));
 			#endif
 			TextRc.left = INPUT_TEXT_X;

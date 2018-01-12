@@ -17,10 +17,10 @@
 #include "storage_include.h"
 #include "logic_include.h"
 
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define EIGHTAREA_CTRL_W		640
 #define EIGHTAREA_CTRL_H		480
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define EIGHTAREA_CTRL_W		380
 #define EIGHTAREA_CTRL_H		272
 #endif

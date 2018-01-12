@@ -19,8 +19,7 @@ extern "C" {
 #endif
 #include "gui_include.h"
 
-
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define SIDEBAR_W				80
 #define SIDEBAR_H				428
 #define SIDEBAR_DOWN_ICON_Y		389
@@ -28,7 +27,7 @@ extern "C" {
 #define SIDEBAR_ICON_H			70
 #define SIDEBAR_YDIS			21
 #define SIDEBAR_SCRLEN			384
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define SIDEBAR_W				45
 #define SIDEBAR_H				225
 #define SIDEBAR_DOWN_ICON_Y		219

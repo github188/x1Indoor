@@ -22,7 +22,7 @@
 #define OPER_DELAY_TIME			2
 #define GUI_TIMER_ID			1
 
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define LYLY_TEXT_LEFT_1		280	
 #define LYLY_TEXT_TOP_1			400	
 #define LYLY_TEXT_LEFT_2		254		
@@ -32,7 +32,7 @@
 #define LYLY_PIC_TOP			0
 #define LYLY_PIC_RIGHT			640
 #define LYLY_PIC_BOTTOM	    	480
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define LYLY_TEXT_LEFT_1		162	
 #define LYLY_TEXT_TOP_1			220	
 #define LYLY_TEXT_LEFT_2		124		

@@ -319,11 +319,11 @@ static void CreateListCtrl(HWND hDlg)
 	g_ListCtrl.ImageBk = BID_ListCtrl_BK5_0;
 	g_ListCtrl.HeadInfo.Image = BID_ListCtrl_Title;
 	g_ListCtrl.HeadInfo.TextID = SID_Media_Snap;
-	#ifdef _TFT_7_
+	#if (_LCD_DPI_ == _LCD_800480_)
 	g_ListCtrl.Width[0] = 40;
 	g_ListCtrl.Width[1] = 200;
 	g_ListCtrl.Width[2] = 200;
-	#else
+	#elif (_LCD_DPI_ == _LCD_1024600_)
 	g_ListCtrl.Width[0] = 40;
 	g_ListCtrl.Width[1] = 100;
 	g_ListCtrl.Width[2] = 140;

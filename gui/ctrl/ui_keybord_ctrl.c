@@ -15,7 +15,7 @@
 #include "gui_include.h"
 
 /************************常量定义************************/
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define KEYBOARD_BK_X			0
 #define KEYBOARD_BK_Y      	    0
 #define KEYBOARD_BK_W       	640
@@ -23,7 +23,7 @@
 #define KEYBOARD_NUM_DISX       52             		// 选择键跳跃间距
 #define KEYBOARD_SELECT_XPOS    1              		
 #define KEYBOARD_SELECT_YPOS    8 
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define KEYBOARD_BK_X			0
 #define KEYBOARD_BK_Y      	    0
 #define KEYBOARD_BK_W       	380

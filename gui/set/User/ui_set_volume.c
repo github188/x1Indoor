@@ -15,7 +15,7 @@
 #include "gui_include.h"
 #include "storage_include.h"
 
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define TOP_TEXT_H				52	
 #define TOP_TEXT_XPOS			40	
 #define TOP_TEXT_YPOS			((TOP_TEXT_H-Font16X16)/2)	
@@ -34,7 +34,7 @@
 #define SEL_XPOS				480
 #define SEL_YPOS				TOP_TEXT_H+(TOPBK5_H-SEL_BMP_H)/2
 #define CHAR_LEN				110
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define TOP_TEXT_H				45	
 #define TOP_TEXT_XPOS			10	
 #define TOP_TEXT_YPOS			((TOP_TEXT_H-Font16X16)/2)	

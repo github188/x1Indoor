@@ -14,12 +14,12 @@
 #include "gui_include.h"
 
 /************************常量定义************************/
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define TOP_TEXT_H				52	
 #define TOP_TEXT_XPOS			40	
 #define INPUT_ICON_W			102
 #define INPUT_ICON_H			42
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define TOP_TEXT_H				45	
 #define TOP_TEXT_XPOS			10	
 #define INPUT_ICON_W			61

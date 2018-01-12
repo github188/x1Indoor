@@ -36,7 +36,7 @@ extern "C" {
 #define SKIN_3				3						// 皮肤方案3
 #define SKIN_4				4						// 皮肤方案4    
 
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define SCREEN_WIDTH	  		1024				// 窗体的宽度
 #define SCREEN_HEIGHT     		600					// 窗体的高度
 #define LCD_W					SCREEN_WIDTH
@@ -108,7 +108,7 @@ extern "C" {
 #define VOLUME_TOTAL_H			48					// 音量图标总高度
 #define VOLUME_TOTAL_W			(210+48+20)
 #define VOLUME_ALL_ICON_Y		((VIDEO_WIN_H-VOLUME_TOTAL_H)/2+150)
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define SCREEN_WIDTH	  		480						// 窗体的宽度
 #define SCREEN_HEIGHT     		272						// 窗体的高度
 #define DW_STYLE				(WS_VISIBLE | WS_NONE)	// 窗体的风格

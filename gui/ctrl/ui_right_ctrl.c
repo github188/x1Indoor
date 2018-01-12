@@ -13,7 +13,7 @@
 *************************************************/
 #include "gui_include.h"
 
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define ICON_TOPDISY			18
 #define ICON_DISY				28
 #define ICONBK_W				160
@@ -23,7 +23,7 @@
 
 #define BK_BMP_W				160
 #define BK_BMP_H				480
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define ICON_TOPDISY			6
 #define ICON_DISY				6
 #define ICONBK_W				100

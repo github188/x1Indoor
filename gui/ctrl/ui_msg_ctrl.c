@@ -13,7 +13,7 @@
 #define GUI_TIMER_ID			1					// ¶¨Ê±Æ÷ID
 #define TIMEOUT					2
 
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define MSG_ICON_W				40
 #define MSG_ICON_H				40
 #define MSG_ICON_XPOS			(FORM_MSG_W-MSG_ICON_W)/2
@@ -52,7 +52,7 @@
 #define HIT_TEXT_TOP			132+(68-16)/2
 #define HIT_TEXT_RIGHT			FORM_MSG_W
 #define HIT_TEXT_BOTTOM			FORM_MSG_H
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define MSG_ICON_XPOS			93
 #define MSG_ICON_YPOS			63
 #define MSG_TEXT_LEFT			0
@@ -356,7 +356,7 @@ static void draw_msg(HDC hdc)
 		}
 		else
 		{
-			#ifndef _TFT_7_
+			#if (_LCD_DPI_ == _LCD_800480_)
 			if (strlen(get_str(g_pData.TextID)) > 28)
 			{
 				Textrc.left = MSG_TEXT_LEFT;

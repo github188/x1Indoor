@@ -14,7 +14,7 @@
 #include "gui_include.h"
 
 /************************常量定义************************/
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define LIST_ITEM_DISX			40
 #define LIST_TOP_H				52
 #define INPUT_ICON_W			102
@@ -35,7 +35,7 @@
 #define	PW_TEXT_LEFT2			(INPUT_CTRL_X_1 - 50)
 #define PW_TEXT_TOP2			PW_TEXT_TOP1
 #define PW_TEXT					50
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define INPUT_ICON_W			61
 #define INPUT_ICON_H			30
 #define INPUT_CTRL_X_1	 		190

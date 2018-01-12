@@ -19,14 +19,14 @@
 #define GUI_TIMER_ID			1
 #define TIMEOUT					5
 
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define DT_TEXT_LEFT			190
 #define DT_TEXT_TOP1			400
 #define DT_TEXT_TOP2			428
 #define DT_TEXT_TOP3			398
 #define DT_TEXT_TOP4			431
 #define DT_TEXT_DISX			150
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define DT_TEXT_LEFT			75
 #define DT_TEXT_TOP1			220
 #define DT_TEXT_TOP2			238

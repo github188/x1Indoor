@@ -16,7 +16,7 @@
 #include "gui_include.h"
 
 /************************常量定义************************/
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define TEXT_LEFT1			280				
 #define TEXT_TOP1			400
 #define TEXT_LEFT2			242				
@@ -26,7 +26,7 @@
 #define PHOTO_PIC_TOP		0
 #define PHOTO_PIC_RIGHT		640
 #define PHOTO_PIC_BOTTOM	480
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define TEXT_LEFT1			162				
 #define TEXT_TOP1			220
 #define TEXT_LEFT2			124				

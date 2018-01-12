@@ -19,9 +19,9 @@
 
 /************************常量定义************************/
 #define NET_XPOS				10
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define NET_YPOS				5
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define NET_YPOS				2
 #endif
 #define NET_W					28

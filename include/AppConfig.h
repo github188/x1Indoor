@@ -128,10 +128,7 @@
 
 #define HARD_VER_COMM		    "SNV641-100201"
 #define JIEGOU_TYPE				ML8_V6S
-#define _TFT_7_											// 7寸屏
 #define _ALARM_IO_										// 报警直接用IO口
-
-
 
 #elif (SYS_TYPE == V7S_JHB_VER)
 #define _HW_ENCRYPT_			_ML_HWENCRYPT_			// 该版本使用的硬件加密码
@@ -140,7 +137,6 @@
 
 #define HARD_VER_COMM		    "SNV741-100201"
 #define JIEGOU_TYPE				ML8_V7S
-#define _TFT_7_											// 7寸屏
 #define _ALARM_IO_										// 报警直接用IO口
 #define _CP2526_TOUCH_KEY_								// 启用感应按键背光灯
 
@@ -148,7 +144,6 @@
 #define _AU_PROTOCOL_									// 使用冠林协议
 #define _UPLOAD_PHOTO_									
 #define JIEGOU_TYPE				AH8_E81S
-#define _TFT_7_											// 7寸屏
 #define _ALARM_IO_										// 报警直接用IO口	
 #define _USE_TIME_SET_									// 是否启用时间设置
 

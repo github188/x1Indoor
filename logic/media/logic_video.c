@@ -35,7 +35,7 @@
 
 #define _SNAP_WAIT_TIME_		1000
 
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define _JPEG_ENC_WIDTH_		640
 #define _JPEG_ENC_HEIGHT_		480
 
@@ -46,7 +46,7 @@
 #define _H264_DEC_FULL_HEIGHT_	600
 #define _H264_DEC_WIDTH_		820
 #define _H264_DEC_HEIGHT_		600
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define _JPEG_ENC_WIDTH_		380
 #define _JPEG_ENC_HEIGHT_		272
 

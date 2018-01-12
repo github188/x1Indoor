@@ -13,14 +13,14 @@
 *************************************************/
 #include "gui_include.h"
 
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define LIST_ITEM_DISX			40
 #define LIST_TOP_H				52
 #define SPIN_CTRL_W				320
 #define SPIN_CTRL_H				40
 #define SPIN_CTRL_X				(FORM_W - RIGHT_CTRL_W - SPIN_CTRL_W)/2
 #define SPIN_CTRL_Y				(LIST_TOP_H + 30)
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define SPIN_CTRL_X				75
 #define SPIN_CTRL_Y				70
 #define SPIN_CTRL_W				230

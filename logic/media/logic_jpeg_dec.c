@@ -132,12 +132,12 @@ static int ms_jpeg_dec_init(struct _MSMediaDesc * f)
 
 
 		memset(data->mName, 0XFF, sizeof(data->mName));
-		#ifdef _TFT_7_
+		#if (_LCD_DPI_ == _LCD_800480_)
 		data->vorect.x = 0;
 		data->vorect.y = 0;
 		data->vorect.width = 640;
 		data->vorect.height = 480;
-		#else
+		#elif (_LCD_DPI_ == _LCD_1024600_)
 		data->vorect.x = 0;
 		data->vorect.y = 0;
 		data->vorect.width = 380;

@@ -27,10 +27,10 @@
 #define CALL_RTP_AUDIO_PT		8					// RTP音频类型
 #define CALL_RTP_VIDEO_PT		98					// RTP视频类型
 
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define SNAP_PIC_WIDTH			640
 #define SNAP_PIC_HEIGHT			480
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define SNAP_PIC_WIDTH			380
 #define SNAP_PIC_HEIGHT			272
 #endif

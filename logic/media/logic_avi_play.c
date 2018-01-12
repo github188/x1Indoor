@@ -29,12 +29,12 @@
 #include "logic_include.h"
 #include "logic_avi_play.h"
 
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define AVI_DISPLAY_X 			0
 #define AVI_DISPLAY_Y 			0
 #define AVI_DISPLAY_W 			640
 #define AVI_DISPLAY_H 			480
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define AVI_DISPLAY_X 			0
 #define AVI_DISPLAY_Y 			0
 #define AVI_DISPLAY_W 			380

@@ -14,13 +14,13 @@
 *********************************************************/
 #include "gui_include.h"
 
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define SPIN_ICON_W				50
 #define SPIN_ICON_DISX			16
 #define SPIN_ICON_XPOS			36 					// 窗口起始坐标到第一个输入框的距离 
 #define	SP_TEXT_XPOS			47
 #define SP_TEXT_YPOS			5
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define SPIN_ICON_W				36
 #define SPIN_ICON_DISX			10
 #define SPIN_ICON_XPOS			25 					// 窗口起始坐标到第一个输入框的距离 
@@ -97,9 +97,9 @@ static uint32 draw_mode_ip (HWND hDlg, HDC hdc)
 			xpos =  SPIN_ICON_XPOS +(i*(SPIN_ICON_W + SPIN_ICON_DISX));
 			if (pData->Value == 3)
 			{
-				#ifdef _TFT_7_
+				#if (_LCD_DPI_ == _LCD_800480_)
 				DrawBmpID(hdc, xpos - 1, 0, 0, 0, pData->ImageIpSel);
-				#else
+				#elif (_LCD_DPI_ == _LCD_1024600_)
 				DrawBmpID(hdc, xpos + 1, 0, 0, 0, pData->ImageIpSel);
 				#endif
 			}

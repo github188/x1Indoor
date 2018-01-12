@@ -14,7 +14,7 @@
 #ifndef __UILISTCTRL_H__
 #define __UILISTCTRL_H__
 
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 //#define LIST_ITEM_H				84					// 列表项高
 //#define LIST_ITEM_W				640
 
@@ -28,7 +28,7 @@
 //#define RIGHT_ICON_H			16					// 列表框里右边小图标高
 //#define RIGHT_ICON_W			16
 #define RIGHT_ICON_DIS_X		15
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 //#define LIST_ITEM_H				45					// 列表项高
 //#define LIST_ITEM_W				380
 

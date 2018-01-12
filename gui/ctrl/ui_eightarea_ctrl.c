@@ -14,14 +14,14 @@
 *********************************************************/
 #include "gui_include.h"
 
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define ICON_BIG				88
 #define ICON_SMALL				45
 #define ICON_DIS_X				120
 #define ICON_DIS_Y				80
 #define ICON_TOLETT_DIS_X		90
 #define TXT_TO_TOPAREA			15
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define ICON_BIG				60
 #define ICON_SMALL				35
 #define ICON_DIS_X				88

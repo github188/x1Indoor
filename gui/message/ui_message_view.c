@@ -16,7 +16,7 @@
 #include "gui_include.h"
 
 /************************常量定义************************/
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define CPATION_ITEM_H				52
 #if 0
 #define MESSAGE_PIC_LEFT			104
@@ -24,7 +24,7 @@
 #define MESSAGE_PIC_RIGHT			432
 #define MESSAGE_PIC_BOTTOM			324
 #endif
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define CPATION_ITEM_H				45
 #if 0
 #define MESSAGE_PIC_LEFT			62

@@ -427,11 +427,11 @@ static void CreateListCtrl(HWND hDlg)
 	g_listCtrl.Drawcallback = (SidebarCallBack)draw_Sidebar; // 侧边栏
 	g_listCtrl.fonttype = Font16X16;				// 文字显示大小
 	g_listCtrl.Sidebar = 1;							// 不显示侧边栏
-	#ifdef _TFT_7_
+	#if (_LCD_DPI_ == _LCD_800480_)
 	g_listCtrl.PageCount = 8;						// 显示个数
 	g_listCtrl.ImageTopBk = BID_ListCtrl_TopBK8_0;
 	g_listCtrl.ImageBk = BID_ListCtrl_BK8_0;
-	#else
+	#elif (_LCD_DPI_ == _LCD_1024600_)
 	g_listCtrl.PageCount = 5;						// 显示个数
 	g_listCtrl.ImageTopBk = BID_ListCtrl_TopBK5_0;
 	g_listCtrl.ImageBk = BID_ListCtrl_BK5_0;
@@ -439,9 +439,9 @@ static void CreateListCtrl(HWND hDlg)
 	g_listCtrl.HeadInfo.Image = BID_ListCtrl_Title;
 	g_listCtrl.HeadInfo.TextID = SID_Set_Prj_Set_IPModule;
 	g_listCtrl.Width[0] = 110;
-	#ifdef _TFT_7_
+	#if (_LCD_DPI_ == _LCD_800480_)
 	g_listCtrl.Width[1] = 450;
-	#else
+	#elif (_LCD_DPI_ == _LCD_1024600_)
 	g_listCtrl.Width[1] = 200;
 	#endif
 	

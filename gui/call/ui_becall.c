@@ -21,10 +21,10 @@
 /************************常量定义************************/
 #define GUI_TIMER_ID			101
 
-#ifdef _TFT_7_
+#if (_LCD_DPI_ == _LCD_800480_)
 #define VIDEO_WIN_W				640
 #define VIDEO_WIN_H				480
-#else
+#elif (_LCD_DPI_ == _LCD_1024600_)
 #define VIDEO_WIN_W				380
 #define VIDEO_WIN_H				272
 #endif
