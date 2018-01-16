@@ -27,15 +27,15 @@
 #define PHOTO_PIC_RIGHT		640
 #define PHOTO_PIC_BOTTOM	480
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define TEXT_LEFT1			162				
-#define TEXT_TOP1			220
-#define TEXT_LEFT2			124				
-#define TEXT_TOP2			240
+#define TEXT_LEFT1			280				
+#define TEXT_TOP1			400
+#define TEXT_LEFT2			242				
+#define TEXT_TOP2			420
 #define TEXT_LEN			150
 #define PHOTO_PIC_LEFT		0
 #define PHOTO_PIC_TOP		0
-#define PHOTO_PIC_RIGHT		380
-#define PHOTO_PIC_BOTTOM	272
+#define PHOTO_PIC_RIGHT		640
+#define PHOTO_PIC_BOTTOM	480
 #endif
 
 /************************变量定义************************/

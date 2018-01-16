@@ -33,15 +33,15 @@
 #define LYLY_PIC_RIGHT			640
 #define LYLY_PIC_BOTTOM	    	480
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define LYLY_TEXT_LEFT_1		162	
-#define LYLY_TEXT_TOP_1			220	
-#define LYLY_TEXT_LEFT_2		124		
-#define LYLY_TEXT_TOP_2			240	
+#define LYLY_TEXT_LEFT_1		280	
+#define LYLY_TEXT_TOP_1			400	
+#define LYLY_TEXT_LEFT_2		254		
+#define LYLY_TEXT_TOP_2			420	
 #define LYLY_TEXT_LEN			150
 #define LYLY_PIC_LEFT			0
 #define LYLY_PIC_TOP			0
-#define LYLY_PIC_RIGHT			380
-#define LYLY_PIC_BOTTOM	    	272
+#define LYLY_PIC_RIGHT			640
+#define LYLY_PIC_BOTTOM	    	480
 #endif
 
 /************************变量定义************************/

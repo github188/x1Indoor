@@ -325,8 +325,8 @@ static void CreateListCtrl(HWND hDlg)
 	g_ListCtrl.Width[2] = 200;
 	#elif (_LCD_DPI_ == _LCD_1024600_)
 	g_ListCtrl.Width[0] = 40;
-	g_ListCtrl.Width[1] = 100;
-	g_ListCtrl.Width[2] = 140;
+	g_ListCtrl.Width[1] = 200;
+	g_ListCtrl.Width[2] = 200;
 	#endif
 	g_ListhDlg = CreateWindow(AU_LIST_CTRL, "", 
 				WS_VISIBLE | BS_NOTIFY | BS_DEFPUSHBUTTON, 

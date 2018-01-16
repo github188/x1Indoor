@@ -26,11 +26,12 @@
 #endif
 #elif (_LCD_DPI_ == _LCD_1024600_)
 #define CPATION_ITEM_H				45
+#define CPATION_ITEM_H				52
 #if 0
-#define MESSAGE_PIC_LEFT			62
-#define MESSAGE_PIC_TOP				62
-#define MESSAGE_PIC_RIGHT			256
-#define MESSAGE_PIC_BOTTOM			192
+#define MESSAGE_PIC_LEFT			104
+#define MESSAGE_PIC_TOP				103
+#define MESSAGE_PIC_RIGHT			432
+#define MESSAGE_PIC_BOTTOM			324
 #endif
 #endif
 #define MESSAGE_PIC_LEFT			0

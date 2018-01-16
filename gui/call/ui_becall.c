@@ -25,8 +25,8 @@
 #define VIDEO_WIN_W				640
 #define VIDEO_WIN_H				480
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define VIDEO_WIN_W				380
-#define VIDEO_WIN_H				272
+#define VIDEO_WIN_W				640
+#define VIDEO_WIN_H				480
 #endif
 #define VIDEO_WIN_X				0	
 #define VIDEO_WIN_Y				0

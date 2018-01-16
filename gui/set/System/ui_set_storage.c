@@ -22,11 +22,11 @@
 #define TEXT1_XPOS_DIS			520
 #define TEXT_BK_YPOS			32
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define TOP_TEXT_XPOS			10	
-#define TEXT_BK_H				45
+#define TOP_TEXT_XPOS			40	
+#define TEXT_BK_H				52
 #define CHAR_LEN 				100
-#define TEXT1_XPOS_DIS			260
-#define TEXT_BK_YPOS			0
+#define TEXT1_XPOS_DIS			520
+#define TEXT_BK_YPOS			32
 #endif
 
 #if (_UI_STYLE_ == _E81S_UI_STYLE_)

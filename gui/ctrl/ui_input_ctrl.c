@@ -31,13 +31,13 @@
 #define INPUT_TEXT1_H           30  				// 输入框中提示字位置坐标
 #elif (_LCD_DPI_ == _LCD_1024600_)
 #define NUM_ICON_XPOS			173    				// 输入框中显示数字时x坐标
-#define NUM_ICON_YPOS			9      				// 输入框中显示数字时y坐标
-#define NUM_ICON_DISX			17    				// 输入框中显示数字的距离
+#define NUM_ICON_YPOS			12      			// 输入框中显示数字时y坐标
+#define NUM_ICON_DISX			29    				// 输入框中显示数字的距离
 
 #define INPUT_TEXT_X            0      
-#define INPUT_TEXT_Y            0      
-#define INPUT_TEXT_W            215    
-#define INPUT_TEXT_H            50     				// 输入框中提示字位置坐标
+#define INPUT_TEXT_Y            0
+#define INPUT_TEXT_W            INPUT_CTRL_W    
+#define INPUT_TEXT_H            INPUT_CTRL_H     	// 输入框中提示字位置坐标
 
 #define INPUT_TEXT1_X           10      
 #define INPUT_TEXT1_Y           5      
@@ -176,7 +176,7 @@ static uint32 draw_inputctrl_num(HWND hDlg,HDC hdc, WPARAM wParam, LPARAM lParam
 			#if (_LCD_DPI_ == _LCD_800480_)
 			SelectFont(hdc, GetFont(FONT_20));
 			#elif (_LCD_DPI_ == _LCD_1024600_)
-			SelectFont(hdc, GetFont(FONT_16));
+			SelectFont(hdc, GetFont(FONT_20));
 			#endif
 			TextRc.left = INPUT_TEXT_X;
 			TextRc.top = INPUT_TEXT_Y;

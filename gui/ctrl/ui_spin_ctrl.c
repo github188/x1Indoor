@@ -21,11 +21,11 @@
 #define	SP_TEXT_XPOS			47
 #define SP_TEXT_YPOS			5
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define SPIN_ICON_W				36
-#define SPIN_ICON_DISX			10
-#define SPIN_ICON_XPOS			25 					// 窗口起始坐标到第一个输入框的距离 
-#define	SP_TEXT_XPOS			33
-#define SP_TEXT_YPOS			2
+#define SPIN_ICON_W				50
+#define SPIN_ICON_DISX			16
+#define SPIN_ICON_XPOS			36 					// 窗口起始坐标到第一个输入框的距离 
+#define	SP_TEXT_XPOS			47
+#define SP_TEXT_YPOS			5
 #endif
 
 /*************************************************
@@ -100,7 +100,7 @@ static uint32 draw_mode_ip (HWND hDlg, HDC hdc)
 				#if (_LCD_DPI_ == _LCD_800480_)
 				DrawBmpID(hdc, xpos - 1, 0, 0, 0, pData->ImageIpSel);
 				#elif (_LCD_DPI_ == _LCD_1024600_)
-				DrawBmpID(hdc, xpos + 1, 0, 0, 0, pData->ImageIpSel);
+				DrawBmpID(hdc, xpos - 1, 0, 0, 0, pData->ImageIpSel);
 				#endif
 			}
 			else

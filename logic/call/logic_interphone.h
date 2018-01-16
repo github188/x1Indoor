@@ -31,8 +31,8 @@
 #define SNAP_PIC_WIDTH			640
 #define SNAP_PIC_HEIGHT			480
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define SNAP_PIC_WIDTH			380
-#define SNAP_PIC_HEIGHT			272
+#define SNAP_PIC_WIDTH			640
+#define SNAP_PIC_HEIGHT			480
 #endif
 
 #if 0

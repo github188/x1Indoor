@@ -24,15 +24,15 @@
 #define BK_BMP_W				160
 #define BK_BMP_H				480
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define ICON_TOPDISY			6
-#define ICON_DISY				6
-#define ICONBK_W				100
-#define ICONBK_H				48
-#define ICON_W					28
-#define ICON_H					28
+#define ICON_TOPDISY			18
+#define ICON_DISY				28
+#define ICONBK_W				160
+#define ICONBK_H				66
+#define ICON_W					40
+#define ICON_H					40
 
-#define BK_BMP_W				100
-#define BK_BMP_H				272
+#define BK_BMP_W				160
+#define BK_BMP_H				480
 #endif
 
 //static PGUI_FORM frm = NULL;

@@ -35,22 +35,22 @@
 #define SEL_YPOS				TOP_TEXT_H+(TOPBK5_H-SEL_BMP_H)/2
 #define CHAR_LEN				110
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define TOP_TEXT_H				45	
-#define TOP_TEXT_XPOS			10	
+#define TOP_TEXT_H				52	
+#define TOP_TEXT_XPOS			40	
 #define TOP_TEXT_YPOS			((TOP_TEXT_H-Font16X16)/2)	
-#define DIS_BMP					8
-#define CENTER_W				128
-#define CENTER_H				29
-#define TOPBK5_H				60
-#define LEFT_BMP_W				17
-#define LEFT_BMP_H				17
-#define RIGHT_BMP_W				30
-#define RIGHT_BMP_H				30
-#define BMP_X					130
+#define DIS_BMP					16
+#define CENTER_W				210
+#define CENTER_H				48
+#define TOPBK5_H				84
+#define LEFT_BMP_W				30
+#define LEFT_BMP_H				30
+#define RIGHT_BMP_W				50
+#define RIGHT_BMP_H				50
+#define BMP_X					150
 #define CHOSE_H					32
-#define CHOSE_XPOS				30
+#define CHOSE_XPOS				40
 #define SEL_BMP_H				40
-#define SEL_XPOS				340
+#define SEL_XPOS				480
 #define SEL_YPOS				TOP_TEXT_H+(TOPBK5_H-SEL_BMP_H)/2
 #define CHAR_LEN				110
 #endif

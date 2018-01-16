@@ -29,19 +29,19 @@
 //#define RIGHT_ICON_W			16
 #define RIGHT_ICON_DIS_X		15
 #elif (_LCD_DPI_ == _LCD_1024600_)
-//#define LIST_ITEM_H				45					// 列表项高
-//#define LIST_ITEM_W				380
+//#define LIST_ITEM_H				84					// 列表项高
+//#define LIST_ITEM_W				640
 
 #define TOP_TEXT_SIZE			200
-//#define TOP_IMAMG_H				45
+//#define TOP_IMAMG_H				52
 
-//#define LEFT_ICON_H				30					// 列表框里左边小图标高
-//#define LEFT_ICON_W				30			
-#define LEFT_ICON_DIS_X			10					// 列表框里左边小图标起始间距		
+//#define LEFT_ICON_H				40					// 列表框里左边小图标高
+//#define LEFT_ICON_W				40			
+#define LEFT_ICON_DIS_X			40					// 列表框里左边小图标起始间距		
 
 //#define RIGHT_ICON_H			16					// 列表框里右边小图标高
 //#define RIGHT_ICON_W			16
-#define RIGHT_ICON_DIS_X		10
+#define RIGHT_ICON_DIS_X		15
 #endif
 
 #define KEYDOWN  				1

@@ -22,7 +22,7 @@
 #if (_LCD_DPI_ == _LCD_800480_)
 #define NET_YPOS				5
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define NET_YPOS				2
+#define NET_YPOS				5
 #endif
 #define NET_W					28
 #define NET_H					28

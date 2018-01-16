@@ -27,11 +27,11 @@
 #define DT_TEXT_TOP4			431
 #define DT_TEXT_DISX			150
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define DT_TEXT_LEFT			75
-#define DT_TEXT_TOP1			220
-#define DT_TEXT_TOP2			238
-#define DT_TEXT_TOP3			218
-#define DT_TEXT_TOP4			241
+#define DT_TEXT_LEFT			190
+#define DT_TEXT_TOP1			400
+#define DT_TEXT_TOP2			428
+#define DT_TEXT_TOP3			398
+#define DT_TEXT_TOP4			431
 #define DT_TEXT_DISX			150
 #endif
 

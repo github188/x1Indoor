@@ -197,9 +197,9 @@ static void CreateListCtrl(HWND hDlg)
 	g_listCtrl.ImageTopBk = BID_ListCtrl_TopBK8_0;
 	g_listCtrl.ImageBk = BID_ListCtrl_BK8_0;
 	#elif (_LCD_DPI_ == _LCD_1024600_)
-	g_listCtrl.PageCount = 5;						// 显示个数
-	g_listCtrl.ImageTopBk = BID_ListCtrl_TopBK5_0;
-	g_listCtrl.ImageBk = BID_ListCtrl_BK5_0;
+	g_listCtrl.PageCount = 8;						// 显示个数
+	g_listCtrl.ImageTopBk = BID_ListCtrl_TopBK8_0;
+	g_listCtrl.ImageBk = BID_ListCtrl_BK8_0;
 	#endif
 	g_listCtrl.HeadInfo.Image = BID_ListCtrl_Title;
 	g_listCtrl.HeadInfo.Image = BID_ListCtrl_Title;

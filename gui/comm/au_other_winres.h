@@ -104,8 +104,8 @@ extern "C" {
 #define VOLUME_TOTAL_W			(210+48+20)
 #define VOLUME_ALL_ICON_Y		((VIDEO_WIN_H-VOLUME_TOTAL_H)/2+150)
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define SCREEN_WIDTH	  		480						// 窗体的宽度
-#define SCREEN_HEIGHT     		272						// 窗体的高度
+#define SCREEN_WIDTH	  		800						// 窗体的宽度
+#define SCREEN_HEIGHT     		480						// 窗体的高度
 #define DW_STYLE				(WS_VISIBLE | WS_NONE)	// 窗体的风格
 //#define DW_STYLE_EX			WS_EX_NONE				// 窗体的扩展风格
 #define DW_STYLE_EX				WS_EX_AUTOSECONDARYDC	// 窗体的扩展风格
@@ -113,8 +113,8 @@ extern "C" {
 #define FORM_Y					0						// 起点坐标y 
 #define FORM_W					(SCREEN_WIDTH-FORM_X)	// 窗体的宽度
 #define FORM_H					(SCREEN_HEIGHT-FORM_Y)	// 窗体的高度
-#define FORM_RIGHT_W			100						// 右边窗体宽度
-#define FORM_RIGHT_H			272						// 右边窗体高度
+#define FORM_RIGHT_W			160						// 右边窗体宽度
+#define FORM_RIGHT_H			480						// 右边窗体高度
 
 //#define DEFAULT_STYLE	  		(WS_VISIBLE | WS_NONE)	// 默认窗体的风格
 //#define DEFAULT_STYLE_EX  	(WS_EX_NONE)			// 默认窗体的扩展风格
@@ -127,47 +127,49 @@ extern "C" {
 #define KEYUP  					0
 #define MAX_LEN					8     
 #define PASSWORD_LEN 			6
-#define INPUT_CTRL_X			100
-#define INPUT_CTRL_Y			41
-#define INPUT_CTRL_W			210
-#define INPUT_CTRL_H			44
+
+#define INPUT_CTRL_W			356
+#define INPUT_CTRL_H			74
+#define	INPUT_CTRL_X			((FORM_W-RIGHT_CTRL_W-INPUT_CTRL_W)/2)
+#define INPUT_CTRL_Y			90
 
 // 键盘控件宏定义
 #define KEYBORD_NUM_MAX         11
 #define KEYDOWN  			    1
 #define KEYUP  					0
+
+#define KEYBOARD_CTRL_W         640
+#define KEYBOARD_CTRL_H         90  
 #define KEYBOARD_CTRL_X         0
-#define KEYBOARD_CTRL_Y         219
-#define KEYBOARD_CTRL_W         380
-#define KEYBOARD_CTRL_H         53  
+#define KEYBOARD_CTRL_Y         (FORM_H-KEYBOARD_CTRL_H)
 
 // 右边控件宏定义
-#define RIGHT_CTRL_X			380
+#define RIGHT_CTRL_X			640
 #define RIGHT_CTRL_Y			0
-#define RIGHT_CTRL_W			100
-#define RIGHT_CTRL_H			272
+#define RIGHT_CTRL_W			160
+#define RIGHT_CTRL_H			480
 
 // 列表控件宏定义
 #define LIST_CTRL_X				0
 #define LIST_CTRL_Y				0
-#define LIST_CTRL_W				380
-#define LIST_CTRL_H				272
+#define LIST_CTRL_W				640
+#define LIST_CTRL_H				480
 
 // 主叫、被叫、监视提示字位置
-#define TEXT_XPOS           	12
-#define TEXT_YPOS          		5
+#define TEXT_XPOS           	40
+#define TEXT_YPOS          		20
 #define TEXT_DISX               12
-#define TEXT_DISY				21	
+#define TEXT_DISY				30	
 #define TEXT_LEN          		200
 
 // 音量设置
-#define MUTE_ICON_XPOS			103
-#define MUTE_ICON_YPOS			225
-#define VOLUME_ICON_XPOS    	141
-#define VOLUME_ICON_YPOS    	225
-#define VOLUME_TOTAL_H			29					// 音量图标总高度
-#define VOLUME_TOTAL_W			170
-#define VOLUME_ALL_ICON_Y		MUTE_ICON_YPOS
+#define MUTE_ICON_XPOS			181
+#define MUTE_ICON_YPOS			240
+#define VOLUME_ICON_XPOS    	249
+#define VOLUME_ICON_YPOS    	240
+#define VOLUME_TOTAL_H			48					// 音量图标总高度
+#define VOLUME_TOTAL_W			(210+48+20)
+#define VOLUME_ALL_ICON_Y		((VIDEO_WIN_H-VOLUME_TOTAL_H)/2+150)
 #endif
 
 // 网络门前机定时器时长

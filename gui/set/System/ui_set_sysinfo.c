@@ -26,12 +26,15 @@
 #define CHAR_LEN				200
 #define MAX_ITEM				SYS_INFO_MAX			
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define TOP_TEXT_H				45	
-#define TOP_TEXT_XPOS			10	
+#define TOP_TEXT_H				52	
+#define TOP_TEXT_XPOS			40	
 #define TOP_TEXT_YPOS			((TOP_TEXT_H-Font16X16)/2)	
-#define SYS_TEXT_XPOS			10	
-#define SYS_TEXT_YPOS			(TOP_TEXT_H+10)	
+#define SYS_TEXT_XPOS			50	
+#define SYS_TEXT_YPOS			(TOP_TEXT_H+20)	
 #define TEXT_YPOS_DIS			(10+Font16X16)
+#define TEXT_XPOS_DIS			200
+#define CHAR_LEN				200
+#define MAX_ITEM				SYS_INFO_MAX	
 #ifdef _USE_NEW_CENTER_
 #define TEXT_XPOS_DIS			145
 #else
@@ -107,7 +110,7 @@ static void change_rightkey(HWND hDlg)
 	#if (_LCD_DPI_ == _LCD_800480_)
 	uint32 ImageID[RIGHT_NUM_MAX] = {0, 0, 0, 0, BID_Right_Exit};
 	#elif (_LCD_DPI_ == _LCD_1024600_)
-	uint32 ImageID[RIGHT_NUM_MAX] = {0, 0, 0, BID_Right_Down, BID_Right_Exit};
+	uint32 ImageID[RIGHT_NUM_MAX] = {0, 0, 0, 0, BID_Right_Exit};
 	#endif
 	if (g_CurPage == 1)
 	{
@@ -452,7 +455,7 @@ static void CreateRightCtrl(HWND hDlg)
 	#if (_LCD_DPI_ == _LCD_800480_)
 	uint16 ImageID[RIGHT_NUM_MAX] = {0, 0, 0, 0, BID_Right_Exit};
 	#elif (_LCD_DPI_ == _LCD_1024600_)
-	uint16 ImageID[RIGHT_NUM_MAX] = {0, 0, 0, BID_Right_Down, BID_Right_Exit};
+	uint16 ImageID[RIGHT_NUM_MAX] = {0, 0, 0, 0, BID_Right_Exit};
 	#endif
 	uint16 TextID[RIGHT_NUM_MAX] = {0, 0, 0, 0, 0};
 	

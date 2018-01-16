@@ -22,12 +22,12 @@
 #define ICON_TOLETT_DIS_X		90
 #define TXT_TO_TOPAREA			15
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define ICON_BIG				60
-#define ICON_SMALL				35
-#define ICON_DIS_X				88
-#define ICON_DIS_Y				40
-#define ICON_TOLETT_DIS_X		28
-#define TXT_TO_TOPAREA			10
+#define ICON_BIG				88
+#define ICON_SMALL				45
+#define ICON_DIS_X				120
+#define ICON_DIS_Y				80
+#define ICON_TOLETT_DIS_X		90
+#define TXT_TO_TOPAREA			15
 #endif
 
 #define GUI_TIMER_ID  			2

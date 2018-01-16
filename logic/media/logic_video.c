@@ -47,16 +47,16 @@
 #define _H264_DEC_WIDTH_		820
 #define _H264_DEC_HEIGHT_		600
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define _JPEG_ENC_WIDTH_		380
-#define _JPEG_ENC_HEIGHT_		272
+#define _JPEG_ENC_WIDTH_		640
+#define _JPEG_ENC_HEIGHT_		480
 
-#define _JPEG_DEC_WIDTH_		380
-#define _JPEG_DEC_HEIGHT_		272
+#define _JPEG_DEC_WIDTH_		640
+#define _JPEG_DEC_HEIGHT_		480
 
-#define _H264_DEC_FULL_WIDTH_	640
-#define _H264_DEC_FULL_HEIGHT_	480
-#define _H264_DEC_WIDTH_		380
-#define _H264_DEC_HEIGHT_		272
+#define _H264_DEC_FULL_WIDTH_	1024
+#define _H264_DEC_FULL_HEIGHT_	600
+#define _H264_DEC_WIDTH_		820
+#define _H264_DEC_HEIGHT_		600
 #endif
 
 static JpegDecParam g_JpegDecParam;

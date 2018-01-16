@@ -44,8 +44,8 @@
 #elif (_LCD_DPI_ == _LCD_1024600_)
 #define RTSP_DISPLAY_X 			0
 #define RTSP_DISPLAY_Y 			0
-#define RTSP_DISPLAY_W 			380
-#define RTSP_DISPLAY_H 			272
+#define RTSP_DISPLAY_W 			640
+#define RTSP_DISPLAY_H 			480
 #endif
 
 #define RtspNotify(s, param1, param2)	if (s)\

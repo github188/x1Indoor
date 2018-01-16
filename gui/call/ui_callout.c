@@ -24,8 +24,10 @@
 #define	HOUSE_ICON_XPOS			(INPUT_CTRL_X-HOUSE_ICON_W-20)
 #define HOUSE_ICON_YPOS			(INPUT_CTRL_Y+(INPUT_CTRL_H-HOUSE_ICON_H)/2)
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define HOUSE_ICON_XPOS         70
-#define HOUSE_ICON_YPOS         50
+#define	HOUSE_ICON_W			40
+#define HOUSE_ICON_H			38
+#define	HOUSE_ICON_XPOS			(INPUT_CTRL_X-HOUSE_ICON_W-20)
+#define HOUSE_ICON_YPOS			(INPUT_CTRL_Y+(INPUT_CTRL_H-HOUSE_ICON_H)/2)
 #endif
 		
 /************************变量定义************************/

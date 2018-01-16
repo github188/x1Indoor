@@ -37,8 +37,8 @@
 #elif (_LCD_DPI_ == _LCD_1024600_)
 #define AVI_DISPLAY_X 			0
 #define AVI_DISPLAY_Y 			0
-#define AVI_DISPLAY_W 			380
-#define AVI_DISPLAY_H 			272
+#define AVI_DISPLAY_W 			640
+#define AVI_DISPLAY_H 			480
 #endif
 
 //static S_FB_PARAM g_AviPlay_FB;

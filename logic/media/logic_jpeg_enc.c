@@ -316,8 +316,8 @@ static int ms_jpeg_enc_init(struct _MSMediaDesc * f)
 		#elif (_LCD_DPI_ == _LCD_1024600_)
 		data->vorect.x = 0;
 		data->vorect.y = 0;
-		data->vorect.width = 380;
-		data->vorect.height = 272;
+		data->vorect.width = 640;
+		data->vorect.height = 480;
 		#endif
 		
 		f->private = data;

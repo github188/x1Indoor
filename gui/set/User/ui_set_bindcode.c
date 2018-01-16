@@ -20,10 +20,10 @@
 #define INPUT_ICON_W			102
 #define INPUT_ICON_H			42
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define TOP_TEXT_H				45	
-#define TOP_TEXT_XPOS			10	
-#define INPUT_ICON_W			61
-#define INPUT_ICON_H			30
+#define TOP_TEXT_H				52	
+#define TOP_TEXT_XPOS			40	
+#define INPUT_ICON_W			102
+#define INPUT_ICON_H			42
 #endif
 #define TOP_TEXT_YPOS			((TOP_TEXT_H-Font16X16)/2)	
 #define CHAR_LEN				200
