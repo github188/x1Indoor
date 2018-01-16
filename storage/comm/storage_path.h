@@ -21,12 +21,15 @@
 /**************************************************************************/
 #define SOFTWARE_VER_PATH		"/etc/firmVer"									// 软件版本路径
 #define HARDWARE_VER_PATH		"/etc/chipVer"									// 固件版本路径
-//#define CFG_PUBLIC_DRIVE		"/sdcard/user/nand-2"						// 存放记录 临时文件
-//#define CFG_PRIVATE_DRIVE		"/sdcard/user/nand-1"						// 系统配置 重要文件
-//#define CFG_RES_DRIVE			"/sdcard/user/res/"							// 资源文件 必须原本就存在的路径
+#if 0
+#define CFG_PUBLIC_DRIVE		"/sdcard/user/nand-2"						// 存放记录 临时文件
+#define CFG_PRIVATE_DRIVE		"/sdcard/user/nand-1"						// 系统配置 重要文件
+#define CFG_RES_DRIVE			"/sdcard/user/res/"							// 资源文件 必须原本就存在的路径
+#else
 #define CFG_PUBLIC_DRIVE		"/nand/user/nand-2"								// 存放记录 临时文件
 #define CFG_PRIVATE_DRIVE		"/nand/user/nand-1"								// 系统配置 重要文件
 #define CFG_RES_DRIVE			"/nand/user/res/"								// 资源文件 必须原本就存在的路径
+#endif
 
 
 

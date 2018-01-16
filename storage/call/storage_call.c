@@ -1319,6 +1319,94 @@ uint32 storage_set_devno(uint8 save, DEVICE_TYPE_E DeviceType, char* DevNo)
 }
 
 /*************************************************
+  Function:    		storage_save_setdevno
+  Description:		保存设备编号
+  Input: 
+  	1.save			是否保存
+  	2.rule			设备编号规则
+	3.devno			设备号字符串
+  Output:			无
+  Return:			无
+  Others:			无
+*************************************************/
+uint32 storage_save_setdevno(uint8 save, DEVICENO_RULE Rule, DEVICE_NO* DevNo)
+{
+	//合法判断
+	if (Rule.CellNoLen > 2)
+	{
+		return 1;
+	}
+	if (Rule.StairNoLen < Rule.CellNoLen || Rule.StairNoLen > 9)
+	{
+		return 2;
+	}
+	if (Rule.RoomNoLen < 3 || Rule.RoomNoLen > 9)
+	{
+		return 3;
+	}
+	if ((Rule.StairNoLen+Rule.RoomNoLen) > 17) 
+	{
+		return 4;
+	}
+	if (Rule.CellNoLen == 0)
+	{
+		Rule.UseCellNo = FALSE;
+	}
+
+	memcpy(&gpSysParam->Devparam.Rule, &Rule, sizeof(DEVICENO_RULE));	
+	gpSysParam->Devparam.DevNoLen = Rule.StairNoLen + Rule.RoomNoLen + 1;
+	gpSysParam->Devparam.IsRight = FALSE;	
+	gpSysParam->Devparam.DeviceType = DEVICE_TYPE_ROOM;
+
+	memset(&gpSysParam->Devparam.DeviceNo, 0, sizeof(DEVICE_NO));
+	memcpy(&gpSysParam->Devparam.DeviceNo, DevNo, sizeof(DEVICE_NO));
+
+	#ifndef _AU_PROTOCOL_
+	{
+		storage_set_areano(DevNo->AreaNo);
+	}
+	#endif
+
+	char str[20];
+	memset(str, 0, sizeof(str));
+	memset(gpSysParam->Devparam.DeviceNoStr, 0, sizeof(gpSysParam->Devparam.DeviceNoStr));	
+	if (gpSysParam->Devparam.DevNoLen > 9)
+	{
+		sprintf(str, "%d%09d", DevNo->DeviceNo1, DevNo->DeviceNo2);
+	}
+	else
+	{
+		sprintf(str, "%d", DevNo->DeviceNo2);
+	}
+
+	// 前面补0
+	uint8 i = 0;
+	int8 len = (gpSysParam->Devparam.DevNoLen-strlen(str));	
+	dprintf("len======: %d\n", len);
+	if(len < 0)
+	{
+		return 5;
+	}
+	else
+	{	
+		for (i=0; i < len; i++)
+		{
+			gpSysParam->Devparam.DeviceNoStr[i] = '0';
+		}		
+		strcpy(gpSysParam->Devparam.DeviceNoStr+len, str);
+	}
+	
+	dprintf("gpSysParam->Devparam.DeviceNoStr: %s\n", gpSysParam->Devparam.DeviceNoStr);
+	gpSysParam->Devparam.IsRight = TRUE;
+	if (save)
+	{
+		SaveRegInfo();
+	}
+
+	return 0;
+}
+
+/*************************************************
   Function:    		storage_save_devno
   Description:		保存设备编号
   Input: 
@@ -1697,345 +1785,8 @@ void storage_clear_monitorlist(DEVICE_TYPE_E Type)
 		default:
 			break;
 	}
-    
+
+	FSFlush(fPListFile);
 	fclose(fPListFile);
-	system("sync");
 }
-
-#if 0
-/************* 以下为视频参数设置部分 *****************/
-////////////////////////////////////////////////////////////
-
-/*************************************************
-  Function:			storage_get_video_param
-  Description:		从文件中获取视频参数
-  Input: 	
-  Output:			无
-  Return:			成功与否, TRUE/FALSE
-  Others:	
-*************************************************/
-static uint8 storage_set_video_param(void)
-{
-	FILE *fp;
-	fp = fopen(VIDEO_FILE_NAME,"w+");
-	if(fp == NULL)
-	{
-		return FALSE;
-	}
-	g_venc_parm.encMode = VIDEO_ENCMODE_H264;
-	g_venc_parm.frameRate = 15;
-	g_venc_parm.imgSize = VIDEO_SIZE_CIF; // 352*288
-	g_venc_parm.resver0 = 0;
-	g_venc_parm.bitRate = 512000;//128000;//512000;            // 512kbps
-	g_venc_parm.resver1 = 0;
-	g_venc_parm.resver2 = 0;
-	fwrite(&g_venc_parm, sizeof(VIDEO_SDP_PARAM), fp);
-	fclose(fp);
-	
-}
-
-/*************************************************
-  Function:			storage_get_video_param
-  Description:		从文件中获取视频参数
-  Input: 	
-  Output:			无
-  Return:			成功与否, TRUE/FALSE
-  Others:	
-*************************************************/
-static uint8 storage_set_audio_param(void)
-{
-	FILE *fp;
-	fp = fopen(AUDIO_FILE_NAME,"w+");
-	if(fp == NULL)
-	{
-		return FALSE;
-	}
-	g_audio_parm.encMode = AUDIO_ENCMODE_PCMA;
-	g_audio_parm.resver0 = 0;
-	g_audio_parm.resver1 = 0;
-	g_audio_parm.resver2 = 0;
-	fwrite(&g_audio_parm, sizeof(AUDIO_SDP_PARAM), fp);
-	fclose(fp);
-}
-
-/*************************************************
-  Function:			storage_get_video_param
-  Description:		从文件中获取视频参数
-  Input: 	
-  Output:			无
-  Return:			成功与否, TRUE/FALSE
-  Others:	
-*************************************************/
-void storage_get_video_param(void)
-{
-	FILE *fp;
-	uint8 filebuf[50];
-	fp = fopen(VIDEO_FILE_NAME, "r+");
-	if (fp != NULL)
-	{
-		fread(filebuf, sizeof(VIDEO_SDP_PARAM), fp);
-		memcpy(&g_venc_parm, (VIDEO_SDP_PARAM *)filebuf, sizeof(VIDEO_SDP_PARAM));
-		fclose(fp);
-		return;
-	}
-	else
-	{
-		storage_set_video_param();
-	}
-	return;
-	
-}
-
-/*************************************************
-  Function:			storage_get_audio_param
-  Description:		从文件中获取音频参数
-  Input: 	
-  Output:			无
-  Return:			成功与否, TRUE/FALSE
-  Others:	
-*************************************************/
-void storage_get_audio_param(void)
-{
-	FILE *fp;
-	uint8 filebuf[50];
-	fp = fopen(AUDIO_FILE_NAME, "r+");
-	if (fp != NULL)
-	{
-		fread(filebuf, sizeof(AUDIO_SDP_PARAM), fp);
-		memcpy(&g_audio_parm, (AUDIO_SDP_PARAM *)filebuf, sizeof(AUDIO_SDP_PARAM));
-		fclose(fp);
-		return;
-	}
-	else
-	{
-		storage_set_audio_param();
-	}
-	return;
-}
-
-/*************************************************
-  Function:			stroage_sdp_param
-  Description:		初始化视频编码参数
-  Input: 	
-  Output:			无
-  Return:			成功与否, TRUE/FALSE
-  Others:	
-*************************************************/
-void stroage_sdp_param_init(void)
-{
-	storage_get_video_param();
-	storage_get_audio_param();
-	return;
-}
-
-#else
-/*************************************************
-  Function:			storage_get_video_param
-  Description:		从文件中获取视频参数
-  Input: 	
-  Output:			无
-  Return:			成功与否, TRUE/FALSE
-  Others:	
-*************************************************/
-static uint8 storage_set_video_param(void)
-{
-#if 0
-	g_venc_parm.encMode = VIDEO_ENCMODE_H264;
-	g_venc_parm.frameRate = 30;
-	g_venc_parm.imgSize = VIDEO_SIZE_D1; 		
-	g_venc_parm.resver0 = 0;
-	g_venc_parm.bitRate = 512000;    
-	g_venc_parm.resver1 = 0;
-	g_venc_parm.resver2 = 0;
-#endif
-	memset(&g_venc_parm, 0, sizeof(VIDEO_SDP_PARAM));
-	return TRUE;
-}
-
-/*************************************************
-  Function:			storage_get_video_param
-  Description:		从文件中获取视频参数
-  Input: 	
-  Output:			无
-  Return:			成功与否, TRUE/FALSE
-  Others:	
-*************************************************/
-static uint8 storage_set_audio_param(void)
-{
-	g_audio_parm.encMode = AUDIO_ENCMODE_PCMA;
-	g_audio_parm.resver0 = 0;
-	g_audio_parm.resver1 = 0;
-	g_audio_parm.resver2 = 0;
-	return TRUE;
-}
-
-/*************************************************
-  Function:			stroage_sdp_param
-  Description:		初始化视频编码参数
-  Input: 	
-  Output:			无
-  Return:			成功与否, TRUE/FALSE
-  Others:	
-*************************************************/
-void storage_sdp_param_init(void)
-{
-	storage_set_video_param();
-	storage_set_audio_param();
-	return;
-}
-#endif
-
-#if 0
-PSYS_FLASH_DATA g_SysParam;
-
-/*************************************************
-  Function:    		set_default_deviceno
-  Description:		设置默认设备号
-  Input: 
-	1.devno			设备号参数
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-static void set_default_deviceno(PFULL_DEVICE_NO devno)
-{
-	devno->AreaNo = 1;
-	//规则
-	devno->Rule.StairNoLen = 4;
-	devno->Rule.RoomNoLen = 4;
-	devno->Rule.CellNoLen = 2;
-	devno->Rule.UseCellNo = 1;
-	devno->Rule.Subsection = 224;
-	devno->DeviceNo.DeviceNo1 = 0;
-	devno->DevNoLen = 9;
-	devno->IsRight = true;
-
-	devno->DeviceType = DEVICE_TYPE_ROOM;
-	devno->DeviceNo.DeviceNo2 = 10102070;
-	sprintf(devno->DeviceNoStr, "010102070");
-}
-
-/*************************************************
-  Function:    		set_default_netparam
-  Description:		设置默认网络参数 
-  Input: 
-	1.devno			设备号参数
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-static void set_default_netparam(PNET_PARAM NetParam)
-{	
-	#if 1
-	//NetParam->IP 			= 0XA6E1222;//  10.110.18.34 ;	
-	NetParam->IP 			= 0XA6E10CF;//DEFAULT_DEVICEIP;//0XA6E10B1  ;	
-	NetParam->SubNet 		= 0XFFFFFF00;//DEFAULT_SUBNET;
-	//NetParam->DefaultGateway = 0XA6E12FE;
-	NetParam->DefaultGateway = 0XA6E10FE;//DEFAULT_GATEWAY;0XA6E10FE
-//	NetParam->DNS1 			= DEFAULT_DNS1;
-//	NetParam->DNS2 			= DEFAULT_DNS2;
-	NetParam->CenterIP 		= DEFAULT_CENTERIP;
-	NetParam->ManagerIP 	= DEFAULT_MANAGERIP;		
-
-	NetParam->SipProxyServer = DEFAULT_SIPPROXYSERVER;
-	NetParam->AurineServer   = DEFAULT_AURINESERVER;
-	NetParam->StunServer     = DEFAULT_STUNSERVER;		
-	#else
-	NetParam->IP 			= DEFAULT_DEVICEIP;
-	NetParam->SubNet 		= DEFAULT_SUBNET;
-	NetParam->DefaultGateway = DEFAULT_GATEWAY;
-	NetParam->DNS1 			= DEFAULT_DNS1;
-	NetParam->DNS2 			= DEFAULT_DNS2;
-	NetParam->CenterIP 		= DEFAULT_CENTERIP;
-	NetParam->ManagerIP 	= DEFAULT_MANAGERIP;		
-
-	NetParam->SipProxyServer = DEFAULT_SIPPROXYSERVER;
-	NetParam->AurineServer   = DEFAULT_AURINESERVER;
-	NetParam->StunServer     = DEFAULT_STUNSERVER;	
-	#endif
-}
-
-/*************************************************
-  Function:    		UlongtoIP
-  Description:		将long型IP地址转化为IP地址字符串
-  Input:
-  	1.uIp			unsigned long型IP地址
-  Output:			
-  Return:			转化后的字符串指针
-  Others:			
-*************************************************/
-static char* UlongtoIP1(uint32 uIp)
-{
-	static char strIp[20];
-	char temp[20];
-	int32 i;
-	uint32 t;
-	memset(strIp, 0, 20);
-	for(i = 3; i >= 0; i--)
-	{
-		t = uIp >> (i * 8);
-		t = t & 0xFF;
-		sprintf(temp, "%d", (uint32)t);
-		strcat(strIp, temp);
-		if(i != 0)
-		{
-			strcat(strIp, ".");
-		}
-	}
-	return strIp;
-}
-
-/*************************************************
-Function:   	 	init_ipset
-Description: 		初始化nfsip
-Input:              无
-Output:				无
-Return:				成功－ture 失败－false
-Others:
-*************************************************/
-static uint32 init_ipset(void)
-{
-	char buf[255];	
-	PNET_PARAM NetParam = &gpSysParam->Netparam;
-
-	system("ifconfig eth0 down");
-	system("ifconfig eth0 hw ether 00:00:00:12:34:07");
-	
-	memset(buf,0,sizeof(buf));
-	sprintf(buf,"ifconfig %s %s ", "eth0", UlongtoIP1(NetParam->IP));
-	log_printf("1.init_ipset buf:%s\n", buf);
-	system(buf);
-	
-	memset(buf, 0, sizeof(buf));
-	sprintf(buf,"ifconfig %s netmask %s ","eth0", UlongtoIP1(NetParam->SubNet));	
-	log_printf("2.init_ipset buf:%s\n", buf);
-	system(buf);
-	
-	memset(buf, 0, sizeof(buf));
-	sprintf(buf, "route add default gw  %s ", UlongtoIP1(NetParam->DefaultGateway));	
-	log_printf("3.init_ipset buf:%s\n", buf);	
-	system(buf);
-
-	system("ifconfig eth0 up");
-}
-
-/*************************************************
-  Function:			storage_init_sysparam
-  Description:		初始化系统参数
-  Input: 	
-  Output:			无
-  Return:			成功与否, TRUE/FALSE
-  Others:	
-*************************************************/
-void storage_init_sysparam(void)
-{
-	// 测试用先直接用初始值 不存储 gpSysParam
-	g_SysParam = (SYS_FLASH_DATA *)malloc(sizeof(SYS_FLASH_DATA));
-	memset(g_SysParam, 0, sizeof(SYS_FLASH_DATA));
-	set_default_deviceno(&g_SysParam->Devparam);
-	set_default_netparam(&g_SysParam->Netparam);
-	gpSysParam = g_SysParam;
-	init_ipset();
-}
-#endif
 

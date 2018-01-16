@@ -12,7 +12,7 @@
 	   Modification:
 	2. ...
 *************************************************/
-#include "storage_include.h"
+#include "../logic_include.h"
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <sys/types.h>
@@ -30,17 +30,29 @@
 #include "logic_audio.h"
 #include "logic_audio_enc.h"
 #include "logic_wav_play.h"
-#include "logic_audio_ai.h"
-#include "logic_audio_ao.h"
+#include "logic_wav_record.h"
 #include "logic_play_lyly_hit.h"
 
+//#include "logic_alaw_agc.h"
+#include "logic_audio_ai.h"
+#include "logic_audio_ao.h"
+#include "logic_cloud_itc.h"
+
 static uint8 g_AudioIsPack = 0;
+static AUDIO_PARAM AudioParam;
+static AUDIO_STATE_E g_audio_mode = AS_NONE;
+
+static pthread_mutex_t g_audio_mutex;
+#define AUDIO_MUTEX_LOCK 	pthread_mutex_lock(&g_audio_mutex);
+#define AUDIO_MUTEX_UNLOCK 	pthread_mutex_unlock(&g_audio_mutex);
+#define AUDIO_MUTEX_INIT 	pthread_mutex_init(&g_audio_mutex, NULL);
 
 #if (_AEC_TYPE_ == _SW_AEC_)
 //by zxf
-void echo_cancel_init(int size, int tail, int noiselevel, int echolevel);
-void echo_cancel_free(void);
+extern void echo_cancel_init(int size, int tail, int noiselevel, int echolevel);
+extern void echo_cancel_free(void);
 #endif
+
 
 /*************************************************
   Function:    		set_audio_pack_mode
@@ -56,52 +68,30 @@ void set_audio_pack_mode(uint8 IsPack)
 }
 
 /*************************************************
-  Function:    	open_audio_rtp_send
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
+  Function:    		set_audio_codec_param
+  Description:		设置音频参数
+  Input: 		
+  Output:			AudioParam 音频参数变量
+  Return:			无
   Others:
 *************************************************/
-int open_audio_rtp_send(void)
-{
-	int ret = -1;
-	RTP_OPEN_S rtps;
-	
-	rtps.RecvIp = 0;	
-	rtps.Port = MEDIA_AUDIO_PORT;
-	rtps.Pt = PAYLOAD_G711A;
-	sprintf(rtps.UserName, "%s", "audio@aurine.cn");
-	ret = ms_filter_call_method(mMediaStream.AudioRtpSend, MS_RTP_SEND_A_OPEN, &rtps);
-	return ret;
+static void set_audio_codec_param(AUDIO_PARAM *g_AudioParam)
+{	
+	memset(g_AudioParam, 0, sizeof(AUDIO_PARAM));
+	g_AudioParam->isPack = g_AudioIsPack;
+	g_AudioParam->AiAgc = 1.0;
+	g_AudioParam->AoAgc = 1.0;
 }
 
 /*************************************************
-  Function:    	close_audio_rtp_send
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
-  Others:
-*************************************************/
-int close_audio_rtp_send(void)
-{
-	int ret = -1;
-	
-	ret = ms_filter_call_method(mMediaStream.AudioRtpSend, MS_RTP_SEND_A_CLOSE, NULL);
-	
-	return ret;
-}
-
-/*************************************************
-  Function:    	open_audio_rtp_recv
+  Function:    	audio_rtp_recv_open
   Description: 	打开音频RTP接收
   Input:		无
   Output:		无
   Return:		无	
   Others:
 *************************************************/
-static int open_audio_rtp_recv(int address)
+int audio_rtp_recv_open(int address)
 {
 	int ret = -1;
 	RTP_OPEN_S rtps;
@@ -119,14 +109,14 @@ static int open_audio_rtp_recv(int address)
 }
 
 /*************************************************
-  Function:    	close_audio_rtp_recv
+  Function:    	audio_rtp_recv_close
   Description: 	关闭音频RTP接收
   Input:		无
   Output:		无
   Return:		无		
   Others:
 *************************************************/
-static int close_audio_rtp_recv(void)
+int audio_rtp_recv_close(void)
 {
 	int ret = -1;
 	RTP_ADDRESS_S rtpaddr;
@@ -140,7 +130,45 @@ static int close_audio_rtp_recv(void)
 }
 
 /*************************************************
-  Function:    		add_audio_sendaddr
+  Function:    	audio_rtp_send_open
+  Description: 		
+  Input:		无
+  Output:		无
+  Return:		无		
+  Others:
+*************************************************/
+ static int audio_rtp_send_open(void)
+{
+	int ret = -1;
+	RTP_OPEN_S rtps;
+	
+	rtps.RecvIp = 0;	
+	rtps.Port = MEDIA_AUDIO_PORT;
+	rtps.Pt = PAYLOAD_G711A;
+	sprintf(rtps.UserName, "%s", "audio@aurine.cn");
+	ret = ms_filter_call_method(mMediaStream.AudioRtpSend, MS_RTP_SEND_A_OPEN, &rtps);
+	return ret;
+}
+
+/*************************************************
+  Function:    	audio_rtp_send_close
+  Description: 		
+  Input:		无
+  Output:		无
+  Return:		无		
+  Others:
+*************************************************/
+static int audio_rtp_send_close(void)
+{
+	int ret = -1;
+	
+	ret = ms_filter_call_method(mMediaStream.AudioRtpSend, MS_RTP_SEND_A_CLOSE, NULL);
+	
+	return ret;
+}
+
+/*************************************************
+  Function:    		audio_sendaddr_add
   Description: 		增加音频发送地址
   Input: 			
   	1.IP			IP地址
@@ -149,19 +177,19 @@ static int close_audio_rtp_recv(void)
   Return:			成功与否true/false
   Others:
 *************************************************/
-int32 add_audio_sendaddr(uint32 IP, uint16 AudioPort)
+int32 audio_sendaddr_add(uint32 IP, uint16 AudioPort)
 {
 	RTP_ADDRESS_S rtp_addr;
 	
 	rtp_addr.Ip = IP;
-	rtp_addr.Port = AudioPort;
+	rtp_addr.Port = MEDIA_AUDIO_PORT;
 	ms_filter_call_method(mMediaStream.AudioRtpSend, MS_RTP_ADDRESS_A_ADD, &rtp_addr);
 	
 	return 0;
 }
 
 /*************************************************
-  Function:    		del_audio_sendaddr
+  Function:    		audio_sendaddr_del
   Description: 		去除音频发送地址
   Input: 			
   	1.IP			IP地址
@@ -170,7 +198,7 @@ int32 add_audio_sendaddr(uint32 IP, uint16 AudioPort)
   Return:			无
   Others:
 *************************************************/
-void del_audio_sendaddr(uint32 IP, uint16 AudioPort)
+void audio_sendaddr_del(uint32 IP, uint16 AudioPort)
 {
 	RTP_ADDRESS_S rtp_addr;
 	
@@ -180,128 +208,41 @@ void del_audio_sendaddr(uint32 IP, uint16 AudioPort)
 }
 
 /*************************************************
-  Function:    		get_audio_addr_count
-  Description: 		获取RTP音频连接数
-  Input:			无
-  Output:			无
-  Return:			已连接的数量		
-  Others:
-*************************************************/
-int get_audio_addr_count(void)
-{
-	int ret = -1;
-	
-	ret = ms_filter_call_method(mMediaStream.AudioRtpSend, MS_RTP_ADDRESS_A_ADD, NULL);
-	
-	return ret;
-}
-
-/*************************************************
-  Function:    		set_audio_aec_enable
-  Description: 		设置是否开启消回声
-  Input:		
-	  enable		0 不开启 1 开启
-  Output:			无
-  Return:			无		
-  Others:
-*************************************************/
-int set_audio_aec_enable(unsigned char enable)
-{
-	unsigned char flg = enable;
-	return ms_filter_call_method(mMediaStream.AudioAI, MS_AUDIO_AI_AEC_ENABLE, &flg);	
-}
-
-/*************************************************
-  Function:    	open_audio_ai
+  Function:    	audio_enc_open
   Description: 		
   Input:		无
   Output:		无
   Return:		无		
   Others:
 *************************************************/
-int open_audio_ai(void)
+static int audio_enc_open(void)
 {
-	ms_filter_call_method(mMediaStream.AudioAI, MS_AUDIO_AI_PARAM, &AudioParam);
-	return ms_filter_call_method(mMediaStream.AudioAI, MS_AUDIO_AI_OPEN, NULL);	
+	ms_filter_call_method(mMediaStream.AudioEnc, MS_AUDIO_SF_ENC_PARAM, &AudioParam);
+	return ms_filter_call_method(mMediaStream.AudioEnc, MS_AUDIO_SF_ENC_OPEN, NULL);	
 }
 
 /*************************************************
-  Function:    	close_audio_ai
+  Function:    	audio_enc_close
   Description: 		
   Input:		无
   Output:		无
   Return:		无		
   Others:
 *************************************************/
-int close_audio_ai(void)
+static int audio_enc_close(void)
 {
-	return ms_filter_call_method(mMediaStream.AudioAI, MS_AUDIO_AI_CLOSE, NULL);	
+	return ms_filter_call_method(mMediaStream.AudioEnc, MS_AUDIO_SF_ENC_CLOSE, NULL);	
 }
 
 /*************************************************
-  Function:    	open_audio_enc
+  Function:    	audio_dec_enable
   Description: 		
   Input:		无
   Output:		无
   Return:		无		
   Others:
 *************************************************/
-int open_audio_enc(void)
-{
-	ms_filter_call_method(mMediaStream.AudioSfEnc, MS_AUDIO_SF_ENC_PARAM, &AudioParam);
-	return ms_filter_call_method(mMediaStream.AudioSfEnc, MS_AUDIO_SF_ENC_OPEN, NULL);	
-}
-
-/*************************************************
-  Function:    	close_audio_enc
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
-  Others:
-*************************************************/
-int close_audio_enc(void)
-{
-	return ms_filter_call_method(mMediaStream.AudioSfEnc, MS_AUDIO_SF_ENC_CLOSE, NULL);	
-}
-
-/*************************************************
-  Function:    	open_audio_local_enc
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
-  Others:
-*************************************************/
-int open_audio_local_enc(void)
-{
-	uint8 flg = TRUE;
-	return ms_filter_call_method(mMediaStream.AudioSfEnc, MS_AUDIO_SF_ENC_LOCAL, &flg);	
-}
-
-/*************************************************
-  Function:    	close_audio_local_enc
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
-  Others:
-*************************************************/
-int close_audio_local_enc(void)
-{
-	uint8 flg = FALSE;
-	return ms_filter_call_method(mMediaStream.AudioSfEnc, MS_AUDIO_SF_ENC_LOCAL, &flg);	
-}
-
-/*************************************************
-  Function:    	open_dec_enable
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
-  Others:
-*************************************************/
-int open_dec_enable(void)
+int audio_dec_enable(void)
 {
 	int param = 1;
 	
@@ -310,55 +251,55 @@ int open_dec_enable(void)
 
 
 /*************************************************
-  Function:    		open_dec_disable
+  Function:    		audio_dec_disable
   Description: 		
   Input:		无
   Output:		无
   Return:		无	
   Others:
 *************************************************/
-int open_dec_disable(void)
+int audio_dec_disable(void)
 {
 	int param = 0;
 	return ms_filter_call_method(mMediaStream.AudioDec, MS_AUDIO_DEC_ENABLE, &param);	
 }
 
 /*************************************************
-  Function:    	open_audio_dec
+  Function:    	audio_dec_open
   Description: 		
   Input:		无
   Output:		无
   Return:		无		
   Others:
 *************************************************/
- static int open_audio_dec(void)
+ static int audio_dec_open(void)
 {
 	ms_filter_call_method(mMediaStream.AudioDec, MS_AUDIO_DEC_PARAM, &AudioParam);
 	return ms_filter_call_method(mMediaStream.AudioDec, MS_AUDIO_DEC_OPEN, NULL);	
 }
 
 /*************************************************
-  Function:    		close_audio_dec
+  Function:    		audio_dec_close
   Description: 		
   Input:			无
   Output:			无
   Return:			无		
   Others:
 *************************************************/
-static int close_audio_dec(void)
+static int audio_dec_close(void)
 {
 	return ms_filter_call_method(mMediaStream.AudioDec, MS_AUDIO_DEC_CLOSE, NULL);	
 }
 
 /*************************************************
-  Function:    	open_ao_enable
+  Function:    	audio_ao_enable
   Description: 		
   Input:		无
   Output:		无
   Return:		无		
   Others:
 *************************************************/
-int open_ao_enable(void)
+int audio_ao_enable(void)
 {
 	int param = 1;
 	
@@ -366,193 +307,244 @@ int open_ao_enable(void)
 }
 
 /*************************************************
-  Function:    		open_ao_disable
+  Function:    		audio_ao_disable
   Description: 		
   Input:		无
   Output:		无
   Return:		无	
   Others:
 *************************************************/
-int open_ao_disable(void)
+int audio_ao_disable(void)
 {
 	int param = 0;
 	return ms_filter_call_method(mMediaStream.AudioAo, MS_AUDIO_AO_ENABLE, &param);	
 }
 
 /*************************************************
-  Function:    	open_audio_ao
+  Function:    	audio_ao_open
   Description: 		
   Input:		无
   Output:		无
   Return:		无		
   Others:
 *************************************************/
- static int open_audio_ao(void)
+static int audio_ao_open(void)
 {
 	ms_filter_call_method(mMediaStream.AudioAo, MS_AUDIO_AO_PARAM, &AudioParam);
 	return ms_filter_call_method(mMediaStream.AudioAo, MS_AUDIO_AO_OPEN, NULL);	
 }
 
 /*************************************************
-  Function:    	close_audio_ao
+  Function:    	audio_ao_close
   Description: 	
   Input:		无
   Output:		无
   Return:		无		
   Others:
 *************************************************/
-static int close_audio_ao(void)
+static int audio_ao_close(void)
 {
 	return ms_filter_call_method(mMediaStream.AudioAo, MS_AUDIO_AO_CLOSE, NULL);	
 }
 
 /*************************************************
-  Function:    	start_play_net_audio
-  Description:	开始播放网络音频
-  Input: 			
-	1.address	对端的IP地址
+  Function:    	audio_ai_enable
+  Description: 		
+  Input:		无
+  Output:		无
+  Return:		无		
+  Others:
+*************************************************/
+int audio_ai_enable(void)
+{
+	int param = 1;
+	
+	return ms_filter_call_method(mMediaStream.AudioAi, MS_AUDIO_AI_ENABLE, &param);	
+}
+
+/*************************************************
+  Function:    		audio_ai_disable
+  Description: 		
+  Input:		无
+  Output:		无
+  Return:		无	
+  Others:
+*************************************************/
+int audio_ai_disable(void)
+{
+	int param = 0;
+	return ms_filter_call_method(mMediaStream.AudioAi, MS_AUDIO_AI_ENABLE, &param);	
+}
+
+/*************************************************
+  Function:    	audio_ai_open
+  Description: 		
+  Input:		无
+  Output:		无
+  Return:		无		
+  Others:
+*************************************************/
+static int audio_ai_open(void)
+{
+	ms_filter_call_method(mMediaStream.AudioAi, MS_AUDIO_AI_PARAM, &AudioParam);
+	return ms_filter_call_method(mMediaStream.AudioAi, MS_AUDIO_AI_OPEN, NULL);	
+}
+
+/*************************************************
+  Function:    	audio_ai_close
+  Description: 		
+  Input:		无
+  Output:		无
+  Return:		无		
+  Others:
+*************************************************/
+static int audio_ai_close(void)
+{
+	return ms_filter_call_method(mMediaStream.AudioAi, MS_AUDIO_AI_CLOSE, NULL);	
+}
+
+/*************************************************
+  Function:    		audio_aec_enable
+  Description: 		
+  Input:		
+  Output:			无
+  Return:			无		
+  Others:
+*************************************************/
+int audio_aec_enable(void)
+{
+	unsigned char flg = TRUE;
+	return ms_filter_call_method(mMediaStream.AudioAi, MS_AUDIO_AI_AEC_ENABLE, &flg);	
+}
+
+/*************************************************
+  Function:    		audio_aec_disable
+  Description: 		
+  Input:		
+  Output:			无
+  Return:			无		
+  Others:
+*************************************************/
+int audio_aec_disable(void)
+{
+	unsigned char flg = FALSE;
+	return ms_filter_call_method(mMediaStream.AudioAi, MS_AUDIO_AI_AEC_ENABLE, &flg);	
+}
+
+/*************************************************
+  Function:    		audio_lyly_hint_init
+  Description: 		
+  Input:		无
   Output:		无
   Return:		无
   Others:
 *************************************************/
-static int start_play_net_audio(int address)
+static int audio_lyly_hint_init(AUDIO_HIT_PARAM *param, void * proc)
 {
-	int ret = -1;
-		
-	ret = open_audio_rtp_send();
-	if (ret != 0)
+	int ret = ms_filter_call_method(mMediaStream.LylyHitPlay, MS_LYLY_HIT_PARAM, (void*)param);
+	if (ret != HI_SUCCESS)
 	{
-		printf(" open_audio_rtp_send return error!!! \n");
-		goto erraudio0;
+		return ret;
 	}
 
-	ret = open_audio_enc();
-	if (ret != 0)
+	ms_filter_set_notify_callback(mMediaStream.LylyHitPlay, proc);
+	if (ret != HI_SUCCESS)
 	{
-		printf(" open_audio_enc return error!!! \n");
-		goto erraudio1;
+		return ret;
 	}
 	
-	ret = open_audio_ai();
-	if (ret != 0)
+	ret = ms_filter_call_method(mMediaStream.LylyHitPlay, MS_LYLY_HIT_OPEN, NULL);
+	if (ret != HI_SUCCESS)
 	{
-		printf("open_audio_ai return error!!! \n");
-		goto erraudio3;
+		return ret;
 	}
 
-	ret = open_audio_rtp_recv(address);
-	if (ret != 0)
-	{
-		printf("open_audio_rtp_recv return error!!! \n");
-		goto erraudio4;
-	}
-	
-	ret = open_audio_dec();
-	if (ret != 0)
-	{
-		printf("open_audio_dec return error!!! \n");
-		goto erraudio5;
-	}
-
-	ret = open_audio_ao();
-		if (ret != 0)
-	{
-		printf("open_audio_ao return error!!! \n");
-		goto erraudio6;
-	}
-	
-
-	#if (_AEC_TYPE_ == _SW_AEC_)
-	//echo_cancel_init(160, 2048, -100, -200); //by zxf
-	echo_cancel_init(160, 160*2, -100, -200); //by zxf
-	#endif
-	
-	log_printf("start_play_net_audio\n");
-	ms_media_link(mMediaStream.AudioDec, mMediaStream.AudioAo);
-	ms_media_link(mMediaStream.AudioRtpRecv, mMediaStream.AudioDec);	
-	ms_media_link(mMediaStream.AudioSfEnc, mMediaStream.AudioRtpSend);
-	ms_media_link(mMediaStream.AudioAI, mMediaStream.AudioSfEnc);
-	
-	return HI_SUCCESS;
-
-erraudio6:
-	close_audio_dec();
-	
-erraudio5:
-	close_audio_rtp_recv();
-	
-erraudio4:
-	close_audio_ai();
-	
-erraudio3:	
-erraudio2:	
-	close_audio_enc();
-	
-erraudio1:
-	close_audio_rtp_send;
-
-erraudio0:
-	return -1;
+	return ret;
 }
 
 /*************************************************
-  Function:    		stop_play_net_audio
-  Description:		停止播放网络音频
-  Input: 			无
+  Function:    		audio_lyly_hint_uninit
+  Description: 		
+  Input:		无
+  Output:		无
+  Return:		无
+  Others:
+*************************************************/
+int audio_lyly_hint_uninit(void)
+{
+	return ms_filter_call_method(mMediaStream.LylyHitPlay, MS_LYLY_HIT_CLOSE, NULL);		
+}
+
+/*************************************************
+  Function:			audio_jrly_record_start
+  Description:		家人留言
+  Input:			无
   Output:			无
   Return:			无
   Others:
 *************************************************/
-static void stop_play_net_audio(void)
+static int audio_jrly_record_start(char * FileName)
 {
-	int ret;
-	
-	log_printf("stop_play_net_audio\n");
-	ret = close_audio_dec();
-	log_printf("close_audio_dec return ==%d\n",ret);
-
-	ret = close_audio_rtp_recv();
-	log_printf("close_audio_rtp_recv return ==%d\n",ret);
-	
-	ret = close_audio_ai();
-	log_printf("close_audio_ai return ==%d\n",ret);
-
-	ret = close_audio_ao();
-	log_printf("close_audio_ao return ==%d\n",ret);
-
-	ret = close_audio_enc();
-	log_printf("close_audio_enc return ==%d\n",ret);
-	
-	//ret = close_audio_agc();
-	//log_printf("close_audio_agc return ==%d\n",ret);
-	
-	ret = close_audio_rtp_send();
-	log_printf("close_audio_rtp_send return ==%d\n",ret);
-	
-
-	ms_media_unlink(mMediaStream.AudioAI,  mMediaStream.AudioSfEnc);
-	ms_media_unlink(mMediaStream.AudioSfEnc, mMediaStream.AudioRtpSend);
-	ms_media_unlink(mMediaStream.AudioRtpRecv, mMediaStream.AudioDec);
-	ms_media_unlink(mMediaStream.AudioDec, mMediaStream.AudioAo);
-
-	#if (_AEC_TYPE_ == _SW_AEC_)
-	// by zxf
-	// printf("Before echo_cancel_free\n");
-	echo_cancel_free();//by zxf
-	// printf("After echo_cancel_free\n");
-	#endif
+	int ret = ms_filter_call_method(mMediaStream.WavRecord, MS_WAV_RECORD_PARAM, FileName);
+	if (ret == RT_SUCCESS)
+	{
+		ret = ms_filter_call_method(mMediaStream.WavRecord, MS_WAV_RECORD_OPEN, NULL);
+	}
+	return ret;
 }
 
 /*************************************************
-  Function:			start_play_file
+  Function:			audio_jrly_record_stop
+  Description:		
+  Input:			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int audio_jrly_record_stop(void)
+{
+	return ms_filter_call_method(mMediaStream.WavRecord, MS_WAV_RECORD_CLOSE, NULL);
+}
+
+/*************************************************
+  Function:			audio_file_play_start
   Description:		播放文件
   Input:			无
   Output:			无
   Return:			无
   Others:
 *************************************************/
-static int start_play_file(void)
+static int audio_file_play_start(char * FileName, int IsRepeat, void * proc)
 {
+	int ret = RT_FAILURE;
+	AUDIOPLAY_PARAM PlayParam;
+	memset(&PlayParam, 0, sizeof(AUDIOPLAY_PARAM));
+
+	// 判断文件格式是否支持
+	if ((media_stream_FileExtCmp((const uint8*)FileName, ".wav") == 0)
+		|| (media_stream_FileExtCmp((const uint8*)FileName, ".WAV")) == 0)
+	{
+		PlayParam.FileType = FILE_WAVE;
+		PlayParam.callback = (AudioPlay_CallBack)proc;
+		PlayParam.IsRepeat  = IsRepeat;
+		//memcpy(PlayParam.filename, filename, sizeof(PlayParam.filename));
+		strcpy(PlayParam.filename, FileName);
+		
+		ret = ms_filter_call_method(mMediaStream.FilePlayer, MS_AUDIO_PLAY_PARAM, &PlayParam);
+		if (ret == RT_SUCCESS)
+		{
+			ret = ms_filter_call_method(mMediaStream.FilePlayer, MS_AUDIO_PLAY_OPEN, NULL);
+
+		}
+	}
+	else							
+	{
+		return RT_FAILURE;
+	}
+	
+	
+	return ret;
+
 	
 }
 
@@ -564,262 +556,541 @@ static int start_play_file(void)
   Return:			无
   Others:
 *************************************************/
- int stop_play_file(void)
+static int audio_file_play_stop(void)
 {
 	return ms_filter_call_method(mMediaStream.FilePlayer, MS_AUDIO_PLAY_CLOSE, NULL);
 }
 
 /*************************************************
-  Function:			start_hint_lyly_play
+  Function:			audio_lyly_hint_start
   Description:		播放留言提示音
   Input:			无
   Output:			无
   Return:			无
   Others:
 *************************************************/
-static int start_hint_lyly_play(void)
-{	
- 	int ret =  open_audio_rtp_send();	
+static int audio_lyly_hint_start(AUDIO_HIT_PARAM *param, void *callbak)
+{
+	int ret =  audio_rtp_send_open();	
     if (ret != HI_SUCCESS)
     {
-   		goto erraudio1;
+   		goto erraudio0;
     }
-
-	ms_media_link(mMediaStream.LylyFilePlayer, mMediaStream.AudioRtpSend);	
+	
+	ret = audio_lyly_hint_init(param, callbak);
+	if (ret != HI_SUCCESS)
+	{
+		goto erraudio1;
+	}
+	
+	ms_media_link(mMediaStream.LylyHitPlay, mMediaStream.AudioRtpSend);	
 	return ret;
 
 erraudio1:
-	close_audio_rtp_send();
+	audio_lyly_hint_uninit();
 	
-    return ret;
+erraudio0:
+	audio_rtp_send_close();
+	
+	return ret;
 }
 
 /*************************************************
-  Function:			stop_hint_lyly_play
+  Function:			audio_lyly_hint_stop
   Description:		结束播放留言提示音
   Input:			无
   Output:			无
   Return:			无
   Others:
 *************************************************/
-static int stop_hint_lyly_play(void)
+static int audio_lyly_hint_stop(void)
 {
-	int ret = close_audio_rtp_send();
-	if (0 == ret)
-	{
-		ms_media_unlink(mMediaStream.LylyFilePlayer, mMediaStream.AudioRtpSend);
-	}
-	
+	audio_lyly_hint_uninit();
+	audio_rtp_send_close();
+
+	ms_media_unlink(mMediaStream.LylyHitPlay, mMediaStream.AudioRtpSend);	
 	return HI_SUCCESS;
 }
 
+
 /*************************************************
-  Function:    		set_audio_codec_param
-  Description:		设置音频参数
-  Input: 		
-  Output:			AudioParam 音频参数变量
+  Function:    	audio_net_talk_start
+  Description:	开始播放网络音频
+  Input: 			
+	1.address	对端的IP地址
+  Output:		无
+  Return:		无
+  Others:
+*************************************************/
+static int audio_net_talk_start(int address)
+{
+	int ret = -1;
+		
+	ret = audio_rtp_send_open();
+	if (ret != 0)
+	{
+		printf(" audio_rtp_send_open return error!!! \n");
+		goto erraudio0;
+	}
+
+	ret = audio_enc_open();
+	if (ret != 0)
+	{
+		printf(" audio_enc_open return error!!! \n");
+		goto erraudio1;
+	}
+	
+	ret = audio_ai_open();
+	if (ret != 0)
+	{
+		printf("audio_ai_open return error!!! \n");
+		goto erraudio3;
+	}
+
+	ret = audio_rtp_recv_open(address);
+	if (ret != 0)
+	{
+		printf("audio_rtp_recv_open return error!!! \n");
+		goto erraudio4;
+	}
+	
+	ret = audio_dec_open();
+	if (ret != 0)
+	{
+		printf("audio_dec_open return error!!! \n");
+		goto erraudio5;
+	}
+
+	ret = audio_ao_open();
+	if (ret != 0)
+	{
+		printf("audio_ao_open return error!!! \n");
+		goto erraudio6;
+	}
+	
+	#if (_AEC_TYPE_ == _SW_AEC_)
+	//echo_cancel_init(160, 2048, -100, -200); //by zxf
+	echo_cancel_init(160, 160*2, -100, -200); //by zxf
+	#endif
+	
+	log_printf("audio_net_talk_start\n");
+	ms_media_link(mMediaStream.AudioDec, mMediaStream.AudioAo);
+	ms_media_link(mMediaStream.AudioRtpRecv, mMediaStream.AudioDec);	
+	ms_media_link(mMediaStream.AudioEnc, mMediaStream.AudioRtpSend);
+	ms_media_link(mMediaStream.AudioAi, mMediaStream.AudioEnc);
+	
+	return HI_SUCCESS;
+
+	
+erraudio6:
+	audio_dec_close();
+	
+erraudio5:
+	audio_rtp_recv_close();
+	
+erraudio4:
+	audio_ai_close();
+	
+erraudio3:
+erraudio2:	
+	audio_enc_close();
+	
+erraudio1:
+	audio_rtp_send_close;
+
+erraudio0:
+	return -1;
+}
+
+/*************************************************
+  Function:    		audio_net_talk_stop
+  Description:		停止播放网络音频
+  Input: 			无
+  Output:			无
   Return:			无
   Others:
 *************************************************/
-void set_audio_codec_param(AUDIO_PARAM *g_AudioParam, int len)
-{	
-	memset(g_AudioParam, 0, sizeof(AUDIO_PARAM));
-	g_AudioParam->MicValue = 95;
-	g_AudioParam->SpkValue = 95;
-	g_AudioParam->IsAec = 1;
-	g_AudioParam->IsPack = g_AudioIsPack;
-	//g_AudioParam->PackNum = 2;
-	g_AudioParam->PackNum = AUDIO_NUM;
-	g_AudioParam->byte_per_packet = len;
-	g_AudioParam->AgcType = 0;
-	g_AudioParam->MultAgcH = 3.0;
-	g_AudioParam->MultAgcL = 1.0;
-	g_AudioParam->AIAgcH = 0.8;
-	g_AudioParam->AIAgcL = 1.0;
-	g_AudioParam->SpkAgcH = 3.0;
-	g_AudioParam->SpkAgcL = 3.0;
-	g_AudioParam->AoAgcH = 1.0;
-	g_AudioParam->AoAgcL = 0.8;
-}
-
-/*************************************************
-  Function:    		play_sound_file
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无
-  Others:
-*************************************************/
-int play_sound_file(char * FileName, int IsRepeat, void * proc)
+static int audio_net_talk_stop(void)
 {
-	AUDIOPLAY_PARAM PlayParam;
-	memset(&PlayParam, 0, sizeof(AUDIOPLAY_PARAM));
-
-	// 判断文件格式是否支持
-	if ((media_stream_FileExtCmp((const uint8*)FileName, ".wav") == 0)
-		|| (media_stream_FileExtCmp((const uint8*)FileName, ".WAV")) == 0)
-	{
-		PlayParam.FileType = FILE_WAVE;
-	}
-	else							
-	{
-		return RT_FAILURE;
-	}
+	int ret;
 	
-	PlayParam.callback = (AudioPlay_CallBack)proc;
-	PlayParam.IsRepeat  = IsRepeat;
-	//memcpy(PlayParam.filename, filename, sizeof(PlayParam.filename));
-	strcpy(PlayParam.filename, FileName);
+	log_printf("audio_net_talk_stop\n");
+	ret = audio_dec_close();
+	log_printf("audio_dec_close return ==%d\n",ret);
+
+	ret = audio_rtp_recv_close();
+	log_printf("audio_rtp_recv_close return ==%d\n",ret);
 	
-	int ret = ms_filter_call_method(mMediaStream.FilePlayer, MS_AUDIO_PLAY_PARAM, &PlayParam);
-	if (ret == RT_SUCCESS)
-	{
-		ret = ms_filter_call_method(mMediaStream.FilePlayer, MS_AUDIO_PLAY_OPEN, NULL);
+	ret = audio_ai_close();
+	log_printf("audio_ai_close return ==%d\n",ret);
 
-	}
-	return ret;
+	ret = audio_ao_close();
+	log_printf("audio_ao_close return ==%d\n",ret);
 
+	ret = audio_enc_close();
+	log_printf("audio_enc_close return ==%d\n",ret);
 	
-}
-
-
-/*************************************************
-  Function:    		start_play_hint_lyly
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无
-  Others:
-*************************************************/
-uint32 start_play_hint_lyly(uint8 RemoteDeviceType, char * FileName, void * proc)
-{
-	AUDIO_HIT_PARAM param;
-	memset(&param, 0, sizeof(AUDIO_HIT_PARAM));
-	if ((media_stream_FileExtCmp((const uint8*)FileName, ".wav") == 0)
-		|| (media_stream_FileExtCmp((const uint8*)FileName, ".WAV")) == 0)
-	{
-		param.FileType = FILE_WAVE;
-	}
-	else							
-	{
-		return HI_FAILURE;
-	}
-
-	strcpy(param.filename, FileName);
-	param.IsPack = TRUE;
-	param.PackNum = 6;
-	if (DEVICE_TYPE_STAIR == RemoteDeviceType)
-	{
-		param.PerFrameNum = 1;		// 梯口机每帧80
-	}
-	else
-	{
-		param.PerFrameNum = param.PackNum;
-	}
-		
-	int ret = ms_filter_call_method(mMediaStream.LylyFilePlayer, MS_AUDIO_LYLY_PARAM, (void*)&param);
-	if (ret != HI_SUCCESS)
-	{
-		return ret;
-	}
-
-	ms_filter_set_notify_callback(mMediaStream.LylyFilePlayer, proc);
-	if (ret != HI_SUCCESS)
-	{
-		return ret;
-	}
+	ret = audio_rtp_send_close();
+	log_printf("audio_rtp_send_close return ==%d\n",ret);
 	
-	ret = ms_filter_call_method(mMediaStream.LylyFilePlayer, MS_AUDIO_LYLY_OPEN, NULL);
-	if (ret != HI_SUCCESS)
-	{
-		return ret;
-	}
+
+	ms_media_unlink(mMediaStream.AudioAi,  mMediaStream.AudioEnc);
+	ms_media_unlink(mMediaStream.AudioEnc, mMediaStream.AudioRtpSend);
+	ms_media_unlink(mMediaStream.AudioRtpRecv, mMediaStream.AudioDec);
+	ms_media_unlink(mMediaStream.AudioDec, mMediaStream.AudioAo);
+
+	#if (_AEC_TYPE_ == _SW_AEC_)
+	// by zxf
+	// printf("Before echo_cancel_free\n");
+	echo_cancel_free();//by zxf
+	// printf("After echo_cancel_free\n");
+	#endif
 
 	return ret;
 }
 
+#ifdef _ENABLE_CLOUD_
 /*************************************************
-  Function:    		stop_play_hint_lyly
-  Description: 		
-  Input:		无
+  Function:    	set_cloud_audio_send_funcs
+  Description:	
+  Input: 			
   Output:		无
   Return:		无
   Others:
 *************************************************/
-uint32 stop_play_hint_lyly(void)
+int set_cloud_audio_send_func(void *func)
 {
-	int ret = ms_filter_call_method(mMediaStream.LylyFilePlayer, MS_AUDIO_LYLY_CLOSE, NULL);		
-	if (ret != HI_SUCCESS)
-	{
-		return ret;
-	}
-	ret = HI_SUCCESS;
-	
+	return ms_filter_call_method(mMediaStream.AudioCloudSend, MS_CLOUD_SEND_AUDIO_FUNC, func);
+}
+
+/*************************************************
+  Function:    	start_play_cloud_audio
+  Description:	云端对讲
+  Input: 			
+	1.address	对端的IP地址
+  Output:		无
+  Return:		无
+  Others:
+*************************************************/
+int send_cloud_audio_data(char *data)
+{
+	int ret = HI_FAILURE;
+	ret = ms_filter_call_method(mMediaStream.AudioCloudRecv, MS_CLOUD_RECV_AUDIO_DATA, data);
 	return ret;
 }
 
 /*************************************************
-  Function:    		open_audio_rtp_recv
-  Description: 		留影留言中开启音频接口
-  Input:		无
+  Function:    	audio_cloud_send_enable
+  Description:	
+  Input: 			
   Output:		无
   Return:		无
   Others:
 *************************************************/
-int32 start_lyly_audio_recv(int32 address)
+int audio_cloud_send_enable()
 {
-	return open_audio_rtp_recv(address);
+	int ret = HI_FAILURE;
+	HI_BOOL param = HI_TRUE;
+	ret = ms_filter_call_method(mMediaStream.AudioCloudSend, MS_CLOUD_SEND_AUDIO_ENABLE, &param);
+	return ret;
 }
 
 /*************************************************
-  Function:    		stop_lyly_audio_recv
-  Description: 		
-  Input:		无
+  Function:    	audio_cloud_send_disable
+  Description:	
+  Input: 			
   Output:		无
   Return:		无
   Others:
 *************************************************/
-void stop_lyly_audio_recv(void)
+int audio_cloud_send_disable()
 {
-	close_audio_rtp_recv();
+	int ret = HI_FAILURE;
+	HI_BOOL param = HI_FALSE;
+	ret = ms_filter_call_method(mMediaStream.AudioCloudSend, MS_CLOUD_SEND_AUDIO_ENABLE, &param);
+	return ret;
+}
+
+/*************************************************
+  Function:    	audio_cloud_recv_enable
+  Description:	
+  Input: 			
+  Output:		无
+  Return:		无
+  Others:
+*************************************************/
+int audio_cloud_recv_enable()
+{
+	int ret = HI_FAILURE;
+	HI_BOOL param = HI_TRUE;
+	ret = ms_filter_call_method(mMediaStream.AudioCloudRecv, MS_CLOUD_RECV_AUDIO_ENABLE, &param);
+	return ret;
+}
+
+/*************************************************
+  Function:    	audio_cloud_recv_disable
+  Description:	
+  Input: 			
+  Output:		无
+  Return:		无
+  Others:
+*************************************************/
+int audio_cloud_recv_disable()
+{
+	int ret = HI_FAILURE;
+	HI_BOOL param = HI_FALSE;
+	ret = ms_filter_call_method(mMediaStream.AudioCloudRecv, MS_CLOUD_RECV_AUDIO_ENABLE, &param);
+	return ret;
+}
+
+/*************************************************
+  Function:    	audio_cloud_send_open
+  Description:	
+  Input: 			
+  Output:		无
+  Return:		无
+  Others:
+*************************************************/
+static int audio_cloud_send_open()
+{
+	int ret = HI_FAILURE;
+	ret = ms_filter_call_method(mMediaStream.AudioCloudSend, MS_CLOUD_SEND_AUDIO_OPEN, NULL);
+	return ret;
+}
+
+/*************************************************
+  Function:    	audio_cloud_send_close
+  Description:	
+  Input: 			
+  Output:		无
+  Return:		无
+  Others:
+*************************************************/
+static int audio_cloud_send_close()
+{
+	int ret = HI_FAILURE;
+	ret = ms_filter_call_method(mMediaStream.AudioCloudSend, MS_CLOUD_SEND_AUDIO_CLOSE, NULL);
+	return ret;
+}
+
+/*************************************************
+  Function:    	audio_cloud_recv_open
+  Description:	
+  Input: 			
+  Output:		无
+  Return:		无
+  Others:
+*************************************************/
+static int audio_cloud_recv_open()
+{
+	int ret = HI_FAILURE;
+	ret = ms_filter_call_method(mMediaStream.AudioCloudRecv, MS_CLOUD_RECV_AUDIO_OPEN, NULL);
+	return ret;
+}
+
+/*************************************************
+  Function:    	audio_cloud_recv_close
+  Description:	
+  Input: 			
+  Output:		无
+  Return:		无
+  Others:
+*************************************************/
+static int audio_cloud_recv_close()
+{
+	int ret = HI_FAILURE;
+	ret = ms_filter_call_method(mMediaStream.AudioCloudRecv, MS_CLOUD_RECV_AUDIO_CLOSE, NULL);
+	return ret;
+}
+
+/*************************************************
+  Function:    	audio_cloud_talk_start
+  Description:	云端对讲
+  Input: 			
+	1.address	对端的IP地址
+  Output:		无
+  Return:		无
+  Others:
+*************************************************/
+static int audio_cloud_talk_start(void)
+{
+	int ret = HI_FAILURE;	
+
+	ret = audio_cloud_send_open();
+	if (ret != 0)
+	{
+		printf(" open_audio_rtp_send return error!!! \n");
+		goto erraudio0;
+	}
+	
+	ret = audio_ai_open();
+	if (ret != 0)
+	{
+		printf("open_audio_ai return error!!! \n");
+		goto erraudio1;
+	}
+
+	ret = audio_cloud_recv_open();
+	if (ret != 0)
+	{
+		printf("open_audio_rtp_recv return error!!! \n");
+		goto erraudio2;
+	}
+
+	ret = audio_ao_open();
+	if (ret != 0)
+	{
+		printf("open_audio_ao return error!!! \n");
+		goto erraudio3;
+	}
+
+	#if (_AEC_TYPE_ == _SW_AEC_)
+	//echo_cancel_init(160, 2048, -100, -200); //by zxf
+	echo_cancel_init(160, 160*2, -100, -200); //by zxf
+	#endif
+	
+	log_printf("start_play_net_audio\n");
+	ms_media_link(mMediaStream.AudioCloudRecv, mMediaStream.AudioAo);	
+	ms_media_link(mMediaStream.AudioAi, mMediaStream.AudioCloudSend);	
+	return HI_SUCCESS;
+
+	
+erraudio3:
+	audio_cloud_recv_close();
+	
+erraudio2:	
+	audio_ai_close();
+	
+erraudio1:
+	audio_cloud_send_close();
+
+erraudio0:
+	return HI_FAILURE;
+}
+
+/*************************************************
+  Function:    		audio_cloud_talk_stop
+  Description:		停止播放网络音频
+  Input: 			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int audio_cloud_talk_stop(void)
+{
+	int ret;
+	
+	ret = audio_cloud_recv_close();
+	log_printf("audio_cloud_recv_close return ==%d\n",ret);
+	
+	ret = audio_ai_close();
+	log_printf("close_audio_ai return ==%d\n",ret);
+
+	ret = audio_ao_close();
+	log_printf("close_audio_ao return ==%d\n",ret);
+
+	ret = audio_cloud_send_close();
+	log_printf("audio_cloud_send_close return ==%d\n",ret);
+	
+
+	ms_media_unlink(mMediaStream.AudioAi,  mMediaStream.AudioCloudSend);
+	ms_media_unlink(mMediaStream.AudioCloudRecv, mMediaStream.AudioAo);
+
+	#if (_AEC_TYPE_ == _SW_AEC_)
+	// by zxf
+	// printf("Before echo_cancel_free\n");
+	echo_cancel_free();//by zxf
+	// printf("After echo_cancel_free\n");
+	#endif
+	
+	return HI_SUCCESS;
+}
+#endif
+
+/*************************************************
+  Function:    		audio_mutex_init
+  Description:		
+  Input: 			
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+void audio_mutex_init(void)
+{
+	pthread_mutex_init(&g_audio_mutex, NULL);
 }
 
 /*************************************************
   Function:    		open_audio_mode
   Description:		开启音频模式
-  Input: 			len=0 忽略长度 其他=每包长度单位字节
+  Input: 			
   Output:			无
   Return:			无
   Others:
 *************************************************/
-int open_audio_mode(AUDIO_STATE_E mode, int address, int len)
+int open_audio_mode(AUDIO_STATE_E mode, void* arg1, void *arg2, void *arg3)
 {
 	int ret = -1;
-	
-	log_printf("len==============%d\n", len);
-	#if TEST_AUDIO									// 调试用
-	#else
-	set_audio_codec_param(&AudioParam, len);
-	#endif
-		
+	AUDIO_MUTEX_LOCK;
+	set_audio_codec_param(&AudioParam);		
 	switch (mode)
 	{
 		case AS_NETTALK:							// 网络对讲模式
-			ret = start_play_net_audio(address);
+			{
+				int address = *(int *)arg1;
+				//AudioParam.AiAgc = 2.0;
+				ret = audio_net_talk_start(address);
+			}
 			break;
 
 		case AS_PLAY:			                    // 播放模式
-	        ret = start_play_file();
+			{
+				char *filename = (char *)arg1;
+				int IsRepeat = *(int *)arg2;
+				void *callbak = arg3;
+				if ((g_audio_mode & AS_NETTALK) || (g_audio_mode & AS_CLOUD_TALK))
+				{
+					ret = -1;
+				}
+				else
+				{
+	        		ret = audio_file_play_start(filename, IsRepeat, callbak);
+				}
+			}
 	        break;
 			
-		case AM_HINT_LYLY:
-			ret = start_hint_lyly_play();           // 播放留言提示音
+		case AS_HINT_LYLY:
+			{
+				AUDIO_HIT_PARAM *param = (AUDIO_HIT_PARAM *)arg1;
+				void *callbak = arg2;
+				ret = audio_lyly_hint_start(param, callbak);           // 播放留言提示音
+			}
 			break;
+
+		case AS_JRLY_RECORD:
+			{
+				char *filename = (char *)arg1;
+				ret = audio_jrly_record_start(filename);
+			}
+			break;
+			
+		#ifdef _ENABLE_CLOUD_
+		case AS_CLOUD_TALK:								// 云端对讲模式
+			//AudioParam.AiAgc = 6.0;
+			ret = audio_cloud_talk_start();
+			break;
+		#endif
 			
 		default:
 			break;			
 	}
 
+	if (0 == ret)
+	{
+		//driver_speak_on();
+		g_audio_mode &= mode;
+	}
+	AUDIO_MUTEX_UNLOCK;
 	return ret;
 }
 
@@ -833,26 +1104,42 @@ int open_audio_mode(AUDIO_STATE_E mode, int address, int len)
 *************************************************/
 int close_audio_mode(AUDIO_STATE_E mode)
 {
+	AUDIO_MUTEX_LOCK
 	int ret = -1;
-
+	
 	switch (mode)
 	{
 		case AS_NETTALK:
-			stop_play_net_audio();
-			ret = 0;
+			ret = audio_net_talk_stop();
 			break;
 
 		case AS_PLAY:	
-			ret = stop_play_file();
+			ret = audio_file_play_stop();
 			break;
 
-		case AM_HINT_LYLY:
-			ret = stop_hint_lyly_play();           // 留言提示音
+		case AS_HINT_LYLY:
+			ret = audio_lyly_hint_stop();           // 留言提示音
 			break;
+
+		case AS_JRLY_RECORD:
+			{
+				ret = audio_jrly_record_stop();
+			}
+			break;
+			
+		#ifdef _ENABLE_CLOUD_
+		case AS_CLOUD_TALK:
+			ret = audio_cloud_talk_stop();
+			break;
+		#endif
 
 		default:
-			break;			
+			AUDIO_MUTEX_UNLOCK
+			return -1;			
 	}
 
+	g_audio_mode &= ~mode;
+	AUDIO_MUTEX_UNLOCK
 	return ret;
 }
+

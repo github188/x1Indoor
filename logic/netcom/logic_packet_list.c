@@ -35,6 +35,9 @@ static pthread_t SendThread;						// 发送线程
 static pthread_t TimeOutThread;						// 发送超时重发控制线程
 static pthread_t ReciveThread;						// 接收线程
 static pthread_t MulTimeOutThread;					// 多包接收超时重发控制线程
+#ifdef _USE_AURINE_SET_
+static pthread_t ReciveSetThread;					//设置 接收线程
+#endif
 
 static PFSEND_TIMEOUT_ECHO g_SendTimeoutFunc = NULL;// 发送超时应答函数指针
 
@@ -727,7 +730,10 @@ void net_start_comm_thread(void)
  	pthread_create(&SendThread, NULL, net_send_proc, NULL);
  	pthread_create(&TimeOutThread, NULL, net_timeout_proc, NULL);
  	pthread_create(&ReciveThread, NULL, recive_cmd_data_proc, NULL);
-	pthread_create(&MulTimeOutThread, NULL, net_recive_mult_timeout_proc, NULL);
+	pthread_create(&MulTimeOutThread, NULL, net_recive_mult_timeout_proc, NULL);	
+	#ifdef	_USE_AURINE_SET_
+ 	pthread_create(&ReciveSetThread, NULL, recive_set_cmd_data_proc, NULL);
+	#endif
 }
 
 /*************************************************
@@ -745,7 +751,10 @@ void net_stop_comm_thread(void)
 
 	pthread_join(ReciveThread, NULL);
 	pthread_join(TimeOutThread, NULL);
-	pthread_join(SendThread, NULL);
+	pthread_join(SendThread, NULL);	
+	#ifdef	_USE_AURINE_SET_
+	pthread_join(ReciveSetThread, NULL);
+	#endif
 	list_sem_del();
 }
 

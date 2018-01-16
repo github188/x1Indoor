@@ -936,25 +936,6 @@ typedef struct _GAL_Rect {
 #define SCANCODE_SPACE                  57
 #define SCANCODE_CAPSLOCK               58
 
-#include "AppConfig.h"
-
-#if (AH8_E81S == JIEGOU_TYPE)
-#define SCANCODE_F1                     68
-#define SCANCODE_F2                     64
-#define SCANCODE_F3                     65
-#define SCANCODE_F4                     66
-#define SCANCODE_F5                     67
-#define SCANCODE_F6                     59
-#define SCANCODE_F7                     60
-#define SCANCODE_F8                     61
-#define SCANCODE_F9                     62
-#define SCANCODE_F10                    63
-#define TK_ALARM						59
-#define TK_CENTER						60
-#define TK_MONITOR						61
-#define TK_LOCK							62
-#define TK_TALK							63
-#else
 #define SCANCODE_F1                     59
 #define SCANCODE_F2                     60
 #define SCANCODE_F3                     61
@@ -965,12 +946,6 @@ typedef struct _GAL_Rect {
 #define SCANCODE_F8                     66
 #define SCANCODE_F9                     67
 #define SCANCODE_F10                    68
-#define TK_ALARM						65
-#define TK_CENTER						68
-#define TK_MONITOR						64
-#define TK_LOCK							66
-#define TK_TALK							67
-#endif
 
 #define SCANCODE_NUMLOCK                69
 #define SCANCODE_SCROLLLOCK             70

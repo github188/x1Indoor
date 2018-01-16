@@ -319,8 +319,6 @@ ECHO_STORAGE storage_clear_photo (void)
 		}
 	}
 	storage_free_photo_memory(&photolist);
-	//system("sync");
-	//DelayMs_nops(200);
 	
 	return ret;
 }

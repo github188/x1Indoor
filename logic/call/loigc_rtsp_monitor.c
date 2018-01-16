@@ -1098,7 +1098,6 @@ LabChange:
 	RtspGuiNotify(g_RtspMonItorInfo.state, g_ErrType);
 	
 	log_printf("monitor proc : AS_MONITOR_END : g_ErrType : %d\n", g_ErrType);
-	media_set_device(DEVICE_TYPE_NONE);
 	g_RtspMonItorInfo.state = MONITOR_END;
 	g_ErrType = MONITOR_OK;
 	sys_set_monitor_state(FALSE);

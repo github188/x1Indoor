@@ -75,6 +75,16 @@ typedef enum {
 extern "C" {
 #endif
 
+/*************************************************
+  Function:			Alsa_System_SetVolume
+  Description:  	设置功放音量
+  Input: 
+  	volume			范围值待定
+  Output:		  
+  Return:		 
+  Others:  			
+*************************************************/
+int Alsa_System_SetVolume(int volume);
 
 /*************************************************
   Function:			Alsa_Play_SetVolume

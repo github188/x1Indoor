@@ -19,30 +19,72 @@
 #include "logic_include.h"
 #include "logic_media_core.h"
 
-#define 	RT_SUCCESS  			0
-#define	 	RT_FAILURE   			-1
+#define DEFAULT_BIT_RATE			2048000
+#define DEFAULT_WIDTH				640
+#define DEFAULT_HEIGHT				480
 
-#define		H264VER          		0x00010000
-#define 	H264VER_MAJOR    		(H264VER>>16)
-#define 	H264VER_MINOR    		(H264VER&0xffff)
+#define DEFAULT_CLOUD_BIT_RATE		512000
+#define DEFAULT_CLOUD_WIDTH			320
+#define DEFAULT_CLOUD_HEIGHT		240
+#define DEFAULT_CLOUD_FRAMERATE 	15
 
-#define 	DISPLAY_MODE_RGB555     0
-#define 	DISPLAY_MODE_RGB565     1
-#define 	DISPLAY_MODE_RGB888_MODE0     2
-#define 	DISPLAY_MODE_RGB888_MODE1     3
-#define 	DISPLAY_MODE_CBYCRY     4
-#define 	DISPLAY_MODE_YCBYCR     5
-#define 	DISPLAY_MODE_CRYCBY     6
-#define 	DISPLAY_MODE_YCRYCB     7
+#define DEFAULT_FRAMERATE 			15
 
-#define 	IOCTL_LCD_GET_DMA_BASE      _IOR('v', 32, unsigned int *)
-#define 	IOCTL_LCD_ENABLE_INT		_IO('v', 28)
-#define 	IOCTL_LCD_DISABLE_INT		_IO('v', 29)
-#define 	IOCTL_FB_LOCK				_IOW('v', 64, unsigned int)	
-#define 	IOCTL_FB_UNLOCK				_IOW('v', 65, unsigned int)
-#define 	VIDEO_FORMAT_CHANGE			_IOW('v', 50, unsigned int)  
+#if (_LCD_DPI_ == _LCD_800480_)
+#define JPEG_ENC_W					640
+#define JPEG_ENC_H					480
 
-#define FB_DEVICE       	"/dev/fb0"  
+#define JPEG_DEC_W					640
+#define JPEG_DEC_H					480
+
+// 解码视频显示位置
+#define H264_DISPLAY_X				0
+#define H264_DISPLAY_Y				0
+#define H264_DISPLAY_W				820
+#define H264_DISPLAY_H				600
+#define H264_DISPLAY_W_FULL			1024
+#define H264_DISPLAY_H_FULL			600
+
+
+// RTSP视频显示位置
+#define RTSP_DISPLAY_X 				0
+#define RTSP_DISPLAY_Y 				0
+#define RTSP_DISPLAY_W 				640
+#define RTSP_DISPLAY_H 				480
+
+// 留影留言视频显示位置
+#define AVI_DISPLAY_X 				0
+#define AVI_DISPLAY_Y 				0
+#define AVI_DISPLAY_W 				640
+#define AVI_DISPLAY_H 				480
+#elif (_LCD_DPI_ == _LCD_1024600_)
+#define JPEG_ENC_W					640
+#define JPEG_ENC_H					480
+
+#define JPEG_DEC_W					640
+#define JPEG_DEC_H					480
+
+// 解码视频显示位置
+#define H264_DISPLAY_X				0
+#define H264_DISPLAY_Y				0
+#define H264_DISPLAY_W				820
+#define H264_DISPLAY_H				600
+#define H264_DISPLAY_W_FULL			1024
+#define H264_DISPLAY_H_FULL			600
+
+
+// RTSP视频显示位置
+#define RTSP_DISPLAY_X 				0
+#define RTSP_DISPLAY_Y 				0
+#define RTSP_DISPLAY_W 				640
+#define RTSP_DISPLAY_H 				480
+
+// 留影留言视频显示位置
+#define AVI_DISPLAY_X 				0
+#define AVI_DISPLAY_Y 				0
+#define AVI_DISPLAY_W 				640
+#define AVI_DISPLAY_H 				480
+#endif
 
 typedef enum
 {
@@ -57,17 +99,16 @@ typedef enum
 
 typedef enum
 {
-	STREAM_SRC_H264_DEC = 0,	// 源为解码端
-	STREAM_SRC_ANOLOG   = 1,	// 源为模拟设备视频
-}STREAM_SRC_E;
-
-typedef enum
-{
-	VS_CLOSE,			                            // 关闭状态
-	VS_NETTALK_BOTH,	                            // 网络通话状态,双向视频
-	VS_NETTALK_SEND,	                            // 网络通话状态,仅发送视频
-	VS_NETTALK_RECIVE,	                            // 网络通话状态,仅接收视频
-	VS_NETSNAP,
+	VS_NONE					= 0x0000,			    // 关闭状态
+	VS_NETTALK_BOTH			= 0x0001,	            // 网络通话状态,双向视频
+	VS_NETTALK_SEND			= 0x0002,	            // 网络通话状态,仅发送视频
+	VS_NETTALK_RECIVE		= 0x0004,	            // 网络通话状态,仅接收视频
+	VS_NET_SNAP				= 0x0008,				// 网络视频数据进行抓拍
+	VS_LOCAL_SNAP			= 0x0010,				// 本地摄像头数据抓拍
+	VS_NET_RECORD			= 0x0020,				// 网络数据录制
+	VS_LOCAL_RECORD			= 0x0040,				// 本地数据的录制
+	VS_CLOUD_SEND			= 0x0080,				// 云端发送
+	VS_LYLY_PLAY			= 0x0200,				// 留影留言播放
 }VIDEO_STATE_E;
 
 typedef enum
@@ -80,11 +121,9 @@ typedef enum
 
 typedef enum
 {
-	MP3_CMD_STOP,	                           		// 停止
-	MP3_CMD_PAUSE,	                            	// 暂停/播放切换
-	MP3_CMD_PLAY,	                            	// 播放
-	MP3_CMD_CHANGE,									// 切换播放文件
-}MP3_CMD_E;
+	STREAM_SRC_H264_DEC = 0,	// 源为解码端
+	STREAM_SRC_ANOLOG   = 1,	// 源为模拟设备视频
+}STREAM_SRC_E;
 
 // RTSP状态
 typedef enum
@@ -101,16 +140,6 @@ typedef enum
 	RTSP_STATE_HEART,								// 心跳命令
 }RTSP_STATE_E;
 
-typedef struct AVFrame 
-{
-    unsigned char *data[4];
-} AVFrame;
-
-typedef struct AVPacket 
-{
-    unsigned char *data;
-    int     size;
-} AVPacket;
 
 typedef struct video_params
 {
@@ -169,217 +198,6 @@ typedef struct _RecordParam{
 
 
 
-/*************************************************
-  Function:			rtsp_set_full_screen
-  Description:		全频操作
-  Input: 	
-  	1.flg			是否全屏		
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-int rtsp_set_full_screen(uint8 flg);
 
-/*************************************************
-  Function:			rtsp_play_open
-  Description:		开启rtsp播放
-  Input: 			无
-  Output:			无
-  Return:		
-  Others:
-*************************************************/
-int32 rtsp_play_open(V_RECT_S rect, char *Url, void *callback_func);
-
-/*************************************************
-  Function:			rtsp_play_close
-  Description:		关闭rtsp播放
-  Input: 			无
-  Output:			无
-  Return:		
-  Others:
-*************************************************/
-int32 rtsp_play_close(void);
-
-/*************************************************
-  Function:			inter_full_screen
-  Description:		全频操作
-  Input: 	
-  	1.flg			是否全屏		
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-void set_full_screen(uint8 flg);
-
-
-/*************************************************
-  Function:    		open_video_mode
-  Description:		
-  Input: 			无
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-int open_video_mode(VIDEO_STATE_E mode, int addr);
-
-/*************************************************
-  Function:    		close_video_mode
-  Description:		
-  Input: 			无
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-int close_video_mode(VIDEO_STATE_E mode);
-
-/*************************************************
-  Function:    	set_jpg_param
-  Description: 		
-  Input:		
-  Output:		
-  Return:		
-  Others:
-*************************************************/
-void set_jpg_dec_param(char *filename, uint16 pos_x, uint16 pos_y, uint16 width, uint16 heigh);
-
-/*************************************************
-  Function:    	set_jpg_param
-  Description: 		
-  Input:		
-  Output:		
-  Return:		
-  Others:
-*************************************************/
-void set_jpg_enc_param(char *filename, uint16 width, uint16 heigh, DEVICE_TYPE_E DevType);
-
-/*************************************************
-  Function:    	open_jpeg_dec
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
-  Others:
-*************************************************/
-int open_jpeg_dec(void);
-
-/*************************************************
-  Function:    	close_jpeg_dec
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
-  Others:
-*************************************************/
-int close_jpeg_dec(void);
-
-/*************************************************
-  Function:    	open_jpeg_enc
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
-  Others:
-*************************************************/
-int open_jpeg_enc(void);
-
-/*************************************************
-  Function:    	close_jpeg_enc
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
-  Others:
-*************************************************/
-int close_jpeg_enc(void);
-
-/*************************************************
-  Function:			lyly_play_start
-  Description:		启动留影留言
-  Input: 			无
-  Output:			无
-  Return:			TRUE/FALSE
-  Others:
-*************************************************/
-int32 lyly_play_start(char *filename, void * proc);
-
-/*************************************************
-  Function:			lyly_play_stop
-  Description:		
-  Input: 			无
-  Output:			无
-  Return:		
-  Others:
-*************************************************/
-void lyly_play_stop(void);
-
-/*************************************************
-  Function:			lyly_play_pause
-  Description:		暂停/播放切换
-  Input: 			无
-  Output:			无
-  Return:		
-  Others:
-*************************************************/
-int32 lyly_play_pause(void);
-
-/*************************************************
-  Function:			mp3_play_pause
-  Description:		暂停/播放切换
-  Input: 			无
-  Output:			无
-  Return:		
-  Others:
-*************************************************/
-int32 mp3_play_pause(void);
-
-/*************************************************
-  Function:			lyly_play_start
-  Description:		启动留影留言
-  Input: 			无
-  Output:			无
-  Return:			TRUE/FALSE
-  Others:
-*************************************************/
-int32 mp3_play_start(char *filename, void * proc);
-
-/*************************************************
-  Function:			mp3_play_stop
-  Description:		主动调用，播放完一首会自己反初始化
-  Input: 			无
-  Output:			无
-  Return:		
-  Others:
-*************************************************/
-void mp3_play_stop(void);
-
-/*************************************************
-  Function:    	get_avi_record_param
-  Description: 		
-  Input:		
-  Output:		
-  Return:		
-  Others:
-*************************************************/
-int32 set_avi_record_param(uint8 mode, uint8 atp, uint8 vtp, char * filename);
-
-/*************************************************
-  Function:    	lyly_record_start
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
-  Others:
-*************************************************/
-int lyly_record_start(void);
-
-/*************************************************
-  Function:    	lyly_record_stop
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
-  Others:
-*************************************************/
-int lyly_record_stop(void);
 #endif
 

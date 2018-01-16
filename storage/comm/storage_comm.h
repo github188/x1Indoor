@@ -334,6 +334,16 @@ int get_size (char* srcname);
 int32 FSFileDelete(char * path);
 
 /*************************************************
+  Function:     	FSFlush
+  Description:  	
+  Input:       	
+  Output:           无
+  Return:
+  Others:			文件数据写入磁盘
+*************************************************/
+void FSFlush(FILE* pFile);
+
+/*************************************************
   Function:		Fwrite_common
   Description: 	写数据
   Input:		

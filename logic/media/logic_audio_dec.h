@@ -16,17 +16,10 @@ History:
 
 #include "logic_audio.h"
 
-typedef struct AudioDecState
+typedef struct _AudioDecParam
 {
-	PAYLOAD_TYPE_E enPayloadType;
-	int Samplerate;
-	int Bitwidth;
-	int channelnum;
-	AUDIO_PARAM	AParam;
-	uint8 AoEnable;
-	uint8 AlawIndex;
-	uint8 PackBuf[2*SAMPLE_AUDIO_PTNUMPERFRM];
-}AudioDecState; 
+	bool Enable;	
+}AudioDecParam; 
 
 #define MS_AUDIO_DEC_OPEN		MS_MEDIA_METHOD(MS_ALAW_DEC_ID, 0x00, const char)
 #define MS_AUDIO_DEC_CLOSE		MS_MEDIA_METHOD_NO_ARG(MS_ALAW_DEC_ID, 0x01)

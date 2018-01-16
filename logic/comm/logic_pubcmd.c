@@ -229,7 +229,7 @@ void logic_rtsp_ontimer(void)
 		Rtspip = storage_get_netparam_bytype(RTSP_IPADDR);
 		if (Rtspip == 0)
 		{
-			log_printf(" rtsp server is not set !!! \n");
+			//log_printf(" rtsp server is not set !!! \n");
 			return;
 		}
 		
@@ -493,7 +493,49 @@ int32 public_distribute(const PRECIVE_PACKET recPacket)
 	head = (PNET_HEAD)(recPacket->data + MAIN_NET_HEAD_SIZE);
 	cmd = head->command | SSC_PUBLIC << 8;
 	switch (cmd)
-	{											
+	{		
+		case CMD_SOFT_SET_PARAM:
+		case CMD_SOFT_GET_PARAM:
+		case CMD_SOFT_TERMINAL_CMD:
+		{
+			#ifndef _AU_PROTOCOL_
+				uint32 U32Encrypt = 0;
+				uint8 hwEncrypt[16] = {0};
+				
+				PMAIN_NET_HEAD PMainNethead = (PMAIN_NET_HEAD)(recPacket->data);
+				memcpy(hwEncrypt, PMainNethead->hwEncrypt, sizeof(PMainNethead->hwEncrypt));
+				memcpy(&U32Encrypt, &hwEncrypt[12], 4);
+				log_printf("U32Encrypt : %08x\n", U32Encrypt);
+												
+				if (U32Encrypt != _TYSET_HWENCRYPT_)
+				{
+					log_printf(" Encrypt is wrong !!! \n");
+					return FALSE;
+				}
+
+				switch (cmd)
+				{
+					case CMD_SOFT_SET_PARAM:
+						set_param_cmd_deal(recPacket);
+						break;
+
+					case CMD_SOFT_GET_PARAM:
+						get_param_cmd_deal(recPacket);
+						break;
+
+					case CMD_SOFT_TERMINAL_CMD:
+						terminal_cmd_deal(recPacket);
+						break;
+
+					default:
+						break;								
+				}							
+				return TRUE;
+			#else
+				return FALSE;
+			#endif
+		}
+	
 		case CMD_DEVNO_RULE_CMD:							
 		{
 			char sub_des[70] = {0};

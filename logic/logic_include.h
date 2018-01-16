@@ -71,6 +71,7 @@
 
 #include "comm/logic_appinit.h"
 #include "comm/logic_pubcmd.h"
+#include "comm/logic_pubsetcmd.h"
 
 #include "../driver/hw_ioctrl_api.h"
 #include "../driver/hw_com_api.h"

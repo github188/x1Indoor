@@ -172,7 +172,7 @@
 /* #undef WIN32 */
 
 /* Define if build with debugging messages */
-/* #undef _DEBUG */
+#define _DEBUG 1
 
 /* Define if have math library */
 #define _HAVE_MATH_LIB 1
@@ -540,6 +540,10 @@
 /* Define if include the WVFB IAL engine */
 /* #undef _MGIAL_WVFB */
 
+/* Define if use DPX1 */
+/* #undef _MGIAL_DPX1 */
+#define _MGIAL_DPX1	1
+
 /* Define if support GIF bmp file format */
 #define _MGIMAGE_GIF 1
 
@@ -554,6 +558,7 @@
 
 /* Define if support PNG bmp file format */
 /* #undef _MGIMAGE_PNG */
+#define _MGIMAGE_PNG	1
 
 /* Define if support TGA bmp file format */
 /* #undef _MGIMAGE_TGA */

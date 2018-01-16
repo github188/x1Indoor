@@ -510,16 +510,16 @@ static int WindowProc(HWND hDlg, int message, WPARAM wParam, LPARAM lParam)
 		case MSG_KEYDOWN:
 	        switch ((int)wParam)
 	        {
-	        	case SCANCODE_F2:
+	        	case RIGHT_SCANCODE_F2:
 					if(g_page_type < 2)
 					{
 						SendMessage(GetDlgItem(hDlg, IDC_RIGHT_BUTTON), MSG_KEYDOWN, wParam, lParam);
 					}
 					break;
 					
-		        case SCANCODE_F3:
-		        case SCANCODE_F4:
-				case SCANCODE_F5:
+		        case RIGHT_SCANCODE_F3:
+		        case RIGHT_SCANCODE_F4:
+				case RIGHT_SCANCODE_F5:
 					SendMessage(GetDlgItem(hDlg, IDC_RIGHT_BUTTON), MSG_KEYDOWN, wParam, lParam);
 					break;
 					
@@ -531,16 +531,16 @@ static int WindowProc(HWND hDlg, int message, WPARAM wParam, LPARAM lParam)
 		case MSG_KEYUP:
 	        switch ((int)wParam)
 	        {
-	        	case SCANCODE_F2:
+	        	case RIGHT_SCANCODE_F2:
 					if (g_page_type < 2)
 					{
 						SendMessage(GetDlgItem(hDlg, IDC_RIGHT_BUTTON), MSG_KEYUP, wParam, lParam);
 					}
 					break;
 					
-				case SCANCODE_F3:
-		        case SCANCODE_F4:
-				case SCANCODE_F5:
+				case RIGHT_SCANCODE_F3:
+		        case RIGHT_SCANCODE_F4:
+				case RIGHT_SCANCODE_F5:
 					SendMessage(GetDlgItem(hDlg, IDC_RIGHT_BUTTON), MSG_KEYUP, wParam, lParam);
 		            break;
 					

@@ -60,10 +60,9 @@ ECHO_STORAGE storage_set_bledoor_pic_readed(uint8 index, uint8 door_index)
 	
 	if (fPListFile)
 	{
+		FSFlush(fPListFile);
 		fclose(fPListFile);
     	fPListFile = NULL;
-		system("sync");
-		DelayMs_nops(200);
 	}
 
 	return ECHO_STORAGE_OK;
@@ -309,14 +308,13 @@ ECHO_STORAGE storage_write_bledoor_pic(uint32 ID, uint8 * data, int size, char d
 	
 	if (fPListFile)
 	{
+		FSFlush(fPListFile);
 		fclose(fPListFile);
     	fPListFile = NULL;
 	}
 	
 	#endif
 	log_printf("storage_write_msg end\n");
-	system("sync");
-	DelayMs_nops(200);
 	
 	return ECHO_STORAGE_OK;
 }
@@ -381,8 +379,6 @@ ECHO_STORAGE storage_delete_bledoor_pic(uint8 index, uint8 doorindex)
     	fPListFile = NULL;
 	}
 	storage_delete_bledoor_pic_data(&pic_data);
-	//system("sync");
-	//DelayMs_nops(200);
 	
 	return ECHO_STORAGE_OK;
 }

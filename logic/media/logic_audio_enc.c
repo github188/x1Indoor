@@ -13,14 +13,13 @@
 #include "logic_audio_enc.h"
 #include "logic_audio.h"
 
-#define _AUDIO_FILE_SAVE_		0
-static uint8 g_UseForLocal = FALSE;				// 如果是本地录制使用 设置为1
 
+#define _AUDIO_FILE_SAVE_		0
 #if _AUDIO_FILE_SAVE_
 #define PCM_AUDIO				0
 #define ALAW_AUDIO				1
-#define PCM_AUDIO_FILE			"/mnt/nand1-2/enc_rtp.pcm"
-#define ALAW_AUDIO_FILE			"/mnt/nand1-2/enc_rtp.alaw"
+#define PCM_AUDIO_FILE			CFG_PUBLIC_DRIVE"/enc_rtp.pcm"
+#define ALAW_AUDIO_FILE			CFG_PUBLIC_DRIVE"/enc_rtp.alaw"
 static FILE * mPCMFIle = NULL;
 static FILE * mALAWFIle = NULL;
 
@@ -118,28 +117,46 @@ static void g711_file_save(uint8 mode, uint8 *data, int len)
 #endif
 
 /*************************************************
-  Function:		Audio_Sf_PackStream
+  Function:		st_audio_param_reset
+  Description:	
+  Input:		无
+  Output:		无
+  Return:		无
+  Others:		
+*************************************************/
+static int st_audio_param_reset(AudioEncParam * data)
+{	
+	ms_return_val_if_fail(data, -1);	
+	memset(data, 0, sizeof(AudioEncParam));
+	data->isPack = FALSE;
+	data->isLocalRecord = FALSE;
+	return 0;
+}
+
+/*************************************************
+  Function:		st_audio_enc_packet
   Description: 	
   Input: 		
   Output:		
   Return:		 
   Others:
 *************************************************/
-static int Audio_Sf_PackStream(MSMediaDesc * f, uint8 * pstStream)
+static int st_audio_enc_packet(MSMediaDesc * f, uint8 * pstStream)
 {
 	uint8 send = 0;
 	uint32 nlen = 0, extlen = 4;
 	mblk_t arg;
 
+	AudioEncParam * data = (AudioEncParam*)f->private;
 	// add by chenbh 本地录制时 需要把前面四字节数据去除 
-	if (TRUE == g_UseForLocal)
+	if (TRUE == data->isLocalRecord)
 	{
 		extlen = 0;
 	}
 	
-	AudioSfEncState * s = (AudioSfEncState*)f->private;
+	AudioEncParam * s = (AudioEncParam*)f->private;
 	memcpy(&s->Alaw[extlen + s->AlawIndex*SAMPLE_AUDIO_PTNUMPERFRM], pstStream, SAMPLE_AUDIO_PTNUMPERFRM);
-	if (s->EncParam.IsPack == HI_FALSE)
+	if (s->isPack == FALSE)
 	{
 		send = 1;
 		nlen = SAMPLE_AUDIO_PTNUMPERFRM+extlen;
@@ -147,10 +164,10 @@ static int Audio_Sf_PackStream(MSMediaDesc * f, uint8 * pstStream)
 	else
 	{
 		s->AlawIndex++;
-		if (s->AlawIndex == s->EncParam.PackNum)
+		if (s->AlawIndex == AUDIO_PACKET_NUM)
 		{
 			send = 1;
-			nlen = s->EncParam.PackNum*SAMPLE_AUDIO_PTNUMPERFRM+extlen;
+			nlen = AUDIO_PACKET_NUM*SAMPLE_AUDIO_PTNUMPERFRM+extlen;
 		}
 	}
 	
@@ -161,7 +178,7 @@ static int Audio_Sf_PackStream(MSMediaDesc * f, uint8 * pstStream)
 		arg.address = (char*)s->Alaw;
 		
 		#if _AUDIO_FILE_SAVE_
-		if (s->EncParam.IsPack == HI_TRUE)
+		if (s->isPack == TRUE)
 		{
 			g711_file_save(ALAW_AUDIO, &(s->Alaw[extlen]), SAMPLE_AUDIO_PTNUMPERFRM * 6);
 		}
@@ -197,7 +214,7 @@ static void ms_audio_enc_proc(struct _MSMediaDesc * f, mblk_t * arg)
 		{
 			G711Encoder((short *)(arg->address + i*(2*SAMPLE_AUDIO_PTNUMPERFRM)), (uint8 *)data, SAMPLE_AUDIO_PTNUMPERFRM, 0);
 			
-			Audio_Sf_PackStream(f, data);
+			st_audio_enc_packet(f, data);
 		}
 	}
 }
@@ -212,7 +229,7 @@ static void ms_audio_enc_proc(struct _MSMediaDesc * f, mblk_t * arg)
 *************************************************/
 static int ms_audio_enc_open(struct _MSMediaDesc * f, void * arg)
 {
-	AudioSfEncState * s = (AudioSfEncState*)f->private;	
+	AudioEncParam * s = (AudioEncParam*)f->private;	
 	int ret = -1;
 	
 	ms_media_lock(f);
@@ -223,8 +240,7 @@ static int ms_audio_enc_open(struct _MSMediaDesc * f, void * arg)
 	log_printf("f->mcount : %d \n", f->mcount);
 	if (f->mcount == 0)
 	{
-		g_UseForLocal = FALSE;
-		s->AlawIndex = 0;
+		s->isLocalRecord = FALSE;
 		if (f->preprocess)
 		{
 			f->preprocess(f);
@@ -265,6 +281,8 @@ static int ms_audio_enc_close(struct _MSMediaDesc * f, void * arg)
 				f->postprocess(f);
 			}
 			ret = 0;
+			AudioEncParam * data = (AudioEncParam*)f->private;
+			st_audio_param_reset(data);
 		} 
 	}
 	#if _AUDIO_FILE_SAVE_
@@ -285,13 +303,13 @@ static int ms_audio_enc_close(struct _MSMediaDesc * f, void * arg)
 *************************************************/
 static int ms_audio_enc_param(struct _MSMediaDesc * f, void * arg)
 {
-	AudioSfEncState * data = (AudioSfEncState*)f->private;
-	AUDIO_PARAM param = * ((AUDIO_PARAM*)arg);
+	AudioEncParam * data = (AudioEncParam*)f->private;
+	AUDIO_PARAM *param = (AUDIO_PARAM*)arg;
 
 	ms_media_lock(f);
 	if (f->mcount == 0)
 	{	
-		memcpy(&data->EncParam, &param, sizeof(AUDIO_PARAM));
+		data->isPack = param->isPack;
 		ms_media_unlock(f);	
 		return 0;
 	}
@@ -310,10 +328,12 @@ static int ms_audio_enc_param(struct _MSMediaDesc * f, void * arg)
 *************************************************/
 static int ms_audio_enc_local(struct _MSMediaDesc * f, void * arg)
 {
+	AudioEncParam * data = (AudioEncParam*)f->private;
+	
 	ms_media_lock(f);
 	if (f->mcount > 0)
 	{	
-		g_UseForLocal = *(uint8 *)arg;
+		data->isLocalRecord = *(bool *)arg;
 		ms_media_unlock(f);	
 		return 0;
 	}
@@ -334,15 +354,9 @@ static int ms_audio_enc_init(struct _MSMediaDesc * f)
 {
 	if (NULL == f->private)
 	{
-		AudioSfEncState * data = (AudioSfEncState*)malloc(sizeof(AudioSfEncState));
-		memset(data, 0, sizeof(AudioSfEncState));
-		data->PayloadType = PT_G711A;
-		data->Samplerate = AUDIO_SAMPLE_RATE_8000;
-   		data->Bitwidth = AUDIO_BIT_WIDTH_16;       	// standard 16bit little endian format, support this format only
-		data->channelnum = 1;
-		data->EncParam.IsPack = HI_TRUE;			// 多包发送
-		data->EncParam.PackNum = AUDIO_NUM;			// 一次发送的包数
-		data->EncParam.MicValue = 95;
+		AudioEncParam * data = (AudioEncParam*)malloc(sizeof(AudioEncParam));
+		st_audio_param_reset(data);
+		
 		f->private= data;		
 		f->mcount = 0;
 	}
@@ -377,9 +391,9 @@ static MSMediaMethod methods[] =
 	{0,							NULL}
 };
 
-MSMediaDesc ms_audio_sf_enc_desc =
+MSMediaDesc ms_audio_enc_desc =
 {
-	.id = MS_ALAW_SF_ENC_ID,
+	.id = MS_ALAW_ENC_ID,
 	.name = "MsAlawEncSw",
 	.text = "Encoder using Hi3520 Sf",
 	.enc_fmt = "ALAW",

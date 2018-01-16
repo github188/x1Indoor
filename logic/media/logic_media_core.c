@@ -20,6 +20,7 @@
 static MSMediaDesc * ms_media_descs[] =
 {
 	&ms_h264_enc_desc,
+	&ms_cloud_h264_enc_desc,
 	&ms_h264_dec_desc,
 	&ms_audio_dec_desc,
 	&ms_rtp_send_v_desc,
@@ -29,7 +30,7 @@ static MSMediaDesc * ms_media_descs[] =
 	&ms_jpegwrite_desc,
 	&ms_file_player_desc,
 	&ms_audio_ai_desc,
-	&ms_audio_sf_enc_desc,
+	&ms_audio_enc_desc,
 	NULL,
 };
 */
@@ -41,7 +42,7 @@ static MSMediaDesc * ms_media_descs[] =
 	&ms_rtp_send_a_desc, 
 	&ms_rtp_recv_a_desc,
 	&ms_audio_ai_desc,
-	&ms_audio_sf_enc_desc,
+	&ms_audio_enc_desc,
 	&ms_file_player_desc,
 	&ms_audio_ao_desc,
 	&ms_jpeg_dec_desc,
@@ -49,8 +50,11 @@ static MSMediaDesc * ms_media_descs[] =
 	&ms_avi_play_desc,
 	&ms_rtsp_play_desc,
 	&ms_avi_record_desc,
-	&ms_mp3_play_desc,
-	&ms_file_lyly_desc,
+	&ms_wav_record_desc,
+	//&ms_mp3_play_desc,
+	&ms_lyly_hit_desc,
+	//&ms_h264_enc_desc,
+	//&ms_cloud_h264_enc_desc,
 	NULL,
 };
 

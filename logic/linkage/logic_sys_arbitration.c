@@ -126,7 +126,7 @@ static int32 arbi_stop_media(SYS_MEDIA_TYPE MediaType)
 					g_RecordTimer = 0;
 				}
 				// 停止家人留言录制
-				media_stop_local_record();
+				media_stop_jrly_record();
 			}
 			break;
 			
@@ -664,7 +664,6 @@ int32 sys_start_play_audio(const SYS_MEDIA_TYPE MediaType, char *FileName, uint8
 	if (ret == TRUE)
 	{
 		// 设置音量
-		media_set_device(DEVICE_TYPE_NONE);
 		media_set_output_volume(volume);
 	}
 	else
@@ -726,7 +725,6 @@ int32 sys_start_play_leaveword(char *FileName, LYLY_TYPE type, uint8 volume, Med
 		if (ret == TRUE)
 		{
 			// 设置音量
-			media_set_device(DEVICE_TYPE_NONE);
 			media_set_output_volume(volume);
 		}
 		else
@@ -791,8 +789,8 @@ int32 sys_start_family_record(char *FileName, MediaPlayCallback ProcessProc, Med
 	set_curplay_state(SYS_MEDIA_FAMILY_RECORD, ProcessProc, StoppedProc, FALSE);
 
 	// 开始家人留言录制
-	//ret = media_start_local_record(FileName, SYS_FAMILY_RECORD_MAXTIME, (void*)play_media_callback);
-	ret = media_start_local_record(FileName);
+	//ret = media_start_jrly_record(FileName, SYS_FAMILY_RECORD_MAXTIME, (void*)play_media_callback);
+	ret = media_start_jrly_record(FileName);
 	if (ret == FALSE)
 	{
 		set_curplay_state(SYS_MEDIA_NONE, NULL, NULL, FALSE);
@@ -835,7 +833,7 @@ int32 sys_stop_family_record(void)
 	}
 	
 	// 停止家人留言录制
-	media_stop_local_record();
+	media_stop_jrly_record();
 	set_curplay_state(SYS_MEDIA_NONE, NULL, NULL, FALSE);
 	return SYS_MEDIA_ECHO_OK;
 }

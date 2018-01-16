@@ -261,7 +261,7 @@ typedef enum
 typedef enum
 {
     // 右边控件消息
-	WM_Right_Set_TextID = MSG_USER+1,
+	WM_Right_Set_TextID = MSG_USER+10,	// +10 前面几个特定值预留给滑动消息
 	WM_Right_Get_TextID,
 	WM_Right_Set_Image,
 	WM_Right_Get_Image,

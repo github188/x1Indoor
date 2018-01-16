@@ -412,8 +412,7 @@ ECHO_STORAGE storage_clear_lylyrecord (void)
 		}
 	}
 	storage_free_lyly_memory(&lylylist);
-	//system("sync");
-	//DelayMs_nops(200);
+
 	return ret;
 }
 

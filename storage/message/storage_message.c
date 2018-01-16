@@ -59,10 +59,9 @@ ECHO_STORAGE storage_set_msg_readed(uint8 index)
 	
 	if (fPListFile)
 	{
+		FSFlush(fPListFile);
 		fclose(fPListFile);
     	fPListFile = NULL;
-		system("sync");
-		DelayMs_nops(200);
 	}
 	// ≤‚ ‘
 	#if 0
@@ -479,6 +478,7 @@ ECHO_STORAGE storage_write_msg(const REC_BULLETIN_HEAD *pHead, uint8 * data, uin
 		//log_printf("storage_write_msg fwrite voice \n");
 		if (fPListFile)
 		{
+			FSFlush(fPListFile);
 			fclose(fPListFile);
 	    	fPListFile = NULL;
 		}
@@ -487,8 +487,6 @@ ECHO_STORAGE storage_write_msg(const REC_BULLETIN_HEAD *pHead, uint8 * data, uin
 	log_printf("storage_write_msg end\n");
 	//sys_set_hint_state(SYS_HINT_INFO, 1);
 	//PMU_ExitModule(PMU_HDMI);
-	system("sync");
-	DelayMs_nops(200);
 	
 	return ECHO_STORAGE_OK;
 }
@@ -546,8 +544,6 @@ ECHO_STORAGE storage_delete_msg(uint8 index)
     	fPListFile = NULL;
 	}
 	storage_delete_msg_data(&msg_data);
-	//system("sync");
-	//DelayMs_nops(200);
 	
 	return ECHO_STORAGE_OK;
 }
@@ -594,9 +590,7 @@ ECHO_STORAGE storage_clear_msg (void)
 	}
 	FSFileDelete(MSG_MANAGE_PATH);
 	//sys_set_hint_state(SYS_HINT_INFO, 0);
-	//system("sync");
-	//DelayMs_nops(200);
-		
+
 	return ECHO_STORAGE_OK;
 }
 

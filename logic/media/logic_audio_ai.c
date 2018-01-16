@@ -16,10 +16,12 @@
 #include "audio_dev.h"
 
 #define	BLOCKTIME         		20//40     //每个缓冲数据块的时长（毫秒）
-
 #define VOICE_ZOOM				0
-#define _AUDIO_AI_SAVE_			0
+#define AI_DEV_CHANNELS			1
+#define AI_DEV_BITWIDTH			AIO_BIT_WIDTH_16
+#define AI_DEV_SAMPLERATE		AIO_SAMPLE_RATE_8
 
+#define _AUDIO_AI_SAVE_			0
 #if _AUDIO_AI_SAVE_
 #define AI_PCM_AUDIO			0
 #define AI_AEC_AUDIO			1
@@ -121,42 +123,20 @@ static void g711_ai_file_save(uint8 mode, uint8 *data, int len)
 }
 #endif
 
-#if (_AEC_TYPE_ == _SW_AEC_)
-void echo_cancel_exe2( short *echo_buf, short *out_buf);//by zxf
-#endif
-static void audio_frame_check(AudioAIState * s, int samples) 
+static int st_audio_send_data(char *DataBuffer, int DataSize)
 {
-	struct timeval t0, t1;
-	gettimeofday(&t1, NULL);
-	t0 = s->tv;
-
-	if (t0.tv_sec == 0) 
+	AudioAIParam * mAudio = (AudioAIParam *)ms_audio_ai_desc.private;	
+	if (mAudio->Enable == FALSE)
 	{
-		gettimeofday(&(s->tv), NULL);
-		return ;
-	}
-
-	int timeout = (t1.tv_sec - t0.tv_sec) * 1000000 + t1.tv_usec - t0.tv_usec;
-	//log_printf("timeout:%d, samples:%d\n", timeout, samples);
-	if ((timeout > 0) && (timeout < (samples*1000000)/8000))
-	{
-		int offset = (samples*1000000)/8000 - timeout;
-		usleep(offset);		
-	}
-	gettimeofday(&(s->tv), NULL);
-}
-
-static int audio_send_data(char *DataBuffer, int DataSize)
-{
-	AudioAIState * mAudio = ms_audio_ai_desc.private;
-	//log_printf("size: %d\n", DataSize);
-	if (mAudio->started == false)
-	{
-		log_printf("s->started == false \n");
+		log_printf("s->Enable == false \n");
 		return 0;
 	}
-	static uint8 aipcmbuf[322];
+	
+	//static uint8 aipcmbuf[322];
+	int deal_len = AI_DEV_CHANNELS * (AI_DEV_BITWIDTH/8) * (AI_DEV_SAMPLERATE/1000) * BLOCKTIME;
+	static uint8 aipcmbuf[AI_DEV_CHANNELS * (AI_DEV_BITWIDTH/8) * (AI_DEV_SAMPLERATE/1000) * BLOCKTIME*2];
 	memset(aipcmbuf, 0, sizeof(aipcmbuf));
+	//log_printf("size: %d, deal_len[%d]\n", DataSize, deal_len);
 	
 	#if _AUDIO_AI_SAVE_
 	g711_ai_file_save(AI_PCM_AUDIO, DataBuffer, DataSize);
@@ -164,29 +144,29 @@ static int audio_send_data(char *DataBuffer, int DataSize)
 
 	#if (_AEC_TYPE_ == _SW_AEC_)
 		//by zxf
-		if (mAudio->AecEnable == HI_TRUE)
+		if (mAudio->AecEnable == TRUE)
 		{
 			echo_cancel_exe2((short *)DataBuffer, (short *)aipcmbuf);
 		}	
 		else
-			memcpy(aipcmbuf, DataBuffer, 320);
+			memcpy(aipcmbuf, DataBuffer, deal_len);
 		
 		#if VOICE_ZOOM 								// 消完回声后送到访客端的数据进行放大
-		//pcm_audio_mult_int(aipcmbuf, 320, 16, 1);
-		if (fabs(s->EncParam.AIAgcH-1.0) > 0.000001)
+		//pcm_audio_mult_int(aipcmbuf, deal_len, 16, 1);
+		if (fabs(mAudio->AiAgc-1.0) > 0.000001)
 		{
-			//log_printf("s->EncParam.AIAgcH: %f \n", s->EncParam.AIAgcH);
-			pcm_audio_mult((unsigned char*)aipcmbuf, 320, 16, mAudio->EncParam.AIAgcH);
+			//log_printf("s->EncParam.AiAgc: %f \n", s->EncParam.AiAgc);
+			pcm_audio_mult((unsigned char*)aipcmbuf, deal_len, AI_DEV_BITWIDTH, mAudio->EncParam.AiAgc);
 		}
 		#endif
 	#else
-		memcpy(aipcmbuf, DataBuffer, 320);
+		memcpy(aipcmbuf, DataBuffer, deal_len);
 		#if VOICE_ZOOM 								
-		//pcm_audio_mult_int(aipcmbuf, 320, 16, 1);
-		if (fabs(mAudio->EncParam.AIAgcH-1.0) > 0.000001)
+		//pcm_audio_mult_int(aipcmbuf, deal_len, 16, 1);
+		if (fabs(mAudio->AiAgc-1.0) > 0.000001)
 		{
-			//log_printf("s->EncParam.AIAgcH: %f \n", s->EncParam.AIAgcH);
-			pcm_audio_mult((unsigned char*)aipcmbuf, 320, 16, mAudio->EncParam.AIAgcH);
+			//log_printf("s->EncParam.AiAgcH: %f \n", s->EncParam.AiAgc);
+			pcm_audio_mult((unsigned char*)aipcmbuf, deal_len, AI_DEV_BITWIDTH, mAudio->AiAgc);
 		}
 		#endif
 	#endif
@@ -199,7 +179,7 @@ static int audio_send_data(char *DataBuffer, int DataSize)
 	mblk_t arg;
 	ms_media_blk_init(&arg);
 	arg.address = (char *)aipcmbuf;
-	arg.len = 320;
+	arg.len = deal_len;
 	arg.id = MS_FILTER_NOT_SET_ID;
 	ms_media_process(&ms_audio_ai_desc, &arg);
 	//audio_frame_check(s, arg.len/2);	// 没什么效果	
@@ -209,67 +189,84 @@ static int audio_send_data(char *DataBuffer, int DataSize)
 }
 
 /*************************************************
-  Function:		audio_ai_start
+  Function:		st_audio_ai_start
   Description: 	
   Input: 		
   Output:		
   Return:		 
   Others:
 *************************************************/
-static int audio_ai_start(struct _MSMediaDesc * arg)
+static int st_audio_ai_start(struct _MSMediaDesc * arg)
 {
 	#if _AUDIO_AI_SAVE_
     g711_ai_file_open(AI_PCM_AUDIO);
 	g711_ai_file_open(AI_AEC_AUDIO);
 	#endif	
-	AudioAIState * data = (AudioAIState*)arg->private;
-	return Alsa_Record_Start(data->channelnum, data->Bitwidth, data->Samplerate, BLOCKTIME, audio_send_data);
+	AudioAIParam * data = (AudioAIParam*)arg->private;
+	return Alsa_Record_Start(AI_DEV_CHANNELS, AI_DEV_BITWIDTH, AI_DEV_SAMPLERATE, BLOCKTIME, st_audio_send_data);
 }
 
 /*************************************************
-  Function:		audio_ai_stop
+  Function:		st_audio_ai_stop
   Description: 	
   Input: 		
   Output:		
   Return:		 
   Others:
 *************************************************/
-static int audio_ai_stop(struct _MSMediaDesc * arg)
+static int st_audio_ai_stop(struct _MSMediaDesc * arg)
 {
 	#if _AUDIO_FILE_SAVE_
 	g711_file_close(AI_PCM_AUDIO);
 	g711_file_close(AI_AEC_AUDIO);
 	#endif
 
-	AudioAIState * data = (AudioAIState*)arg->private;
-	data->started = FALSE;	
+	AudioAIParam * data = (AudioAIParam*)arg->private;
+	data->Enable = FALSE;	
 	Alsa_Record_Close();
 }
 
+/*************************************************
+  Function:		st_audio_param_reset
+  Description:	
+  Input:		无
+  Output:		无
+  Return:		无
+  Others:		
+*************************************************/
+static int st_audio_param_reset(AudioAIParam * data)
+{	
+	ms_return_val_if_fail(data, -1);	
+	memset(data, 0, sizeof(AudioAIParam));
+	data->Enable = TRUE;
+	data->AecEnable = TRUE;
+	data->AiAgc = 1.0;
+	return 0;
+}
 
 /*************************************************
-  Function:		msaudioai_thread
+  Function:		ms_audio_ai_thread
   Description: 	
   Input: 		
   Output:		
   Return:		 
   Others:
 *************************************************/
-static void * msaudioai_thread(void *ptr)
+static void * ms_audio_ai_thread(void *ptr)
 {
 	int s32Ret;
 	int offtime;
 	struct timeval t1, t2, t3, t4;
 	MSMediaDesc * f = (MSMediaDesc *)ptr;
-	AudioAIState * s = (AudioAIState *)f->private;
+	AudioAIParam * s = (AudioAIParam *)f->private;
 	uint8 * aipcmbuf = (uint8 *)malloc(641);
 	#if (_AEC_TYPE_ == _SW_AEC_)
 	uint8 cleanbuf[322];
 	#endif
 	
 	memset(aipcmbuf, 0, sizeof(aipcmbuf));
-	log_printf("thread_run: %d,started: %d", s->aithread.thread_run , s->started);
-    while (s->aithread.thread_run && s->started)
+	log_printf("thread_run: %d,Enable: %d", s->aithread.thread_run , s->Enable);
+    while (s->aithread.thread_run && s->Enable)
     {		   
 		
 		gettimeofday(&t1, NULL);	
@@ -290,7 +287,7 @@ static void * msaudioai_thread(void *ptr)
 		
 		#if (_AEC_TYPE_ == _SW_AEC_)
 			//by zxf
-			if (s->AecEnable == HI_TRUE)
+			if (s->AecEnable == TRUE)
 			{
 				echo_cancel_exe2((short *)aipcmbuf, (short *)cleanbuf);
 				memcpy(aipcmbuf, cleanbuf, 320);		// 固定按320 字节做消回音
@@ -301,7 +298,7 @@ static void * msaudioai_thread(void *ptr)
 			#endif
 		#else
 			#if VOICE_ZOOM								// 咪头输入的信号进行缩小,便于回声抵消
-			pcm_audio_mult((unsigned char*)aipcmbuf, s32Ret, 16, s->EncParam.AIAgcH);
+			pcm_audio_mult((unsigned char*)aipcmbuf, s32Ret, AI_DEV_BITWIDTH, s->AiAgc);
 			#endif
 		#endif
 		
@@ -351,17 +348,9 @@ static int ms_audio_ai_init(struct _MSMediaDesc * f)
 {
 	if (NULL == f->private)
 	{
-		AudioAIState * data = (AudioAIState*)malloc(sizeof(AudioAIState));
+		AudioAIParam * data = (AudioAIParam*)malloc(sizeof(AudioAIParam));
+		st_audio_param_reset(data);
 		
-		memset(data, 0, sizeof(AudioAIState));
-		data->enPayloadType = PT_G711A;
-		data->AecEnable = HI_TRUE;
-		data->Samplerate = AUDIO_SAMPLE_RATE_8000;
-   		data->Bitwidth = AUDIO_BIT_WIDTH_16;       /*standard 16bit little endian format, support this format only*/
-		data->channelnum = 1;
-		data->EncParam.IsPack = HI_TRUE;
-		data->EncParam.PackNum = AUDIO_NUM;
-		data->EncParam.MicValue = 60;
 		f->private= data;		
 		f->mcount = 0;
 	}
@@ -399,22 +388,22 @@ static int ms_audio_ai_uninit(struct _MSMediaDesc * f)
 static int ms_audio_ai_open(struct _MSMediaDesc * f, void * arg)
 {
 	int ret = HI_FAILURE;
-	AudioAIState * data = (AudioAIState*)f->private;
+	AudioAIParam * data = (AudioAIParam*)f->private;
 	
 	ms_media_lock(f);
 	if (f->mcount == 0)
 	{	
-		ret = audio_ai_start(f);
+		ret = st_audio_ai_start(f);
 		if (HI_SUCCESS != ret)
 		{
 			goto error0;
 		}
 		f->mcount++;
 		
-		data->started = TRUE;	// by zxf
+		data->Enable = TRUE;	// by zxf
 		/*
 		ms_thread_init(&data->aithread, 100);	
-		ret = ms_thread_create(&data->aithread, msaudioai_thread, f);
+		ret = ms_thread_create(&data->aithread, ms_audio_ai_thread, f);
 		if (HI_SUCCESS != ret)
 		{
 			goto error1;
@@ -435,7 +424,7 @@ static int ms_audio_ai_open(struct _MSMediaDesc * f, void * arg)
 
 error0:
 error1:
-	audio_ai_stop(f);
+	st_audio_ai_stop(f);
 	
 //error0:	
 	ms_media_unlock(f);
@@ -453,9 +442,9 @@ error1:
 static int ms_audio_ai_close(struct _MSMediaDesc * f, void * arg)
 {
 	int ret = HI_FAILURE;
-	AudioAIState * data = (AudioAIState*)f->private;
+	AudioAIParam * data = (AudioAIParam*)f->private;
 	
-	data->started = false;//by zxf
+	data->Enable = FALSE;
 	ms_media_lock(f);
 	if (f->mcount > 0)
 	{
@@ -463,8 +452,9 @@ static int ms_audio_ai_close(struct _MSMediaDesc * f, void * arg)
 		f->mcount = 0;
 		if (f->mcount == 0)
 		{
-			//ms_thread_quit(&data->aithread);			
-			audio_ai_stop(f);
+			//ms_thread_quit(&data->aithread);	
+			st_audio_param_reset(data);
+			st_audio_ai_stop(f);
 			ret = HI_SUCCESS;
 		} 
 	}
@@ -483,13 +473,39 @@ static int ms_audio_ai_close(struct _MSMediaDesc * f, void * arg)
 *************************************************/
 static int ms_audio_ai_param(struct _MSMediaDesc * f, void * arg)
 {
-	AudioAIState * data = (AudioAIState*)f->private;
+	AudioAIParam * data = (AudioAIParam*)f->private;
 	AUDIO_PARAM *param = ((AUDIO_PARAM*)arg);
 
 	ms_media_lock(f);
 	if (f->mcount == 0)
 	{		
-		memcpy(&data->EncParam, param, sizeof(AUDIO_PARAM));
+		data->AiAgc = param->AiAgc;
+		log_printf("data->AiAgc[%f]\n", data->AiAgc);
+		ms_media_unlock(f);	
+		return HI_SUCCESS;
+	}
+	
+	ms_media_unlock(f);	
+	return HI_FAILURE;
+}
+
+/*************************************************
+  Function:		ms_audio_ai_enable
+  Description: 	
+  Input: 		
+  Output:		
+  Return:		 
+  Others:
+*************************************************/
+static int ms_audio_ai_enable(struct _MSMediaDesc * f, void * arg)
+{
+	AudioAIParam * data = (AudioAIParam*)f->private;
+	bool Enable = *(bool *)(arg);
+	
+	ms_media_lock(f);
+	if (f->mcount > 0)
+	{		
+		data->Enable = Enable;		
 		ms_media_unlock(f);	
 		return HI_SUCCESS;
 	}
@@ -508,8 +524,8 @@ static int ms_audio_ai_param(struct _MSMediaDesc * f, void * arg)
 *************************************************/
 static int ms_audio_ai_aec_enable(struct _MSMediaDesc * f, void * arg)
 {
-	AudioAIState * data = (AudioAIState*)f->private;
-	uint8 AecEnable = *(uint8 *)(arg);
+	AudioAIParam * data = (AudioAIParam*)f->private;
+	bool AecEnable = *(bool *)(arg);
 	
 	ms_media_lock(f);
 	if (f->mcount > 0)
@@ -532,6 +548,7 @@ static MSMediaMethod methods[] =
 	{MS_AUDIO_AI_OPEN,	ms_audio_ai_open},
 	{MS_AUDIO_AI_CLOSE,	ms_audio_ai_close},
 	{MS_AUDIO_AI_PARAM, ms_audio_ai_param},
+	{MS_AUDIO_AI_ENABLE, ms_audio_ai_enable},
 	{MS_AUDIO_AI_AEC_ENABLE, ms_audio_ai_aec_enable},
 	{0,					NULL}
 };

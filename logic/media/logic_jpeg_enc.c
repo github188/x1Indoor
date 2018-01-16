@@ -308,18 +308,11 @@ static int ms_jpeg_enc_init(struct _MSMediaDesc * f)
 
 
 		memset(data->mName, 0XFF, sizeof(data->mName));
-		#if (_LCD_DPI_ == _LCD_800480_)
 		data->vorect.x = 0;
 		data->vorect.y = 0;
 		data->vorect.width = 640;
 		data->vorect.height = 480;
-		#elif (_LCD_DPI_ == _LCD_1024600_)
-		data->vorect.x = 0;
-		data->vorect.y = 0;
-		data->vorect.width = 640;
-		data->vorect.height = 480;
-		#endif
-		
+
 		f->private = data;
 		f->mcount = 0;
 	}
@@ -483,7 +476,6 @@ static int ms_jpeg_enc_process(struct _MSMediaDesc * f, void * arg)
 
 	jpeg_finish_compress( &cinfo );
 	fclose( outfile );
-	//sync();  // 该函数比较耗时
 
 	#if 1
 	free( (unsigned char *)image_buffer );

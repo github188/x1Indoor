@@ -29,17 +29,6 @@
 #include "logic_include.h"
 #include "logic_avi_play.h"
 
-#if (_LCD_DPI_ == _LCD_800480_)
-#define AVI_DISPLAY_X 			0
-#define AVI_DISPLAY_Y 			0
-#define AVI_DISPLAY_W 			640
-#define AVI_DISPLAY_H 			480
-#elif (_LCD_DPI_ == _LCD_1024600_)
-#define AVI_DISPLAY_X 			0
-#define AVI_DISPLAY_Y 			0
-#define AVI_DISPLAY_W 			640
-#define AVI_DISPLAY_H 			480
-#endif
 
 //static S_FB_PARAM g_AviPlay_FB;
 static uint8 g_playover_callback = 0;		// 播放结束的回调

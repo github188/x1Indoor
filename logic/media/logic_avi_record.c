@@ -22,7 +22,7 @@
 #include <sys/stat.h>
 #include <sys/vfs.h>
  
-#include "WavFileUtil.h"
+#include "wav_record.h"
 #include "logic_avi_record.h"
 
 #define _SAVE_RECV_AUDIO_  		0
@@ -288,7 +288,8 @@ pRecordAlawRecFile = fopen(RECORD_ALAW_AUDIO, "wb");
 		// Finnailiz Wav file
 		WavFileUtil_Write_Finish(&sWavFileInfo);
 	}
-	sync();
+	fflush(fPListFile);
+	fsync(fileno(fPListFile));
 
 exit_prog:
 	if (i32AVIFd > 0)
@@ -534,7 +535,9 @@ pRecordAlawRecFile = fopen(RECORD_ALAW_AUDIO, "wb");
 		// Finnailiz Wav file
 		WavFileUtil_Write_Finish(&sWavFileInfo);
 	}
-	sync();
+
+	fflush(fPListFile);
+	fsync(fileno(fPListFile));
 
 exit_prog:
 	if (i32AVIFd > 0)

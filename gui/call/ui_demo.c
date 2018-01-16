@@ -102,7 +102,7 @@ static void RightCtrlCommand(HWND hDlg, LPARAM lParam)
 		case SID_Msg_No:
 			{
 				#if _AVI_DEFINED_
-				lyly_play_stop();
+				media_stop_lyly();
 				//usleep(1000*500);
 				media_play_lyly("/mnt/nand1-2/chenbh/avi/111.avi", NULL);
 				#elif _MP3_DEFINED_
@@ -116,7 +116,7 @@ static void RightCtrlCommand(HWND hDlg, LPARAM lParam)
 	    case SID_Right_Sure:
 			{
 				#if _AVI_DEFINED_
-				lyly_play_stop();
+				media_stop_lyly();
 				//usleep(1000*500);
 				media_play_lyly("/mnt/nand1-2/chenbh/avi/222.avi", NULL);
 				#elif _MP3_DEFINED_
@@ -129,7 +129,7 @@ static void RightCtrlCommand(HWND hDlg, LPARAM lParam)
 			 
 		case BID_Right_Exit:
 			#if _AVI_DEFINED_
-			lyly_play_stop();
+			media_stop_lyly();
 			#elif _MP3_DEFINED_
 			mp3_play_stop();
 			#elif _JPG_DEFINED_

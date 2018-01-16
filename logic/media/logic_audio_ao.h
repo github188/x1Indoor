@@ -13,19 +13,13 @@
 *********************************************************/
 #ifndef _LOGIC_AUDIO_AO_H_
 #define _LOGIC_AUDIO_AO_H_
-#include "../logic_include.h"
 #include "logic_audio.h"
 
-typedef struct AudioAoState
+typedef struct _AudioAoParam
 {
-	PAYLOAD_TYPE_E enPayloadType;
-	int Samplerate;
-	int Bitwidth;
-	int channelnum;
-	AUDIO_PARAM	AParam;
-	NT_BOOL AoEnable;
-	int aoDev;
-}AudioAoState; 
+	bool Enable;
+	float AoAgc;
+}AudioAoParam; 
 
 #define MS_AUDIO_AO_OPEN		MS_MEDIA_METHOD(MS_ALAW_AO_ID,0x00,const char)
 #define MS_AUDIO_AO_CLOSE		MS_MEDIA_METHOD_NO_ARG(MS_ALAW_AO_ID,0x01)

@@ -18,22 +18,24 @@
 #define PLAYBLOCKS				4
 #define RECORDBLOCKS			4
 #define PLAYBAK_SYNC_MODE   	true  
-#define CAPTURE_SYNC_MODE   	false  
+#define RECORD_SYNC_MODE   		false  
 
 
 #define PLAYBAK_DEVNAME			"default"
-#define CAPTURE_DEVNAME			"default"
+#define RECORD_DEVNAME			"default"
 
 
 static alsa_info_t alsa_play_info = 
 {
 	.StreamId = 0,
+	.callback = NULL,
 	.status = ALSA_NOT_WORKING,
 };
 
 static alsa_info_t alsa_record_info = 
 {
 	.StreamId = 0,
+	.callback = NULL,
 	.status = ALSA_NOT_WORKING,
 };
 
@@ -50,18 +52,19 @@ static int  alsaSinkDevErrcount =0;
 static int Alsa_Record_Func(char *DataBuffer, int DataSize, void *pContext)
 {
 	if(alsa_record_info.status == ALSA_CAPTURE_START && alsa_record_info.callback) 
-	{		
+	{			
 		alsa_record_info.dwRecMuteCnt -= DataSize;
 		if (alsa_record_info.dwRecMuteCnt < 0)
 			alsa_record_info.dwRecMuteCnt = 0;
 		else
 			memset(DataBuffer, 0, DataSize);
-
-
+		
+		//printf("alsa_record_info.dwRecMuteCnt[%d]\n", alsa_record_info.dwRecMuteCnt);
 		alsa_record_info.callback(DataBuffer, DataSize);
 	}
 
-	return -1;
+	// 返回值不能为-1  否则会一直没有数据过来
+	return DataSize;
 }
 
 /*************************************************
@@ -91,12 +94,13 @@ int Alsa_Record_Start(int Channel, int Bitwidth, int SampleRate, int BlockTime, 
 		return -1;
 
 	// 前面的丢弃
+	printf("SampleRate[%d], Channel[%d] ,Bitwidth[%d], SamplesPerBlock[%d]\n", SampleRate, Channel ,Bitwidth, SamplesPerBlock);
 	alsa_record_info.dwRecMuteCnt = SampleRate * Channel * (Bitwidth/8) * 3/2;
-	Audio_Recorder_SetDevice(StreamID, CAPTURE_DEVNAME);
+	Audio_Recorder_SetDevice(StreamID, RECORD_DEVNAME);
 	Audio_Recorder_SetFormat(StreamID, Channel, Bitwidth, SampleRate);
 	Audio_Recorder_SetCache (StreamID, RECORDBLOCKS, SamplesPerBlock);
-	Audio_Recorder_SetMode	(StreamID, CAPTURE_SYNC_MODE, Alsa_Record_Func, &alsa_record_info);
-
+	Audio_Recorder_SetMode	(StreamID, RECORD_SYNC_MODE, Alsa_Record_Func, &alsa_record_info);
+	
 	if (Audio_Recorder_Start(StreamID) == false)
 	{
 		Audio_Recorder_Close(StreamID);
@@ -133,6 +137,7 @@ int	Alsa_Record_Close(void)
 		Audio_Recorder_Stop(alsa_record_info.StreamId);
 		Audio_Recorder_Close(alsa_record_info.StreamId);
 		alsa_record_info.StreamId = 0;
+		alsa_record_info.callback = NULL;
 		printf("===== CX_Alsa_Source_Close ======\n");
 	}
   	pthread_mutex_unlock(&alsa_record_info.lock);
@@ -153,17 +158,41 @@ int Alsa_Record_SetVolume(int volume)
 
 }
 
+
+
+/*************************************************
+  Function:			Alsa_System_SetVolume
+  Description:  	设置功放音量
+  Input: 
+  	volume			范围值待定
+  Output:		  
+  Return:		 
+  Others:  			
+*************************************************/
+int Alsa_System_SetVolume(int volume)
+{
+	volume = 0xFFFFFFFF;
+	AudioCore_SetPlayVolume((volume & 0xffff) * 100/0xffff);
+}
+
 /*************************************************
   Function:			Alsa_Play_SetVolume
   Description:  	设置喇叭音量
   Input: 
+  	volume			0-100
   Output:		  
   Return:		 
-  Others:  
+  Others:  			
 *************************************************/
 int Alsa_Play_SetVolume(int volume)
 {
-
+	if (alsa_play_info.status != ALSA_PLAYBAK_START)
+	{
+		printf(" CX_Alsa_Play_Init status != ALSA_PLAYBAK_START \n");
+		return 0;
+	}
+	
+	Audio_Player_SetVolume(alsa_play_info.StreamId, volume);	
 }
 
 /*************************************************
@@ -216,6 +245,7 @@ int	Alsa_Play_Start(int Channel, int Bitwidth, int SampleRate, int BlockTime)
 		return 0;
 	}
 
+	int Volume = 100;
 	int  SamplesPerBlock = SampleRate * BlockTime/1000;
 	alsa_play_info.Channel = Channel;
 	alsa_play_info.Bitwidth = Bitwidth;
@@ -231,7 +261,7 @@ int	Alsa_Play_Start(int Channel, int Bitwidth, int SampleRate, int BlockTime)
 	Audio_Player_SetCache (StreamID, PLAYBLOCKS, SamplesPerBlock);
 	//Audio_Player_SetMode  (StreamID, AUDIO_SYNC_MODE, waveOutProc, this);
 	Audio_Player_SetMode  (StreamID, PLAYBAK_SYNC_MODE, NULL, NULL);
-	//Audio_Player_SetVolume(StreamID, Volume);
+	Audio_Player_SetVolume(StreamID, Volume);
 
 	if (Audio_Player_Start(StreamID) == false)
 	{

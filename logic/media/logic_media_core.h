@@ -37,6 +37,10 @@
 #include <arpa/inet.h>
 #include <time.h>
 
+#define 	RT_SUCCESS  			0
+#define	 	RT_FAILURE   			-1
+
+
 #define ALIGN_BACK(x, a)		((a) * (((x) / (a))))
 #define ms_return_val_if_fail(_expr_,_ret_)\
 	if (!(_expr_)) { printf("assert "#_expr_ " failed"); printf("\n"); return (_ret_);}
@@ -45,7 +49,7 @@ typedef enum MSMediaId
 {
 	MS_FILTER_NOT_SET_ID,
 	MS_AUDIO_AI_ID,	
-	MS_ALAW_SF_ENC_ID,
+	MS_ALAW_ENC_ID,
 	MS_ALAW_DEC_ID,
 	MS_H264_ENC_ID,
 	MS_H264_DEC_ID,
@@ -62,9 +66,15 @@ typedef enum MSMediaId
 	MS_ALAW_AO_ID,
 	MS_AVI_PLAY_ID,
 	MS_AVI_RECORD_ID,
+	MS_WAV_RECORD_ID,
 	MS_MP3_PLAY_ID,
-	MS_FILE_LYLY_ID,
-	MS_RTSP_PLAY_ID
+	MS_LYLY_HIT_ID,
+	MS_RTSP_PLAY_ID,
+	MS_CLOUD_SEND_AUDIO_ID,
+	MS_CLOUD_SEND_VIDEO_ID,
+	MS_CLOUD_RECV_AUDIO_ID,
+	MS_CLOUD_H264_ENC_ID
+
 } MSMediaId;
 
 #define MS_MEDIA_METHOD_ID(_id_,_cnt_,_argsize_) \
@@ -236,6 +246,7 @@ struct _MSMediaDesc
 typedef struct _MSMediaDesc MSMediaDesc;
 
 extern MSMediaDesc ms_h264_enc_desc;
+extern MSMediaDesc ms_cloud_h264_enc_desc;
 extern MSMediaDesc ms_h264_dec_desc;
 extern MSMediaDesc ms_jpeg_dec_desc;
 extern MSMediaDesc ms_jpeg_enc_desc;
@@ -249,13 +260,14 @@ extern MSMediaDesc ms_file_player_desc;
 extern MSMediaDesc ms_alaw_agc_desc;
 extern MSMediaDesc ms_echo_cancell_desc;
 extern MSMediaDesc ms_audio_ai_desc;
-extern MSMediaDesc ms_audio_sf_enc_desc;
+extern MSMediaDesc ms_audio_enc_desc;
 extern MSMediaDesc ms_audio_ao_desc;
 extern MSMediaDesc ms_avi_play_desc;
 extern MSMediaDesc ms_rtsp_play_desc;
 extern MSMediaDesc ms_avi_record_desc;
+extern MSMediaDesc ms_wav_record_desc;
 extern MSMediaDesc ms_mp3_play_desc;
-extern MSMediaDesc ms_file_lyly_desc;
+extern MSMediaDesc ms_lyly_hit_desc;
 
 /*************************************************
   Function:		ms_free

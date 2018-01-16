@@ -1360,17 +1360,17 @@ static int WindowProc(HWND hDlg, int message, WPARAM wParam, LPARAM lParam)
 			switch((int)wParam)
 			{
 				case SCANCODE_F8:					// 开锁
-					wParam = SCANCODE_F1;
+					wParam = RIGHT_SCANCODE_F1;
 					break;
 					
 				case SCANCODE_F9:					// 通话
 					if (g_DrawVideo)
 					{
-						wParam = SCANCODE_F2;
+						wParam = RIGHT_SCANCODE_F2;
 					}
 					else
 					{
-						wParam = SCANCODE_F3;
+						wParam = RIGHT_SCANCODE_F3;
 					}
 					 break;
 					 
@@ -1384,17 +1384,17 @@ static int WindowProc(HWND hDlg, int message, WPARAM wParam, LPARAM lParam)
 			switch((int)wParam)
 			{
 				case SCANCODE_F8:					// 开锁
-					wParam = SCANCODE_F1;
+					wParam = RIGHT_SCANCODE_F1;
 					break;
 					
 				case SCANCODE_F9:					// 通话
 					if (g_DrawVideo)
 					{
-						wParam = SCANCODE_F2;
+						wParam = RIGHT_SCANCODE_F2;
 					}
 					else
 					{
-						wParam = SCANCODE_F3;
+						wParam = RIGHT_SCANCODE_F3;
 					}
 					break;
 					 

@@ -132,17 +132,10 @@ static int ms_jpeg_dec_init(struct _MSMediaDesc * f)
 
 
 		memset(data->mName, 0XFF, sizeof(data->mName));
-		#if (_LCD_DPI_ == _LCD_800480_)
 		data->vorect.x = 0;
 		data->vorect.y = 0;
 		data->vorect.width = 640;
 		data->vorect.height = 480;
-		#elif (_LCD_DPI_ == _LCD_1024600_)
-		data->vorect.x = 0;
-		data->vorect.y = 0;
-		data->vorect.width = 640;
-		data->vorect.height = 480;
-		#endif
 		
 		f->private = data;
 		f->mcount = 0;
@@ -228,7 +221,7 @@ static int ms_jpeg_dec_process(struct _MSMediaDesc * f, void * arg)
 	src1 = malloc( sz2 );
 	fread( src1, 1, sz2, fpr );
 	fclose( fpr );
-	sync();
+	
 	jpeg_mem_src( &cinfo, src1, sz2 );
 	#endif
 	
@@ -325,7 +318,6 @@ _FIT_:
 	}
 	fwrite( frame_buffer, 1, (cinfo.output_width * cinfo.output_height * cinfo.output_components), outfile );
 	fclose( outfile );
-	sync();
 	#endif
 	
 	int i, display_width, display_height, display_offset;

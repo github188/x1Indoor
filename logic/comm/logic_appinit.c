@@ -115,6 +115,9 @@ void logic_init(void)
 	net_direct_send(CMD_REQ_SYN_TIME, NULL, 0, center, NETCMD_UDP_PORT);	// 请求时间同步
 	init_list_address();							// 初始化监视列表
 	check_sysconfig_ifcorrect(); 					// 测试校验数据是否正确
+
+	FSCheckSpareSpace("nand");
+	FSCheckSpareSpace("tmp");
 	log_printf("devno: %s \n", pDevNo->DeviceNoStr);
 }
 

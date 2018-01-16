@@ -19,13 +19,14 @@ History:
 #include "logic_media.h"
 #include "logic_media_core.h"
 
-#define _AUDIO_DEC_FILE_SAVE_	0
+#define PCM_DATA_CHUNK_SIZE		160
 
+#define _AUDIO_DEC_FILE_SAVE_	0
 #if _AUDIO_DEC_FILE_SAVE_
 #define PCM_DEC_AUDIO			0
 #define ALAW_DEC_AUDIO			1
-#define PCM_DEC_AUDIO_FILE		"/mnt/nand1-2/dec.pcm"
-#define ALAW_DEC_AUDIO_FILE		"/mnt/nand1-2/dec.alaw"
+#define PCM_DEC_AUDIO_FILE		CFG_PUBLIC_DRIVE"/dec.pcm"
+#define ALAW_DEC_AUDIO_FILE		CFG_PUBLIC_DRIVE"/dec.alaw"
 static FILE * mDPCMFIle = NULL;
 static FILE * mDALAWFIle = NULL;
 
@@ -123,6 +124,22 @@ static void g711_dec_file_save(uint8 mode, uint8 *data, int len)
 #endif
 
 /*************************************************
+  Function:		st_audio_param_reset
+  Description:	
+  Input:		нч
+  Output:		нч
+  Return:		нч
+  Others:		
+*************************************************/
+static int st_audio_param_reset(AudioDecParam * data)
+{	
+	ms_return_val_if_fail(data, -1);	
+	memset(data, 0, sizeof(AudioDecParam));
+	data->Enable = FALSE;
+	return 0;
+}
+
+/*************************************************
   Function:		ms_audio_dec_init
   Description: 	
   Input: 		
@@ -134,16 +151,9 @@ static int ms_audio_dec_init(struct _MSMediaDesc * f)
 {
 	if (NULL == f->private)
 	{
-		AudioDecState * data = (AudioDecState*)malloc(sizeof(AudioDecState));
+		AudioDecParam * data = (AudioDecParam*)malloc(sizeof(AudioDecParam));		
+		st_audio_param_reset(data);
 		
-		memset(data, 0, sizeof(AudioDecState));
-		data->enPayloadType= PT_G711A;
-		data->Samplerate = AUDIO_SAMPLE_RATE_8000;
-   		data->Bitwidth = AUDIO_BIT_WIDTH_16;       	/*standard 16bit little endian format, support this format only*/
-		data->channelnum = 1;
-		data->AParam.IsPack = HI_TRUE;
-		data->AParam.PackNum = AUDIO_NUM;
-		data->AParam.SpkValue = 95;
 		f->private= data;
 		f->mcount = 0;
 	}
@@ -180,7 +190,7 @@ static int ms_audio_dec_uninit(struct _MSMediaDesc * f)
 *************************************************/
 static int ms_audio_dec_open(struct _MSMediaDesc * f, void * arg)
 {	
-	AudioDecState * data = (AudioDecState*)f->private;
+	AudioDecParam * data = (AudioDecParam*)f->private;
 	
 	ms_media_lock(f);
 	if (f->mcount == 0)
@@ -189,8 +199,7 @@ static int ms_audio_dec_open(struct _MSMediaDesc * f, void * arg)
 	    g711_dec_file_open(PCM_DEC_AUDIO);
 	    g711_dec_file_open(ALAW_DEC_AUDIO);
 		#endif	
-		data->AoEnable = HI_TRUE;
-		data->AlawIndex = 0;
+		data->Enable = TRUE;
 		f->mcount++;
 		if (f->preprocess)
 		{
@@ -220,17 +229,16 @@ void ms_audio_dec_proc(struct _MSMediaDesc * f, mblk_t * arg)
 	int packnum;
 	uint8 datapcm[322];
 	
-    AudioDecState * s = (AudioDecState*)f->private;
-	int byte = s->AParam.byte_per_packet/2;
-	//printf("byte==%d\n", byte);
+    AudioDecParam * s = (AudioDecParam*)f->private;
+	int byte = PCM_DATA_CHUNK_SIZE/2;
 	memset(datapcm, 0, sizeof(datapcm));
-	if (s->AoEnable == HI_TRUE)
+	if (s->Enable == TRUE)
 	{
 		packnum = arg->len / byte;
 		for (i = 0; i < packnum; i++)
 		{
 			G711Decoder((short *)datapcm, (unsigned char*)(arg->address + byte*i), byte, 0);
-			//alaw_to_pcm(byte, (uint8 *)(arg->address + byte*i), datapcm);
+			
 			#if _AUDIO_DEC_FILE_SAVE_
 			g711_dec_file_save(PCM_DEC_AUDIO, (uint8 *)datapcm, byte*2);
 			g711_dec_file_save(ALAW_DEC_AUDIO, (uint8 *)(arg->address + byte*i), byte);
@@ -265,15 +273,18 @@ static int ms_audio_dec_close(struct _MSMediaDesc * f, void * arg)
 		f->mcount = 0;
 		if (f->mcount == 0)
 		{
-			#if _AUDIO_DEC_FILE_SAVE_
-    		g711_dec_file_close(PCM_DEC_AUDIO);
-    		g711_dec_file_close(ALAW_DEC_AUDIO);
-			#endif
+			AudioDecParam *data = (AudioDecParam*)f->private;
+			data->Enable = FALSE;
 			if (f->postprocess)
 			{
 				f->postprocess(f);
 			} 
 			ret = HI_SUCCESS;
+			#if _AUDIO_DEC_FILE_SAVE_
+    		g711_dec_file_close(PCM_DEC_AUDIO);
+    		g711_dec_file_close(ALAW_DEC_AUDIO);
+			#endif
+			st_audio_param_reset(data);
 		}
 	}
 	ms_media_unlock(f);
@@ -291,13 +302,11 @@ static int ms_audio_dec_close(struct _MSMediaDesc * f, void * arg)
 *************************************************/
 static int ms_audio_dec_param(struct _MSMediaDesc * f, void * arg)
 {
-	AudioDecState * data = (AudioDecState*)f->private;
-	AUDIO_PARAM* param = (AUDIO_PARAM*)arg;
+	AudioDecParam * data = (AudioDecParam*)f->private;
 
 	ms_media_lock(f);
 	if (f->mcount == 0)
 	{		
-	   memcpy(&data->AParam, param, sizeof(AUDIO_PARAM));
 	   ms_media_unlock(f);	
 	   return HI_SUCCESS;
 	}
@@ -316,13 +325,13 @@ static int ms_audio_dec_param(struct _MSMediaDesc * f, void * arg)
 *************************************************/
 static int ms_audio_dec_enable(struct _MSMediaDesc * f, void * arg)
 {
-	AudioDecState * data = (AudioDecState*)f->private;
-	HI_BOOL param = *((HI_BOOL*)arg);
+	AudioDecParam * data = (AudioDecParam*)f->private;
+	bool param = *((bool*)arg);
 
 	ms_media_lock(f);
 	if (f->mcount > 0)
 	{		
-	   data->AoEnable = param;
+	   data->Enable = param;
 	   ms_media_unlock(f);	
 	   return HI_SUCCESS;
 	}

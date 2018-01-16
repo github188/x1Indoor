@@ -147,39 +147,54 @@ int get_size (char* srcname)
 	#endif
 }
 
-#if 0
 /*************************************************
-  Function:     	is_fileexist
-  Description:  	判断指定路径文件是否存在
+  Function:     	FSFlush
+  Description:  	
   Input:       	
-   	1.path			指定文件的路径
   Output:           无
   Return:
-					文件存在:TRUE
-					文件不存在:FALSE
-  Others:
+  Others:			文件数据写入磁盘
 *************************************************/
-int32 is_fileexist(uint8 *path)
+void FSFlush(FILE* pFile)
 {
-	struct stat buf;
-	int32 ret;
-	
-	if (NULL == path)
-	{
-		return FALSE;
-	}
-	ret = stat(path,&buf);
-	if (-1 == ret)
-	{
-		if (errno == ENOENT)
-		{
-			return FALSE;
-		}
-	}
-		
-	return TRUE;	
+	fflush(pFile);
+	fsync(fileno(pFile));
 }
-#endif
+
+/*************************************************
+  Function:     	FSCheckSpareSpace
+  Description:  	
+  Input:       	
+  Output:           
+  Return:
+  	freeDisk		可用空间 单位B
+  Others:			磁盘空间
+  cat /proc/mounts 可以查看文件系统中有几个可用盘
+*************************************************/
+uint64 FSCheckSpareSpace(const char* dir)
+{
+
+	char dirname[32];
+	struct statfs diskInfo;
+
+	if(strstr(dir, "nand") != NULL)
+		strcpy(dirname, "/nand/");
+	else if(strstr(dir, "tmp")!=NULL)
+		strcpy(dirname, "/tmp/");
+
+	statfs(dirname, &diskInfo);
+	unsigned long long totalsize = diskInfo.f_bsize * diskInfo.f_blocks;		//总的字节数，f_blocks为block的数目
+	unsigned long long freeDisk = diskInfo.f_bfree * diskInfo.f_bsize;			//剩余空间的大小
+	printf("total = %llu KB Free =  %llu KB \n", totalsize>>10, freeDisk>>10);
+		
+	// 小于200K时会出现 fopen fail, 所以预留200K的空间
+	if(freeDisk > 204800)
+		freeDisk -= 204800;
+	else
+		freeDisk = 0;
+
+	return (uint64)freeDisk;
+}
 
 /*************************************************
   Function:    		FSFileDelete
@@ -287,8 +302,7 @@ ECHO_STORAGE Fwrite_common (char * Filename, void * Data, int DataSize, int Data
 			fclose(fPListFile);
 	   		fPListFile = NULL;
 			ret = ECHO_STORAGE_OK;
-		}
-		system("sync");
+		}		
 		return ret;
 	}
 	
@@ -320,12 +334,10 @@ ECHO_STORAGE Fwrite_common (char * Filename, void * Data, int DataSize, int Data
 			ret = ECHO_STORAGE_OK;
 		}
 		log_printf("Write Size  %d\n", size);
-		fflush(fPListFile);
+		FSFlush(fPListFile);
 		#endif
 		fclose(fPListFile);
 	   	fPListFile = NULL;
-		system("sync");  // 此命令执行时间比较长500ms左右
-		//DelayMs_nops(200);
 	}	
 	
 	return ret;
@@ -1645,7 +1657,7 @@ uint32 storage_get_screen_intime(void)
   Input:		无
   Output:		无
   Return:		无
-  Others:
+  Others:		此函数简化版的和经济版的返回值不同
 *************************************************/
 uint32 storage_get_closelcd_time(void)
 {
@@ -1661,27 +1673,22 @@ uint32 storage_get_closelcd_time(void)
 			return (60*3);
 			
 		case EPHOTO_TIME_5:
-			return (60*5);
+			return 5;
 			
 		case EPHOTO_TIME_10:
-			return (60*10);
+			return 10;
 
 		case EPHOTO_TIME_15:
-			return (60*15);
+			return 15;
 			
 		case EPHOTO_TIME_30:
-			return (60*30);
+			return 30;
 			
 		case EPHOTO_TIME_60:
-			return (60*60);
+			return 60;
 
 		case EPHOTO_TIME_120:
-			return (120*60);
-
-		// 因每天室内机会重启
-		// 故此关屏时间>1天则视为永不关屏
-		case EPHOTO_TIME_NEVER:
-			return (48*60*60);
+			return 120;
 			
 		default:
 			return (60*60);
@@ -1715,36 +1722,6 @@ uint8 storage_set_regcode(uint32 code)
 	SaveRegInfo();
 	return TRUE;
 }
-
-#if 0
-/*************************************************
-  Function:		storage_recovery
-  Description: 	恢复出厂设置
-  Input:		无
-  Output:		无
-  Return:		无
-  Others:
-*************************************************/
-uint32 storage_recovery(void)
-{
-	#if 0
-	char tmp1[6];
-	char DevNo[30];
-	memcpy(tmp1, storage_get_mac(HOUSE_MAC), sizeof(tmp1));	
-	storage_format_system();						// 格式化
-	RegRecovery();
-	memset(DevNo,0,sizeof(DevNo));
-	sprintf(DevNo,"%s", storage_get_devno_str());
-	storage_set_devno(TRUE, DEVICE_TYPE_ROOM, DevNo);
-	storage_set_mac(HOUSE_MAC,tmp1);
-	return TRUE;
-	#else
-	storage_format_system();						// 格式化
-	//RecoverFactory();
-	return TRUE;
-	#endif
-}
-#endif
 
 #ifdef _USE_NEW_CENTER_
 
@@ -1802,8 +1779,8 @@ int storage_set_predevno(PDEVICE_NO DeviceNo)
 		memcpy(&pre_devno, DeviceNo, sizeof(DEVICE_NO));
 	}
 	fwrite(&pre_devno, sizeof(DEVICE_NO), 1, fp);
+	FSFlush(fp);
 	fclose(fp);
-	system("sync");  // 此命令执行时间比较长500ms左右
 }
 #endif
 

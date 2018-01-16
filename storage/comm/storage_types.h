@@ -253,6 +253,17 @@ typedef struct
 }DEVICE_NO, *PDEVICE_NO;
 #endif
 
+#ifdef	_USE_AURINE_SET_
+typedef struct
+{
+	uint8 		DeviceType;                         // 设备类型 
+	uint8 		Resver;								// 预留位
+	uint16 		AreaNo;								// 小区编号
+	uint32		DeviceNo1;							// 设备号高位，不大于999999999
+	uint32		DeviceNo2;							// 设备号低位，不大于999999999
+}DEVICE_SET_NO, *PDEVICE_SET_NO;
+#endif
+
 // 设备编号规则, 或放在存储头文件中定义
 typedef struct
 {

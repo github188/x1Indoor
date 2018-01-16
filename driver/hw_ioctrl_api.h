@@ -17,6 +17,18 @@
 #include "AppConfig.h"
 #include "au_types.h"
 
+#define RIGHT_SCANCODE_F1               54
+#define RIGHT_SCANCODE_F2               55
+#define RIGHT_SCANCODE_F3               56
+#define RIGHT_SCANCODE_F4               57
+#define RIGHT_SCANCODE_F5               58
+#define TK_ALARM						59
+#define TK_CENTER						60
+#define TK_MONITOR						61
+#define TK_LOCK							62
+#define TK_TALK							63
+
+
 #define ALM_LED				2140
 #define MSG_LED				2141
 #define MIC_SWITCH			2142

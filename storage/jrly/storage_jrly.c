@@ -102,7 +102,7 @@ char* get_jrlyrecord_path(char *filename, PZONE_DATE_TIME Time)
 	if (Time && filename)
 	{
 		memset(filename, 0, sizeof(filename));
-		sprintf(filename,"%s/%04d%02d%02d%02d%02d%02d.WAV",JRLY_DIR_PATH,Time->year,Time->month,Time->day
+		sprintf(filename,"%s/%04d%02d%02d%02d%02d%02d.wav",JRLY_DIR_PATH,Time->year,Time->month,Time->day
 				,Time->hour,Time->min,Time->sec);
 		return filename;
 	}

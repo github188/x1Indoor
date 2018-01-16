@@ -43,6 +43,18 @@ typedef void (*PFRECIVE_PACKET_PROC)(NET_COMMAND cmd, const PRECIVE_PACKET Reciv
 *************************************************/
 void* recive_cmd_data_proc(void *arg);
 
+#ifdef	_USE_AURINE_SET_
+/*************************************************
+  Function:    		recive_set_cmd_data_proc
+  Description:		接收UDP网络命令
+  Input: 			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+void* recive_set_cmd_data_proc(void *arg);
+#endif
+
 /*************************************************
   Function:    		net_get_cmd_by_nethead
   Description:		获得命令值(含子系统代号)
@@ -53,6 +65,19 @@ void* recive_cmd_data_proc(void *arg);
   Others:
 *************************************************/
 NET_COMMAND net_get_cmd_by_nethead(const PNET_HEAD netHead);
+
+#ifdef	_USE_AURINE_SET_
+/*************************************************
+  Function:    		au_net_get_cmd_by_nethead
+  Description:		获得命令值(含子系统代号)
+  Input: 
+	1.netHead		网络包头
+  Output:			无
+  Return:			网络命令
+  Others:
+*************************************************/
+NET_COMMAND au_net_get_cmd_by_nethead(const PNET_SET_HEAD netHead);
+#endif
 
 /*************************************************
   Function:    		net_send_cmd_packet

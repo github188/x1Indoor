@@ -2371,3 +2371,112 @@ void net_get_utc_time(NET_DATA_TIME * DateTime)
 	DateTime->sec = LocalTime.sec;
 }
 
+/*************************************************
+  Function:    		net_send_echo_packet_ext
+  Description:		用于设置项等不需要加密的数据包
+  Input: 
+	1.recPacket		接收包
+	2.echoValue		应答码
+	3.data			附加数据
+	4.size			附加数据大小
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+void net_send_echo_packet_ext(PRECIVE_PACKET recPacket, ECHO_VALUE_E echoValue, char * data, int32 size)
+{
+	if (NULL == recPacket)
+	{
+		return;
+	}
+
+	static char SendBuf[NET_PACKBUF_SIZE];	  	
+	#ifndef _AU_PROTOCOL_
+	PMAIN_NET_HEAD MainNetHead = (PMAIN_NET_HEAD)SendBuf;  		// 发送网络主包头
+	#endif
+	PNET_HEAD NetHead = (PNET_HEAD)(SendBuf+ MAIN_NET_HEAD_SIZE);	// 发送网络包头
+	
+	sendbuf_lock();
+	PNET_HEAD recNetHead = (PNET_HEAD)(recPacket->data + MAIN_NET_HEAD_SIZE);	
+	memset(SendBuf, 0, sizeof(SendBuf));
+	#ifndef _AU_PROTOCOL_
+	PMAIN_NET_HEAD recMainNetHead = (PMAIN_NET_HEAD)(recPacket->data);
+	memcpy(MainNetHead, recMainNetHead, sizeof(MAIN_NET_HEAD));
+	MainNetHead->DirectFlag = DIR_ACK;	
+	MainNetHead->subPacketLen = sizeof(NET_HEAD) + size;
+	
+	NetHead->SrcDeviceNo = g_FullDeviceNo->DeviceNo;
+	NetHead->DestDeviceNo = recNetHead->SrcDeviceNo;
+	NetHead->Priry = recNetHead->Priry;
+	#else
+	NetHead->AreaCode   = g_FullDeviceNo->AreaNo;
+	NetHead->DeviceNo   = g_FullDeviceNo->DeviceNo;
+	#endif
+	NetHead->PackageID = recNetHead->PackageID;		// 包标识
+	NetHead->DirectFlag = DIR_ACK;					// 方向标志（主动：0xAA；应答：0x00）
+	NetHead->SubSysCode = recNetHead->SubSysCode;	// 子系统代号
+	NetHead->command = recNetHead->command;			// 命令值
+	NetHead->EchoValue = echoValue;					// 应答码	
+
+	NetHead->Encrypt = 1;							// 加密类型
+	NetHead->DataLen = size;						// 数据长度
+	memset(SendBuf+NET_HEAD_SIZE, 0, sizeof(SendBuf)-NET_HEAD_SIZE);
+	memcpy(SendBuf+NET_HEAD_SIZE, data, size);		// 拷贝附加数据
+
+	net_send_cmd_packet_ext(SendBuf, NetHead->DataLen+NET_HEAD_SIZE, recPacket->address, recPacket->port);
+	
+	sendbuf_unlock();
+}
+
+#ifdef	_USE_AURINE_SET_
+/*************************************************
+  Function:    		au_net_send_echo_packet_ext
+  Description:		用于设置项等不需要加密的数据包
+  Input: 
+	1.recPacket		接收包
+	2.echoValue		应答码
+	3.data			附加数据
+	4.size			附加数据大小
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+void au_net_send_echo_packet_ext(PRECIVE_PACKET recPacket, ECHO_VALUE_E echoValue, char * data, int32 size)
+{
+	if (NULL == recPacket)
+	{
+		return;
+	}
+
+	static char SendBuf[NET_PACKBUF_SIZE];	  	
+	PMAIN_NET_HEAD MainNetHead = (PMAIN_NET_HEAD)SendBuf;  		// 发送网络主包头
+	PNET_SET_HEAD NetHead = (PNET_SET_HEAD)(SendBuf+ AU_MAIN_NET_HEAD_SIZE);	// 发送网络包头
+	
+	sendbuf_lock();
+	PNET_SET_HEAD recNetHead = (PNET_SET_HEAD)(recPacket->data + AU_MAIN_NET_HEAD_SIZE);	
+	memset(SendBuf, 0, sizeof(SendBuf));
+	PMAIN_NET_HEAD recMainNetHead = (PMAIN_NET_HEAD)(recPacket->data);
+	memcpy(MainNetHead, recMainNetHead, sizeof(MAIN_NET_HEAD));
+	MainNetHead->DirectFlag = DIR_ACK;	
+	MainNetHead->subPacketLen = sizeof(NET_SET_HEAD) + size;
+	NetHead->SrcDeviceNo = recNetHead->DestDeviceNo; 
+	NetHead->DestDeviceNo = recNetHead->SrcDeviceNo;
+	NetHead->Priry = recNetHead->Priry;
+
+	NetHead->PackageID = recNetHead->PackageID;		// 包标识
+	NetHead->DirectFlag = DIR_ACK;					// 方向标志（主动：0xAA；应答：0x00）
+	NetHead->SubSysCode = recNetHead->SubSysCode;	// 子系统代号
+	NetHead->command = recNetHead->command;			// 命令值
+	NetHead->EchoValue = echoValue;					// 应答码	
+
+	NetHead->Encrypt = 1;							// 加密类型
+	NetHead->DataLen = size;						// 数据长度
+	memset(SendBuf+AU_NET_HEAD_SIZE, 0, sizeof(SendBuf)-AU_NET_HEAD_SIZE);
+	memcpy(SendBuf+AU_NET_HEAD_SIZE, data, size);		// 拷贝附加数据
+
+	au_net_send_cmd_packet_ext(SendBuf, NetHead->DataLen+AU_NET_HEAD_SIZE, recPacket->address, recPacket->port);
+	
+	sendbuf_unlock();
+}
+#endif
+

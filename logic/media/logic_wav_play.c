@@ -113,8 +113,9 @@ static int audio_play_param_reset(AudioPlayState *data)
   Description:		错误回调
   Input: 	
   	1.f				
-  	2.param1		播放百分比*100 小于0 表示出错
-  	3.param2		剩余时间秒 
+  	2.percent		播放百分比*100 小于0 表示出错
+  	3.time			文件总时长
+  	4.cmd			0 失败回调 其他正常
   Output:			无
   Return:			无
   Others:
@@ -222,6 +223,12 @@ static void* ms_audio_play_thread(void *arg)
 	{
 		audio_chunk = g_ChunkSize;
 	}
+
+	// 将时间信息回调给应用
+	int PreCallbakSize = 0;	// 上次回调时播放的长度
+	int PerSecPlaySize = ((data->audio_param.rate) * (data->audio_param.channels) * ((data->audio_param.bit_width) / 8));
+	int WavFilePlayTime = (g_ReadBuf->size)/((data->audio_param.rate) * (data->audio_param.channels) * ((data->audio_param.bit_width) / 8));
+	ms_audio_play_callback(f, 1, WavFilePlayTime, 0);
 	
 	while (data->msplaythread.thread_run)
 	{
@@ -264,21 +271,31 @@ static void* ms_audio_play_thread(void *arg)
 		}
 
 		Alsa_Play_Func((void *)pcm_buf, g_ChunkSize, &state);
-
-		//log_printf("audio_len[%d]\n", audio_len);
-		g_ReadBuf->iget += audio_len;
+		
 		if(g_ReadBuf->iget >= g_ReadBuf->size)
 		{
 		    if(!IsRepeat)
 			{
-		        ms_audio_play_callback(f, 0, 0, 100);
+		        ms_audio_play_callback(f, 1, WavFilePlayTime, 100);
 				break;
 		    } 
 			else 
 		    {
 		        g_ReadBuf->iget = 0;
 		    }
-		}            
+		}  
+		else
+		{
+			// 大概没0.5s会上报一次
+			if ((g_ReadBuf->iget - PreCallbakSize) >= (PerSecPlaySize/2))
+			{
+				PreCallbakSize = g_ReadBuf->iget;
+				ms_audio_play_callback(f, 1, WavFilePlayTime, ((g_ReadBuf->iget)*100)/g_ReadBuf->size);
+			}
+		}
+
+		//log_printf("audio_len[%d]\n", audio_len);
+		g_ReadBuf->iget += audio_len;
 	}
 	
 error:
@@ -294,7 +311,7 @@ error:
 	{
 		free(pcm_buf);
 	}
-	printf(" ms_audio_play_thread error!!! \n");
+	printf(" ms_audio_play_thread exit!!! \n");
 	ms_audio_play_stop(f);	
 	data->msplaythread.thread = -1;
 	pthread_detach(pthread_self());

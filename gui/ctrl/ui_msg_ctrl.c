@@ -662,13 +662,13 @@ static void KeyCommand(HWND hDlg, WPARAM wParam, LPARAM lParam)
 {
 	switch ((uint32)wParam)
 	{
-		case SCANCODE_F1:
+		case RIGHT_SCANCODE_F1:
 			break;
 
-		case SCANCODE_F2:
+		case RIGHT_SCANCODE_F2:
 			break;
 			
-		case SCANCODE_F3:
+		case RIGHT_SCANCODE_F3:
 			sys_key_beep();
 			if (g_pData.Mode == MSG_QUERY)
 			{
@@ -685,7 +685,7 @@ static void KeyCommand(HWND hDlg, WPARAM wParam, LPARAM lParam)
 			SetScreenTimer();
 			break;
 			
-		case SCANCODE_F4:
+		case RIGHT_SCANCODE_F4:
 			sys_key_beep();
 			if (g_pData.Mode == MSG_QUERY)
 			{
@@ -703,7 +703,7 @@ static void KeyCommand(HWND hDlg, WPARAM wParam, LPARAM lParam)
 			SetScreenTimer();
 			break;
 		
-		case SCANCODE_F5:
+		case RIGHT_SCANCODE_F5:
 			sys_key_beep();
 			if (g_pData.Mode == MSG_QUERY)
 			{

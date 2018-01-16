@@ -35,7 +35,6 @@ typedef void (*PMEDIA_CALLBACK)(uint32 cmd, uint32 time, uint32 percent);
 #define AUDIO_REC_PT			PT_G711A			// 本地音频录制格式(海思)
 #define VIDEO_REC_PT			PT_H264				// 本地视频录制格式(海思)
 
-#define BYTES_PER_PACKET_SHORT 	160
 
 typedef struct 
 {
@@ -45,9 +44,9 @@ typedef struct
 	MSMediaDesc* VideoRtpSend;
 	MSMediaDesc* VideoRtpRecv;
 	MSMediaDesc* AudioDec;
-	MSMediaDesc* AudioAI;
+	MSMediaDesc* AudioAi;
 	MSMediaDesc* AudioAo;	
-	MSMediaDesc* AudioSfEnc;
+	MSMediaDesc* AudioEnc;
 	MSMediaDesc* AudioRtpSend;
 	MSMediaDesc* AudioRtpRecv;
 	MSMediaDesc* FilePlayer;
@@ -56,10 +55,18 @@ typedef struct
 	MSMediaDesc* AlawAgc;	
     MSMediaDesc* Speex; 
 	MSMediaDesc* AviPlay; 
-	MSMediaDesc* AviRecord; 
+	MSMediaDesc* AviRecord;
+	MSMediaDesc* WavRecord; 
 	MSMediaDesc* Mp3Play; 
 	MSMediaDesc* RtspPlay;
-	MSMediaDesc* LylyFilePlayer;
+	MSMediaDesc* LylyHitPlay;
+	#ifdef _ENABLE_CLOUD_
+	MSMediaDesc* VideoCloudSend;
+	MSMediaDesc* AudioCloudSend;
+	MSMediaDesc* AudioCloudRecv;
+	MSMediaDesc* VideoCloudEnc;
+	#endif
+
 }MediaStream, * PMediaStream;
 
 // 头文件里面不能有定义
@@ -209,143 +216,78 @@ typedef struct _MEDIA_LYLY_CTRL
 	PMEDIA_CALLBACK callback;						// 回调
 }MEDIA_LYLY_CTRL, * PMEDIA_LYLY_CTRL;
 
-/*************************************************
-  Function:			media_stop_rtsp
-  Description:		关闭rtsp
-  Input: 			无
-  Output:			无
-  Return:			
-  Others:
-*************************************************/
-int media_stop_rtsp(void);
+
 
 /*************************************************
-  Function:			media_start_rtsp
-  Description:		开启rtsp
-  Input: 			无
-  Output:			无
-  Return:			
-  Others:
-*************************************************/
-//int media_start_rtsp(char *Url, void *callback_func);
-
-/*************************************************
-  Function:			media_get_v4l_addr
-  Description:		
+  Function:			media_stream_FileExtCmp
+  Description:		查询文件类型
   Input:
   Output:			无
   Return:			成功或失败
   Others:
 *************************************************/
-void media_get_v4l_addr(uint8 **addr);
+int media_stream_FileExtCmp(const char* pu8FileName, const char* pu8Ext);
 
 /*************************************************
-  Function:			media_start_analog_video
-  Description:		启动模拟视频预览
-  Input:
-  Output:			无
-  Return:			成功或失败
+  Function:		media_set_color_key
+  Description: 	设置关键色
+  Input: 		
+  	color		ARGB
+  Output:		无
+  Return:		无
+  Others:	
+*************************************************/
+void media_set_color_key(uint32 color);
+
+/*************************************************
+  Function:		media_clear_fb
+  Description: 	清空fb
+  Input: 		无
+  Output:		无
+  Return:		无
   Others:
 *************************************************/
-uint32 media_start_analog_video(void);
+uint32 media_clear_fb(void);
 
 /*************************************************
-  Function:			media_stop_net_video
-  Description:		停止模拟视频预览
-  Input: 			无
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-void media_stop_analog_video(void);
-
-/*************************************************
-  Function:			media_set_analog_output_volume
-  Description:		设置音频codec输出音量
-  Input: 
-  	vol				音量等级(0静音 - 8最大)
-  Output:			无
-  Return:			TRUE/FALSE
-  Others:
-*************************************************/
-uint32 media_set_analog_output_volume(uint32 vol);
-
-/*************************************************
-  Function:			media_play_lyly
-  Description:		
-  Input: 
+  Function:			media_enable_audio_ai
+  Description:		使能音频输入
+  Input: 			
   Output:			无
   Return:			TRUE/FALSE
   Others:
 *************************************************/
-uint32 media_play_lyly (char *filename, void * proc);
+int media_enable_audio_ai(void);
 
 /*************************************************
-  Function:			media_stop_lyly
-  Description:		
-  Input: 
-  	vol				音量等级
+  Function:			media_disable_audio_ai
+  Description:		去使能音频输入
+  Input: 			
   Output:			无
   Return:			TRUE/FALSE
   Others:
 *************************************************/
-void media_stop_lyly (void);
+int media_disable_audio_ai(void);
 
 /*************************************************
-  Function:			media_set_output_volume_high
-  Description:		设置音频codec输出音量
-  Input: 
-  	vol				音量等级
+  Function:			media_enable_audio_dec
+  Description:		使能音频解码
+  Input: 			
   Output:			无
   Return:			TRUE/FALSE
   Others:
 *************************************************/
-uint32 media_set_output_volume_high(uint32 vol);
+int media_enable_audio_dec(void);
 
 /*************************************************
-  Function:			media_set_device
-  Description:		设置设备类型
-  Input: 
-  	dev				设备类型
+  Function:			media_disable_audio_dec
+  Description:		去使能音频解码
+  Input: 			
   Output:			无
   Return:			TRUE/FALSE
   Others:
 *************************************************/
-void media_set_device(DEVICE_TYPE_E dev);
-
-/*************************************************
-  Function:			media_fill_audio_data
-  Description:		将网络音频数据填到buf
-  Input: 
-  	1.data			数据指针
-  	2.len			数据长度
-  Output:			无
-  Return:			成功或失败
-  Others:
-*************************************************/
-uint32 media_fill_audio_data(uint8 *data, uint32 len, uint32 time);
-
-/*************************************************
-  Function:			media_fill_video_data
-  Description:		将网络视频数据填到buf
-  Input: 
-  	1.data			数据指针
-  	2.len			数据长度
-  Output:			无
-  Return:			成功或失败
-  Others:
-*************************************************/
-uint32 media_fill_video_data(uint8 *data, uint32 len, uint32 time);
-
-/*************************************************
-  Function:			media_full_dispaly_video
-  Description:		全屏显示视频
-  Input: 			无
-  Output:			无
-  Return:			TRUE/FALSE
-  Others:
-*************************************************/
-uint32 media_full_dispaly_video(DEVICE_TYPE_E devtype, uint8 flg);
+int media_disable_audio_dec(void);
 
 /*************************************************
   Function:			media_enable_audio_aec
@@ -367,45 +309,91 @@ int media_enable_audio_aec(void);
 *************************************************/
 int media_disable_audio_aec(void);
 
-// 抓拍
-uint32 media_snapshot(char *filename, uint32 dstW, uint32 dstH, DEVICE_TYPE_E DevType);
-
-// 声音播放
+/*************************************************
+  Function:			media_play_sound
+  Description:		播放音频文件
+  Input: 			
+  	1.type			播放类型
+  	2.filename		文件名
+  	3.isrepeat		是否重复播放	1重复 0不重复
+  	4.proc			回调
+  Output:			无
+  Return:			TRUE/FALSE
+  Others:
+*************************************************/
 uint32 media_play_sound(char *filename, uint8 IsRepeat, void * proc);
 
-// 停止播放
+/*************************************************
+  Function:			media_stop_sound
+  Description:		停止播放
+  Input: 			无
+  Output:			无
+  Return:			
+  Others:
+*************************************************/
 void media_stop_sound (void);
 
 /*************************************************
-  Function:			media_start_local_record
-  Description:		启动本地录音
+  Function:			media_start_net_hint
+  Description:		启动留言提示音发送
   Input: 			
-  	1.filename		文件名
-  	2.maxtime		录制的最长时间
-  	3.proc			回调
   Output:			无
   Return:			TRUE/FALSE
   Others:
 *************************************************/
-uint32 media_start_local_record(char *filename);
+uint32 media_start_net_hint(uint8 RemoteDeviceType, char *filename, void * proc);
 
 /*************************************************
-  Function:			media_stop_local_record
-  Description:		停止本地录音
+  Function:			media_stop_net_hint
+  Description:		停止提示音发送
   Input: 			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+void media_stop_net_hint(void);
+
+/*************************************************
+  Function:			media_start_net_audio
+  Description:		启动网络音频播放
+  Input: 			
   Output:			无
   Return:			TRUE/FALSE
   Others:
 *************************************************/
-void media_stop_local_record(void);
+uint32 media_start_net_audio(int address);
+
+/*************************************************
+  Function:			media_stop_net_audio
+  Description:		停止网络音频播放
+  Input: 			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+void media_stop_net_audio(void);
+
+/*************************************************
+  Function:			media_snapshot
+  Description:		抓拍
+  Input: 			
+  	1.filename		图像保存的文件名
+  					如果>1时文件名自动加上编号
+	2.dstW			目标图片的宽
+	3.dstH			目标图片的高
+  Output:			无
+  Return:			TRUE/FALSE
+  Others:
+*************************************************/
+uint32 media_snapshot(char *filename, void *proc, DEVICE_TYPE_E DevType);
+
 
 /*************************************************
   Function:			media_start_net_video
   Description:		启动网络视频播放
   Input: 	
   	1.addres		对端地址
-  	2.vorect		视频输出位置
-  	3.flag			视频模式 发送、接收
+  	2.mode			视频模式 发送、接收
   Output:			无
   Return:			成功或失败
   Others:
@@ -423,208 +411,6 @@ uint32 media_start_net_video(uint32 address, uint8 mode);
 void media_stop_net_video(uint8 mode);
 
 /*************************************************
-  Function:			media_start_raw_video_file
-  Description:		启动播放H264裸码流文件
-  Input: 	
-  Output:			无
-  Return:			TRUE/FALSE
-  Others:
-*************************************************/
-uint32 media_start_raw_video_file(char * filename);
-
-void media_stop_raw_video_file(void);
-
-/*************************************************
-  Function:			media_start_net_audio
-  Description:		启动网络音频播放
-  Input: 			
-  	1.tp			音频格式
-  	2.proc			回调
-  Output:			无
-  Return:			成功或失败
-  Others:
-*************************************************/
-uint32 media_start_net_audio(int address, int len);
-
-/*************************************************
-  Function:			media_stop_net_audio
-  Description:		停止网络音频播放
-  Input: 			无
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-void media_stop_net_audio(void);
-
-/*************************************************
-  Function:			meida_start_net_hint
-  Description:		启动留言提示音发送
-  Input: 			
-  	1.tp			发送的格式
-  	2.filename		提示音文件
-  Output:			无
-  Return:			成功或失败
-  Others:
-*************************************************/
-uint32 meida_start_net_hint(uint8 RemoteDeviceType, char *filename, void * proc);
-
-/*************************************************
-  Function:			meida_stop_net_hint
-  Description:		停止提示音发送
-  Input: 			无
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-uint32 meida_stop_net_hint(void);
-
-/*************************************************
-  Function:			meida_start_net_leave_rec
-  Description:		启动从网络上录制
-  Input: 			
-  	1.mode			录制的模式
-  	2.atp			音频格式
-  	3.vtp			视频格式
-  Output:			无
-  Return:			成功或失败
-  Others:
-*************************************************/
-uint32 meida_start_net_leave_rec(LEAVE_WORD_MODE_E mode,
-						PAYLOAD_TYPE_E atp, PAYLOAD_TYPE_E vtp, char * filename);
-
-/*************************************************
-  Function:			stop_leave_word_net
-  Description:		停止录制
-  Input: 			
-  	1.issave		是否保存(1保存, 0不保存)
-  	2.filename		保存的文件名
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-uint32 media_stop_net_leave_rec(uint8 issave);
-
-/*************************************************
-  Function:			meida_set_audio_send_addr
-  Description:		设置音频的发送地址和端口
-  Input: 			
-  	1.ip			IP地址
-  	2.port			端口
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-void meida_set_audio_send_addr(uint32 ip, uint16 port);
-
-/*************************************************
-  Function:			media_del_audio_send_addr
-  Description:		删除音频的发送地址和端口
-  Input: 
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-void media_del_audio_send_addr(uint32 IP, uint16 AudioPort);
-
-/*************************************************
-  Function:    		media_add_audio_sendaddr
-  Description: 		增加音频发送地址
-  Input: 			
-  	1.IP			IP地址
-  	2.AudioPort		音频端口
-  Output:			无
-  Return:			成功与否true/false
-  Others:
-*************************************************/
-int32 media_add_audio_sendaddr(uint32 IP, uint16 AudioPort);
-
-/*************************************************
-  Function:			media_set_dec_enable
-  Description:		打开音频输出设置
-  Input: 
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-void media_set_dec_enable(void);
-
-/*************************************************
-  Function:			media_set_dec_disable
-  Description:		关闭音频输出设置
-  Input: 
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-void media_set_dec_disable(void);
-
-/*************************************************
-  Function:			media_set_video_send_addr
-  Description:		设置视频的发送地址和端口
-  Input: 			
-  	1.ip			IP地址
-  	2.port			端口
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-void media_set_video_send_addr(uint32 ip, uint16 port);
-
-/*************************************************
-  Function:			media_del_video_send_addr
-  Description:		删除视频的发送地址和端口
-  Input: 
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-void media_del_video_send_addr(void);
-
-/*************************************************
-  Function:			media_set_output_volume
-  Description:		设置音频codec输出音量
-  Input: 
-  	vol				音量等级
-  Output:			无
-  Return:			成功或失败
-  Others:
-*************************************************/
-uint32 media_set_output_volume(uint32 vol);
-
-/*************************************************
-  Function:			media_set_talk_volume
-  Description:		设置通话音量
-  Input: 
-  	vol				音量等级(0静音 - 8最大)
-  Output:			无
-  Return:			TRUE/FALSE
-  Others:
-*************************************************/
-uint32 media_set_talk_volume(DEVICE_TYPE_E devtype, uint32 vol);
-
-/*************************************************
-  Function:			media_get_total_time
-  Description:		获取媒体文件的总时间
-  Input: 			无
-  Output:			无
-  Return:			总时间 单位:s
-  Others:			如果留影留言有:仅视频模式的话
-  					这样获取不到正确的时间
-  					暂时没有这种模式
-*************************************************/
-uint32 media_get_total_time(void);
-
-/*************************************************
-  Function:		media_clear_fb
-  Description: 	清空fb
-  Input: 		无
-  Output:		无
-  Return:		无
-  Others:
-*************************************************/
-int32 media_clear_fb(void);
-
-/*************************************************
   Function:		init_media
   Description: 	媒体初始化
   Input: 		无
@@ -633,94 +419,5 @@ int32 media_clear_fb(void);
   Others:
 *************************************************/
 void media_init(void);
-
-/*************************************************
-  Function:		media_play_video_test
-  Description: 	测试播放文件
-  Input: 		无
-  Output:		无
-  Return:		无
-  Others:
-*************************************************/
-void media_play_video_test(void);
-
-/*************************************************
-  Function:			media_show_pict
-  Description:		JPG图片显示
-  Input: 			
-  	1.filename		图像保存的文件名
-  					如果>1时文件名自动加上编号
-	2.pos_x			目标图片显示X 坐标
-	3.pos_y			目标图片显示Y 坐标
-	4.with			目标图片显示宽度
-	5.heigh			目标图片显示长度
-  Output:			无
-  Return:			TRUE/FALSE
-  Others:
-*************************************************/
-int32 media_start_show_pict(char *filename, uint16 pos_x, uint16 pos_y, uint16 with, uint16 heigh);
-
-/*************************************************
-  Function:			media_stop_show_pict
-  Description:		关闭图片显示
-  Input: 			
-  Output:			无
-  Return:			TRUE/FALSE
-  Others:
-*************************************************/
-void media_stop_show_pict(void);
-
-/*************************************************
-  Function:			media_pause_lyly
-  Description:		暂停/播放切换
-  Input: 			无
-  Output:			无
-  Return:			
-  Others:
-*************************************************/
-uint32 media_pause_lyly (void);
-
-/*************************************************
-  Function:			media_pause_mp3
-  Description:		暂停/播放切换
-  Input: 			无
-  Output:			无
-  Return:			
-  Others:
-*************************************************/
-void media_pause_mp3 (void);
-
-/*************************************************
-  Function:			media_play_mp3
-  Description:		播放MP3文件
-  Input: 			
-  	1.filename		文件名
-  	2.proc			回调
-  Output:			无
-  Return:			TRUE/FALSE
-  Others:
-*************************************************/
-uint32 media_play_mp3 (char *filename, void * proc);
-
-/*************************************************
-  Function:			media_stop_lyly
-  Description:		停止留影留言播放
-  Input: 			无
-  Output:			无
-  Return:			
-  Others:
-*************************************************/
-void media_stop_mp3 (void);
-
-/*************************************************
-  Function:    	media_w_close
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无
-  Others:
-*************************************************/
-void media_w_close(void);
-
 #endif
 

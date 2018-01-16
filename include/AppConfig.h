@@ -46,12 +46,12 @@
 #define AH8_E81S				3
 
 // ====版本定义================================================
-#define V6S_JHB_VER				1					// ML8_V6S
-#define V7S_JHB_VER				2					// ML8_V7S
-#define E81S_JHB_VER			3					// AH8_E81S
+#define ML8_V6S_JHB_VER			1					// ML8_V6S
+#define ML8_V7S_JHB_VER			2					// ML8_V7S
+#define AH8_E81S_JHB_VER		3					// AH8_E81S
 
 
-#define SYS_TYPE				V6S_JHB_VER
+#define SYS_TYPE				ML8_V6S_JHB_VER
 
 // ====屏幕分辨率================================================
 #define _LCD_1024600_			1					//1024*600
@@ -64,11 +64,11 @@
 #define _V6_UI_STYLE_			1
 #define _E81S_UI_STYLE_			2
 
-#if (SYS_TYPE == E81S_JHB_VER)
+#if (SYS_TYPE == AH8_E81S_JHB_VER)
 #define _UI_STYLE_				_E81S_UI_STYLE_
-#elif (SYS_TYPE == V7S_JHB_VER)
+#elif (SYS_TYPE == ML8_V7S_JHB_VER)
 #define _UI_STYLE_				_V6_UI_STYLE_	
-#elif (SYS_TYPE == V6S_JHB_VER)
+#elif (SYS_TYPE == ML8_V6S_JHB_VER)
 #define _UI_STYLE_				_V6_UI_STYLE_	
 #endif
 
@@ -121,7 +121,7 @@
 #undef _RTSP_REG_KEEP_
 
 //-----------各版本差异功能-------------
-#if (SYS_TYPE == V6S_JHB_VER)
+#if (SYS_TYPE == ML8_V6S_JHB_VER)
 #define _HW_ENCRYPT_			_ML_HWENCRYPT_			// 该版本使用的硬件加密码
 #define _PROTOCOL_VER_			_ML_PROTOCOL_VER_		// 该版本使用的协议版本
 #define _SUB_PROTOCOL_ENCRYPT_  _NO_PROTOCOL_ENCRYPT_	// 协议加密类型,米立版本不加密
@@ -130,7 +130,7 @@
 #define JIEGOU_TYPE				ML8_V6S
 #define _ALARM_IO_										// 报警直接用IO口
 
-#elif (SYS_TYPE == V7S_JHB_VER)
+#elif (SYS_TYPE == ML8_V7S_JHB_VER)
 #define _HW_ENCRYPT_			_ML_HWENCRYPT_			// 该版本使用的硬件加密码
 #define _PROTOCOL_VER_			_ML_PROTOCOL_VER_		// 该版本使用的协议版本
 #define _SUB_PROTOCOL_ENCRYPT_  _NO_PROTOCOL_ENCRYPT_	// 协议加密类型,米立版本不加密
@@ -140,7 +140,7 @@
 #define _ALARM_IO_										// 报警直接用IO口
 #define _CP2526_TOUCH_KEY_								// 启用感应按键背光灯
 
-#elif (SYS_TYPE == E81S_JHB_VER)
+#elif (SYS_TYPE == AH8_E81S_JHB_VER)
 #define _AU_PROTOCOL_									// 使用冠林协议
 #define _UPLOAD_PHOTO_									
 #define JIEGOU_TYPE				AH8_E81S

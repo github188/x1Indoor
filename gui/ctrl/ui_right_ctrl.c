@@ -796,25 +796,25 @@ static uint32 get_key_down(HWND hDlg, WPARAM wParam, LPARAM lParam)
 
 	switch (wParam)
 	{
-		case SCANCODE_F1:
-		case SCANCODE_F2:
-		case SCANCODE_F3:
-		case SCANCODE_F4: 
-		case SCANCODE_F5:
+		case RIGHT_SCANCODE_F1:
+		case RIGHT_SCANCODE_F2:
+		case RIGHT_SCANCODE_F3:
+		case RIGHT_SCANCODE_F4: 
+		case RIGHT_SCANCODE_F5:
 			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			{
-				if (SCANCODE_F1 == wParam)
+				if (RIGHT_SCANCODE_F1 == wParam)
 				{
 					index = 0;
 				}
 				else
 				{
-					index = wParam - SCANCODE_F2+1;
+					index = wParam - RIGHT_SCANCODE_F2+1;
 				}
 			}
 			#else
 			{
-				index = wParam - SCANCODE_F1;
+				index = wParam - RIGHT_SCANCODE_F1;
 			}
 			#endif
 			if (WButObj->buttons[index].TextID > 0 || WButObj->buttons[index].ImageID > 0)
@@ -858,25 +858,25 @@ static uint32 get_key_up(HWND hDlg, WPARAM wParam, LPARAM lParam)
 	log_printf("%s  wParam %d\n", __FUNCTION__, wParam);
 	switch(wParam)
 	{
-		case SCANCODE_F1:
-		case SCANCODE_F2:
-		case SCANCODE_F3:
-		case SCANCODE_F4: 
-		case SCANCODE_F5:
+		case RIGHT_SCANCODE_F1:
+		case RIGHT_SCANCODE_F2:
+		case RIGHT_SCANCODE_F3:
+		case RIGHT_SCANCODE_F4: 
+		case RIGHT_SCANCODE_F5:
 			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			{
-				if (SCANCODE_F1 == wParam)
+				if (RIGHT_SCANCODE_F1 == wParam)
 				{
 					index = 0;
 				}
 				else
 				{
-					index = wParam - SCANCODE_F2+1;
+					index = wParam - RIGHT_SCANCODE_F2+1;
 				}
 			}
 			#else
 			{
-				index = wParam - SCANCODE_F1;
+				index = wParam - RIGHT_SCANCODE_F1;
 			}
 			#endif
 			if (WButObj)

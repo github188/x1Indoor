@@ -113,8 +113,7 @@ int au_settimeofday(int year, int month, int day, int hour, int min, int sec)
 	sprintf(cmd, "date -s \" %04d-%02d-%02d %02d:%02d:%02d\"",year, month, day, hour, min, sec);
 	log_printf("au_settimeofday:%s\n", cmd);
 	system(cmd);
-	sync();
-	
+
 	return 0;
 }
 

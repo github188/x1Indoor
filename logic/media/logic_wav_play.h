@@ -20,35 +20,6 @@
 #include "logic_media_core.h"
 #include "logic_audio.h"
 
-// 采样率
-typedef enum auAIO_SAMPLE_RATE_E
-{
-    AIO_SAMPLE_RATE_8       = 8000,     /* 8 k Hz sampling rate.     */
-    AIO_SAMPLE_RATE_11025   = 11025,    /* 11.025 k Hz sampling rate.*/
-    AIO_SAMPLE_RATE_16      = 16000,    /* 16 k Hz sampling rate.    */
-    AIO_SAMPLE_RATE_22050   = 22050,    /* 22.050 k Hz sampling rate.*/
-    AIO_SAMPLE_RATE_24      = 24000,    /* 24 k Hz sampling rate.    */
-    AIO_SAMPLE_RATE_32      = 32000,    /* 32 k Hz sampling rate.    */
-    AIO_SAMPLE_RATE_441     = 44100,    /* 44.1 k Hz sampling rate.  */
-    AIO_SAMPLE_RATE_48      = 48000,    /* 48 k Hz sampling rate.    */
-    AIO_SAMPLE_RATE_64      = 64000,    /* 64 k Hz sampling rate.    */
-    AIO_SAMPLE_RATE_882     = 88000,    /* 88.2 k Hz sampling rate.  */
-    AIO_SAMPLE_RATE_96      = 96000,    /* 96 k Hz sampling rate.    */
-    AIO_SAMPLE_RATE_1764    = 176400,   /* 176.4 k Hz sampling rate. */
-    AIO_SAMPLE_RATE_192     = 192000,   /* 192 k Hz sampling rate.   */
-    AIO_SAMPLE_RATE_BUTT
-} AIO_SAMPLE_RATE_E;
-
-// 采样位宽
-typedef enum auAIO_BIT_WIDTH_E
-{
-    AIO_BIT_WIDTH_8   = 8,   			/* 8-bit sampling bitwidth.  */
-    AIO_BIT_WIDTH_16  = 16,  			/* 16-bit sampling bitwidth. */
-    AIO_BIT_WIDTH_20  = 20,   			/* 20-bit sampling bitwidth. */
-    AIO_BIT_WIDTH_24  = 24,   			/* 24-bit sampling bitwidth. */
-    AIO_BIT_WIDTH_BUTT
-}AIO_BIT_WIDTH_E;
-
 
 typedef enum
 {

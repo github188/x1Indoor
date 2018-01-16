@@ -92,7 +92,6 @@ static uint8 g_CurPackPt = 0;			// 该一包数据帧类型
 
 static uint8 g_startrecv = 0;
 static uint8 g_endbit = 0;
-static int32 g_NaluFlag = -1;   		// 视频开启标志
 static uint8 g_StartDeal = 0;   		// 开始视频解码
 
 #if 0
@@ -558,9 +557,9 @@ int rtp_session_close(RtpSession * session)
 		#if SAVE_RECV_VIDEO
 		if (pH264File != NULL)
 		{
+			FSFlush(pH264File);
 			fclose(pH264File);
-			pH264File = NULL;
-			sync();
+			pH264File = NULL;			
 		}
 		
 		#endif
@@ -568,9 +567,9 @@ int rtp_session_close(RtpSession * session)
 		#if SAVE_RECV_AUDIO
 		if (pAlawRecFile != NULL)
 		{
+			FSFlush(pH264File);
 			fclose(pAlawRecFile);
 			pAlawRecFile = NULL;
-			sync();
 		}
 		#endif
 	}
@@ -1510,24 +1509,9 @@ static void * rtp_session_recvprocess(void * ptr)
     return NULL;
 }
 
-/*************************************************
-  Function:    		rtp_set_naluflag
-  Description: 		设置标志位
-  Input:
-  Output:			无
-  Return:			
-  Others:
-*************************************************/
-void rtp_set_naluflag(int flag)
-{
-	g_NaluFlag = flag;
-	g_PrePackTs = 0;
-	g_PreBufLen = 0;
-	g_PrePackPt = 0;
-}
 
 /*************************************************
-  Function:    		rtp_set_naluflag
+  Function:    		rtp_set_videoflag
   Description: 		设置标志位
   Input:
   	1.flag			0: 停止视频处理

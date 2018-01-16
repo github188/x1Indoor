@@ -374,6 +374,19 @@ uint32 storage_set_devno_rule(uint8 save, DEVICENO_RULE Rule);
 uint32 storage_set_devno(uint8 save, DEVICE_TYPE_E DeviceType, char* DevNo);
 
 /*************************************************
+  Function:    		storage_save_setdevno
+  Description:		保存设备编号
+  Input: 
+  	1.save			是否保存
+  	2.rule			设备编号规则
+	3.devno			设备号字符串
+  Output:			无
+  Return:			无
+  Others:			无
+*************************************************/
+uint32 storage_save_setdevno(uint8 save, DEVICENO_RULE Rule, DEVICE_NO* DevNo);
+
+/*************************************************
   Function:    		storage_save_devno
   Description:		保存设备编号
   Input: 

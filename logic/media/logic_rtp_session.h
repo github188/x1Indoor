@@ -317,19 +317,7 @@ RtpSession *rtp_session_new(int port);
 void ms_rtp_session_Init(void);
 
 /*************************************************
-  Function:    		rtp_set_naluflag
-  Description: 		设置标志位
-  Input:
-  	1.IP			IP地址
-  	2.Port			端口
-  Output:			无
-  Return:			
-  Others:
-*************************************************/
-void rtp_set_naluflag(int flag);
-
-/*************************************************
-  Function:    		rtp_set_naluflag
+  Function:    		rtp_set_videoflag
   Description: 		设置标志位
   Input:
   	1.flag			0: 停止视频处理

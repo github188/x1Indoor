@@ -92,6 +92,27 @@ void monitor_ini(PFGuiNotify GuiProc)
 }
 
 /*************************************************
+  Function:    		st_snap_state_callback
+  Description:		抓拍回调
+  Input: 
+  	state:			0 抓拍出错 1 抓拍成功
+  	err  :			出错类型 暂时不用
+  Return:			
+  Others:
+*************************************************/
+static void* st_snap_state_callback(int state, int err)
+{	
+	if (-1 == state)
+	{
+		log_printf(" snap err !!!\n");
+	}
+	else
+	{
+		log_printf(" snap ok !!!\n");
+	}
+}
+
+/*************************************************
   Function:			monitor_fill_destdevno
   Description: 		监视目标设备编号填充
   Input: 		  	
@@ -286,7 +307,6 @@ LabChange:
 		
 		g_PreMonitorState = MONITOR_TALKING;
 		GuiNotify(g_MonitorInfo.state, 0);
-		media_set_device(g_MonitorInfo.DevType);
 		
 		g_MonitorInfo.TimeMax = TALK_TIME_MAX;		
 		g_MonitorInfo.TimeOut = 0;
@@ -332,7 +352,6 @@ LabChange:
 	media_stop_analog_video();	
 	g_Video_Start = 0;
 	hw_switch_digit();  // [关闭监视接口]
-	media_set_device(DEVICE_TYPE_NONE);
 	sys_set_monitor_state(FALSE);
 	log_printf("monitor proc end!\n");
 	
@@ -531,16 +550,13 @@ LabChange:
 
 	if (MONITOR_TALKING == g_MonitorInfo.state)
 	{
-		hw_switch_digit(); 				// 切换到数字对讲 				
-		if (media_start_net_audio(g_MonitorInfo.address, BYTES_PER_PACKET_SHORT))
+		if (media_start_net_audio(g_MonitorInfo.address))
 		{						
 			log_printf("media_start_net_audio return ok\n ");
 			g_Audio_Start = 1;
 			uint8 volume = storage_get_talkvolume();
-			media_set_device(g_MonitorInfo.DevType);
 			media_set_talk_volume(g_MonitorInfo.DevType, volume);			
 			media_add_audio_sendaddr(g_MonitorInfo.address, g_MonitorInfo.RemoteAudioPort);
-			meida_set_audio_send_addr(g_MonitorInfo.address, g_MonitorInfo.RemoteAudioPort);					
 		}	
 		else
 		{						
@@ -624,7 +640,6 @@ LabChange:
 	}
 
 	log_printf("monitor proc : AS_MONITOR_END : g_ErrType : %d\n", g_ErrType);
-	media_set_device(DEVICE_TYPE_NONE);
 	sys_set_monitor_state(FALSE);
 	log_printf("monitor proc end!\n");
 	g_MonitorInfo.state = MONITOR_END;
@@ -1233,7 +1248,7 @@ int32 monitor_video_snap(void)
 	get_photo_path(FileName, &DateTime);
 	if (g_MonitorInfo.state == MONITOR_MONITORING || g_MonitorInfo.state == MONITOR_TALKING)
 	{
-		ret = media_snapshot(FileName, SNAP_PIC_WIDTH, SNAP_PIC_HEIGHT, g_MonitorInfo.DevType);
+		ret = media_snapshot(FileName, st_snap_state_callback, g_MonitorInfo.DevType);
 		if (ret == TRUE)
 		{
 			char DevStr[20] = {0};
@@ -1504,8 +1519,7 @@ void monitor_responsion(const PRECIVE_PACKET recPacket, const PSEND_PACKET SendP
 					}
 
 					#if 0
-					hw_switch_digit(); 				// 切换到数字对讲 				
-					if (media_start_net_audio(g_MonitorInfo.address, BYTES_PER_PACKET_SHORT))
+					if (media_start_net_audio(g_MonitorInfo.address))
 					{						
 						if (g_MonitorInfo.state == MONITOR_MONITORING)
 						{
@@ -1514,13 +1528,11 @@ void monitor_responsion(const PRECIVE_PACKET recPacket, const PSEND_PACKET SendP
 							GuiNotify(g_MonitorInfo.state, 0);
 							uint8 volume = storage_get_talkvolume();
 							//media_set_output_volume(volume);
-							media_set_device(g_MonitorInfo.DevType);
 							media_set_talk_volume(g_MonitorInfo.DevType, volume);
 							// add by luofl 2011-12-07 增加咪头输入设置
 							//media_set_input_volume(storage_get_micvolume());
 							g_MonitorInfo.RemoteAudioPort = *((uint16 *)(recPacket->data + NET_HEAD_SIZE));
 							media_add_audio_sendaddr(g_MonitorInfo.address, g_MonitorInfo.RemoteAudioPort);
-							meida_set_audio_send_addr(g_MonitorInfo.address, g_MonitorInfo.RemoteAudioPort);
 						}
 						else
 						{

@@ -115,7 +115,6 @@ static uint8 g_ErrType;
 static uint8 g_LylyFlg;
 static uint8 g_ElevtorAuthorize = FALSE;
 static uint8 g_MoveTempTimes = 0;
-static uint8 g_AnalogDoor = FALSE;							// 模拟门前呼入
 //static uint8 g_UnlockFlag = FALSE;
 static uint16 g_RandSeed = 1;
 static uint8 g_Leaveword_Timeout = 0;						// 	启动留言时间
@@ -459,6 +458,26 @@ static int32 get_device(const char * str, uint32 * AreaCode, char * devno)
 	return TRUE;
 }
 
+/*************************************************
+  Function:    		st_snap_state_callback
+  Description:		抓拍回调
+  Input: 
+  	state:			0 抓拍出错 1 抓拍成功
+  	err  :			出错类型 暂时不用
+  Return:			
+  Others:
+*************************************************/
+static void* st_snap_state_callback(int state, int err)
+{	
+	if (-1 == state)
+	{
+		log_printf(" snap err !!!\n");
+	}
+	else
+	{
+		log_printf(" snap ok !!!\n");
+	}
+}
 
 /*************************************************
   Function:			media_callback
@@ -476,14 +495,14 @@ static void play_recordhint_callback(int32 cmd, int32 time, int32 percent)
 	if (cmd == 0)
 	{
 		log_printf("play_recordhint_callback : record hint play err!\n");
-		meida_start_net_hint(CALL_AUDIO_PT, (char *)storage_get_lyly_tip_path(), (void *)play_recordhint_callback);
+		media_start_net_hint(CALL_AUDIO_PT, (char *)storage_get_lyly_tip_path(), (void *)play_recordhint_callback);
 	}
 	else
 	{	
 		if (percent == 100)
 		{
 			log_printf("play_recordhint_callback : record hint play over!\n");
-			meida_stop_net_hint();
+			media_stop_net_hint();
 			g_BeCallInfo.state = CALL_STATE_RECORDING;
 		}
 	}
@@ -695,7 +714,7 @@ static void * callout_proc(void *arg)
 
 		// 填充目标设备编号
 		//set_nethead(g_CallDestNo, PRIRY_DEFAULT);
-		media_set_output_volume(RING_OUT_VOL);
+		
 		while (CALL_STATE_CALLING == g_CallInfo.state)
 		{
 			//g_CallInfo.TimeOut = time(0) - t0;
@@ -733,6 +752,7 @@ static void * callout_proc(void *arg)
 				}
 
 				media_play_sound(storage_get_ring_out(), FALSE, NULL);
+				media_set_output_volume(RING_OUT_VOL);
 				if (g_CallInfo.state == CALL_STATE_CALLING)
 				{
 					uint8 nCallListNum = g_CallListNum;							
@@ -828,16 +848,16 @@ static void * callout_proc(void *arg)
 		ret = FALSE;
 		log_printf("call out proc : AS_INTER_RECORD_HINT\n");
 		CallGuiNotify(g_CallInfo.state, 0);
-		media_disable_audio_aec();
 		uint8 RingVolume = storage_get_ringvolume();		
 		
 		// 停止播放回铃音
 		media_stop_sound();
 					
 		// 开启网络音频
-		media_set_device(g_CallInfo.RemoteDeviceType);
+		media_start_net_audio(g_CallInfo.address);
+		media_disable_audio_aec();
+		media_disable_audio_ai();
 		media_set_output_volume(RingVolume);
-		media_start_net_audio(g_CallInfo.address, BYTES_PER_PACKET_SHORT);
 		
 		t0 = time(0);
 		g_CallInfo.TimeOut = 0;
@@ -877,7 +897,8 @@ static void * callout_proc(void *arg)
 		CallGuiNotify(g_CallInfo.state, 0);
 
 		media_disable_audio_aec();
-		meida_set_audio_send_addr(g_CallInfo.address, g_CallInfo.RemoteAudioPort);
+		media_disable_audio_dec();
+		media_enable_audio_ai();
 		media_add_audio_sendaddr(g_CallInfo.address, g_CallInfo.RemoteAudioPort);
 
 		t0 = time(0);		
@@ -918,21 +939,19 @@ static void * callout_proc(void *arg)
 	{
 		ret = FALSE;
 		CallGuiNotify(g_CallInfo.state, 0);
-		media_enable_audio_aec();
+		
 		uint8 TalkVolume = storage_get_talkvolume();
 		
 		log_printf("callout proc : AS_INTER_TALK\n");
-		media_set_device(g_CallInfo.RemoteDeviceType);
-		hw_switch_digit(); 		// 切换到数字对讲 
 		
 		if (g_PreCallOutState != CALL_STATE_RECORDHINT && g_PreCallOutState != CALL_STATE_RECORDING)
 		{
 			media_stop_sound();					
-			ret = media_start_net_audio(g_CallInfo.address, BYTES_PER_PACKET_SHORT);
+			ret = media_start_net_audio(g_CallInfo.address);
 			if (ret == TRUE)
 			{
 				g_CallInfo.IsStartAudio = TRUE;
-				meida_set_audio_send_addr(g_CallInfo.address, g_CallInfo.RemoteAudioPort);
+				media_enable_audio_aec();
 				media_add_audio_sendaddr(g_CallInfo.address, g_CallInfo.RemoteAudioPort);
 			}
 			else
@@ -940,10 +959,11 @@ static void * callout_proc(void *arg)
 				log_printf("callout proc : AS_INTER_TALK : start net audio err\n");
 			}
 		}
-		
+
+		media_enable_audio_dec();
+		media_enable_audio_ai();
 		if (g_PreCallOutState == CALL_STATE_RECORDHINT)
-		{
-			meida_set_audio_send_addr(g_CallInfo.address, g_CallInfo.RemoteAudioPort);
+		{			
 			media_add_audio_sendaddr(g_CallInfo.address, g_CallInfo.RemoteAudioPort);
 		}
 
@@ -1057,7 +1077,6 @@ static void * callout_proc(void *arg)
 	g_CallInfo.address = 0;
 	memset(&g_NewBeCallInfo, 0, sizeof(g_NewBeCallInfo)); 
 	g_CallRefuseNum = 0;
-	media_set_device(DEVICE_TYPE_NONE);
 	log_printf("callout proc end!\n");
 	inter_SetThread(&g_CallInfo.mThread);
 	log_printf("inter_SetThread\n");
@@ -1142,10 +1161,9 @@ static void * becall_proc(void *arg)
 			char RingFile[50] = {0};
 
 			// 获取铃声音量
-			media_set_device(DEVICE_TYPE_NONE);
-			media_set_output_volume(RingVolume);
 			get_ring_file(RingFile);
 			media_play_sound(RingFile, TRUE, NULL);
+			media_set_output_volume(RingVolume);
 		}	
 												
 		t0 = time(0);			
@@ -1234,8 +1252,7 @@ static void * becall_proc(void *arg)
 		if (HintFile != NULL)
 		{
 			log_printf("becall proc : hint file is %s\n", HintFile);
-			meida_start_net_hint(g_BeCallInfo.RemoteDeviceType, HintFile, (void *)play_recordhint_callback);
-			meida_set_audio_send_addr(g_BeCallInfo.address, g_BeCallInfo.RemoteAudioPort);
+			media_start_net_hint(g_BeCallInfo.RemoteDeviceType, HintFile, (void *)play_recordhint_callback);
 			media_add_audio_sendaddr(g_BeCallInfo.address, g_BeCallInfo.RemoteAudioPort);
 		}
 		else
@@ -1293,10 +1310,9 @@ static void * becall_proc(void *arg)
 		get_lylyrecord_path(lvdFile, &g_LylyDateTime);
 			
 		// 关闭留言提示音接口
-		meida_stop_net_hint();		
+		media_stop_net_hint();		
 		
 		// 开启留言录制接口
-		meida_set_audio_send_addr(g_BeCallInfo.address, g_BeCallInfo.RemoteAudioPort);
 		int32 ret = meida_start_net_leave_rec(g_BeCallInfo.LeaveWordMode, CALL_AUDIO_PT, CALL_VIDEO_PT, lvdFile);
 		if (ret == FALSE)
 		{
@@ -1374,7 +1390,7 @@ static void * becall_proc(void *arg)
 		if (g_PreBeCallState == CALL_STATE_RECORDHINT)
 		{
 			// 关闭留言提示音接口
-			meida_stop_net_hint();
+			media_stop_net_hint();
 		}
 
 		if (g_PreBeCallState == CALL_STATE_RECORDING)
@@ -1383,17 +1399,8 @@ static void * becall_proc(void *arg)
 			media_stop_net_leave_rec(FALSE);
 		}
 
-		// 设置通话音量
-		if (g_BeCallInfo.RemoteDeviceType == DEVICE_TYPE_DOOR_NET && g_AnalogDoor == TRUE)
-		{
-			media_set_device(DEVICE_TYPE_DOOR_PHONE);
-			media_set_output_volume_high(storage_get_talkvolume());
-		}
-		else
-		{
-			media_set_device(g_BeCallInfo.RemoteDeviceType);
-			media_set_talk_volume(g_BeCallInfo.RemoteDeviceType, storage_get_talkvolume());
-		}
+		// 设置通话音量	
+		media_set_talk_volume(g_BeCallInfo.RemoteDeviceType, storage_get_talkvolume());
 
 		// add by luofl 2011-12-07 增加咪头输入设置
 		//media_set_input_volume(storage_get_micvolume());
@@ -1404,12 +1411,10 @@ static void * becall_proc(void *arg)
 		memset(data + 4, 0xFF, 4);
 
 		// 开启通话接口
-		hw_switch_digit(); 		// 切换到数字对讲 
-		if (media_start_net_audio(g_BeCallInfo.address, BYTES_PER_PACKET_SHORT) == TRUE)
+		if (media_start_net_audio(g_BeCallInfo.address) == TRUE)
 		{
 			g_BeCallInfo.IsStartAudio = TRUE;
 		}
-		meida_set_audio_send_addr(g_BeCallInfo.address, g_BeCallInfo.RemoteAudioPort);
 		media_add_audio_sendaddr(g_BeCallInfo.address, g_BeCallInfo.RemoteAudioPort);
 
 		// 已接记录
@@ -1461,7 +1466,7 @@ static void * becall_proc(void *arg)
 	{
 		media_del_audio_send_addr(g_BeCallInfo.address, MEDIA_AUDIO_PORT);
 		usleep(10*1000);
-		meida_stop_net_hint();	
+		media_stop_net_hint();	
 	}
 
 	if (g_PreBeCallState == CALL_STATE_RECORDING)
@@ -1499,7 +1504,6 @@ static void * becall_proc(void *arg)
 	g_Leaveword_Timeout = 0;
 	memset(&g_NewBeCallInfo, 0, sizeof(g_NewBeCallInfo)); 
 	g_ElevtorAuthorize = FALSE;
-	media_set_device(DEVICE_TYPE_NONE);
 
 	// 存储比较耗时，等界面退出在存储
 	// 未接记录
@@ -1562,11 +1566,9 @@ static void * phone_becall_proc(void *arg)
 			uint8 RingVolume = storage_get_ringvolume();
 			char RingFile[50] = {0};
 
-			// 获取铃声音量
-			media_set_device(DEVICE_TYPE_NONE);
-			media_set_output_volume(RingVolume);
 			get_ring_file(RingFile);
 			media_play_sound(RingFile, TRUE, NULL);
+			media_set_output_volume(RingVolume);
 		}
 
 		uint8 count = 0;
@@ -1621,17 +1623,8 @@ static void * phone_becall_proc(void *arg)
 			media_stop_sound();
 		}
 	
-		// 设置通话音量
-		if (g_BeCallInfo.RemoteDeviceType == DEVICE_TYPE_DOOR_NET && g_AnalogDoor == TRUE)
-		{
-			media_set_device(DEVICE_TYPE_DOOR_PHONE);
-			media_set_output_volume_high(storage_get_talkvolume());
-		}
-		else
-		{
-			media_set_device(g_BeCallInfo.RemoteDeviceType);
-			media_set_talk_volume(g_BeCallInfo.RemoteDeviceType, storage_get_talkvolume());
-		}
+		// 设置通话音量	
+		media_set_talk_volume(g_BeCallInfo.RemoteDeviceType, storage_get_talkvolume());
 		
 		t0 = time(0);		
 		g_BeCallInfo.TimeOut = 0;
@@ -1695,7 +1688,6 @@ static void * phone_becall_proc(void *arg)
 	g_BeCallInfo.address = 0;
 	memset(&g_NewBeCallInfo, 0, sizeof(g_NewBeCallInfo)); 
 	g_ElevtorAuthorize = FALSE;
-	media_set_device(DEVICE_TYPE_NONE);
 	log_printf("becall_proc end!");
 	
 	inter_SetThread(&g_BeCallInfo.mThread);		
@@ -1896,7 +1888,6 @@ static int32 call_in(const PRECIVE_PACKET recPacket)
 					{	
 						g_BeCallInfo.CallNo1[0] = '2';
 					}
-					g_AnalogDoor = FALSE;				// add by xiewr 101209
 				}
 				else
 				{
@@ -1909,14 +1900,12 @@ static int32 call_in(const PRECIVE_PACKET recPacket)
 						{
 							g_BeCallInfo.RemoteDeviceType = DEVICE_TYPE_DOOR_NET;
 							g_BeCallInfo.CallNo1[0] = '1';
-							g_AnalogDoor = TRUE;	// add by xiewr 101209, 模拟门前机呼入
 							break;
 						}
 						else if (callno[myDev->DevNoLen - 1] == '7')
 						{
 							g_BeCallInfo.RemoteDeviceType = DEVICE_TYPE_DOOR_NET;
 							g_BeCallInfo.CallNo1[0] = '2';
-							g_AnalogDoor = TRUE;	// add by xiewr 101209, 模拟门前机呼入
 							break;
 						}
 					}					
@@ -1952,7 +1941,6 @@ static int32 call_in(const PRECIVE_PACKET recPacket)
 					{	
 						g_BeCallInfo.CallNo1[0] = '2';
 					}
-					g_AnalogDoor = FALSE;				// add by xiewr 101209
 				}
 				else
 				{
@@ -1967,14 +1955,12 @@ static int32 call_in(const PRECIVE_PACKET recPacket)
 						{
 							g_BeCallInfo.RemoteDeviceType = DEVICE_TYPE_DOOR_NET;
 							g_BeCallInfo.CallNo1[0] = '1';
-							g_AnalogDoor = TRUE;	// add by xiewr 101209, 模拟门前机呼入
 							break;
 						}
 						else if (callno[myDev->DevNoLen - 1] == '7')
 						{
 							g_BeCallInfo.RemoteDeviceType = DEVICE_TYPE_DOOR_NET;
 							g_BeCallInfo.CallNo1[0] = '2';
-							g_AnalogDoor = TRUE;	// add by xiewr 101209, 模拟门前机呼入
 							break;
 						}
 					}
@@ -2951,7 +2937,7 @@ int32 inter_video_snap(void)
 				return FALSE;
 					
 		}
-		ret = media_snapshot(FileName, SNAP_PIC_WIDTH, SNAP_PIC_HEIGHT, g_BeCallInfo.RemoteDeviceType);
+		ret = media_snapshot(FileName, st_snap_state_callback, g_BeCallInfo.RemoteDeviceType);
 		if (ret == TRUE)
 		{
 			storage_add_photo(g_BeCallInfo.RemoteDeviceType, g_BeCallInfo.CallNo1, DateTime);
@@ -3422,13 +3408,6 @@ int32 inter_call_distribute(const PRECIVE_PACKET recPacket)
 		case CMD_CALL_HANDDOWN:	
 		{	
 			log_printf("CMD_CALL_HANDDOWN : CallID : %d, g_CallInfo.ID : %d, g_BeCallInfo.ID : %d\n", CallID, g_CallInfo.ID, g_BeCallInfo.ID);
-
-			// modi by chenbh 2015-11-13 增加IsStartAudio的判断 否则调用media_w_close可能会死机
-			if ((g_CallInfo.state == CALL_STATE_TALK && g_CallInfo.address == recPacket->address && g_CallInfo.IsStartAudio)||
-				(g_BeCallInfo.state == CALL_STATE_TALK && g_BeCallInfo.address == recPacket->address && g_BeCallInfo.IsStartAudio))
-			{
-				media_w_close();  //清空音频播放输出缓冲区
-			}
 
 			if (CallID == g_CallInfo.ID)
 			{

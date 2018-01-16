@@ -57,6 +57,17 @@ typedef unsigned short NET_COMMAND;
 #define CMD_IPMODULE_BIND			(SSC_PUBLIC<<8 | 0xB6)		// IP模块向室内主机绑定
 #define CMD_GET_EXTENSION_ADDR		(SSC_PUBLIC<<8 | 0xB9)		// 移动终端或室内分机向IP模块获取分机的IP地址
 #define CMD_TUNNEL					(SSC_PUBLIC<<8 | 0xA2)		// 数据透传命令
+
+#ifdef	_USE_AURINE_SET_
+#define CMD_SOFT_SET_PARAM			(0xFF<<8 | 0xD0)			// 上位机设置室内机参数
+#define CMD_SOFT_GET_PARAM			(0xFF<<8 | 0xD1)			// 上位机获取室内机参数
+#define CMD_SOFT_TERMINAL_CMD		(0xFF<<8 | 0xD2)			// 终端操作
+#else
+#define CMD_SOFT_SET_PARAM			(SSC_PUBLIC<<8 | 0xD0)		// 上位机设置室内机参数
+#define CMD_SOFT_GET_PARAM			(SSC_PUBLIC<<8 | 0xD1)		// 上位机获取室内机参数
+#define CMD_SOFT_TERMINAL_CMD		(SSC_PUBLIC<<8 | 0xD2)		// 终端操作
+#endif
+
 /************************以上为公共部分命令**********************************/
 
 /************************以下为安防部分命令**********************************/

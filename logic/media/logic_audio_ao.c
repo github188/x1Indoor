@@ -20,8 +20,11 @@
 #include "audio_dev.h"
 
 #define	BLOCKTIME         		10     //每个缓冲数据块的时长（毫秒）
-
 #define _VOICE_SCALE_			0
+#define AO_DEV_CHANNELS			1
+#define AO_DEV_BITWIDTH			AIO_BIT_WIDTH_16
+#define AO_DEV_SAMPLERATE		AIO_SAMPLE_RATE_8
+
 
 #define _AUDIO_AO_FILE_SAVE_	0
 #if _AUDIO_AO_FILE_SAVE_
@@ -125,33 +128,22 @@ static void g711_ao_file_save(uint8 mode, uint8 *data, int len)
 	}
 }
 #endif
-#if (_AEC_TYPE_ == _SW_AEC_)
-//by zxf
-//static struct timeval timestart;
-//static struct timeval timestop;
-//static long usec;
-void ace_echo_playback_aec( short * play);
-void ace_echo_playback_aec2(short * play, int samplecount);
-#endif
 
 /*************************************************
-  Function:		audio_play_start
-  Description:	启动音频播放
-  Input: 		
-  Output:
-  Return:		 
-  Others:
+  Function:		st_audio_param_reset
+  Description:	
+  Input:		无
+  Output:		无
+  Return:		无
+  Others:		
 *************************************************/
-static int audio_play_start( MSMediaDesc * arg)
-{
-	AudioAoState * data = (AudioAoState*)arg->private;
-	int  Volume = 70;//100;
-	int  StreamID = 0;
-	int  Channels = data->channelnum;
-	int  Bitwidth = 16;
-	int  SampleRate = data->Samplerate;
-
-	return Alsa_Play_Start(Channels, Bitwidth, SampleRate, BLOCKTIME);
+static int st_audio_param_reset(AudioAoParam * data)
+{	
+	ms_return_val_if_fail(data, -1);	
+	memset(data, 0, sizeof(AudioAoParam));
+	data->Enable = FALSE;
+	data->AoAgc = 1.0;
+	return 0;
 }
 
 /*************************************************
@@ -166,17 +158,9 @@ static int ms_ao_audio_init(struct _MSMediaDesc * f)
 {
 	if (NULL == f->private)
 	{
-		AudioAoState * data = (AudioAoState*)malloc(sizeof(AudioAoState));
+		AudioAoParam * data = (AudioAoParam*)malloc(sizeof(AudioAoParam));
+		st_audio_param_reset(data);
 		
-		memset(data, 0, sizeof(AudioAoState));
-		data->enPayloadType= PT_G711A;
-		data->Samplerate = AUDIO_SAMPLE_RATE_8000;
-   		data->Bitwidth = AUDIO_BIT_WIDTH_16;       	/*standard 16bit little endian format, support this format only*/
-		data->channelnum = 1;
-		data->aoDev = 0;
-		data->AParam.IsPack = HI_TRUE;
-		data->AParam.PackNum = AUDIO_NUM;
-		data->AParam.SpkValue = 95;
 		f->private= data;
 		f->mcount = 0;
 	}
@@ -214,22 +198,21 @@ static int ms_ao_audio_uninit(struct _MSMediaDesc * f)
 static int ms_audio_ao_open(struct _MSMediaDesc * f, void * arg)
 {
 	int ret = -1;
-	AudioAoState * data = (AudioAoState*)f->private;
+	AudioAoParam * data = (AudioAoParam*)f->private;
 	
 	ms_media_lock(f);
 	if (f->mcount == 0)
-	{
-		#if _AUDIO_AO_FILE_SAVE_
-	    g711_ao_file_open(PCM_AO_AUDIO);
-		#endif	
-		data->AoEnable = HI_TRUE;
-		
-		ret = audio_play_start(f);
+	{						
+		ret = Alsa_Play_Start(AO_DEV_CHANNELS, AO_DEV_BITWIDTH, AO_DEV_SAMPLERATE, BLOCKTIME);
 		if (HI_SUCCESS != ret)
 		{
 			goto error0;
 		}
-		
+
+		#if _AUDIO_AO_FILE_SAVE_
+	    g711_ao_file_open(PCM_AO_AUDIO);
+		#endif	
+		data->Enable = TRUE;
 		f->mcount++;
 		if (f->preprocess)
 		{
@@ -261,15 +244,18 @@ error0:
 void ms_audio_ao_proc(struct _MSMediaDesc * f, mblk_t * arg)
 {	
 	int status;
-    AudioAoState * s = (AudioAoState*)f->private;
-	if (s->AoEnable == HI_TRUE)
+    AudioAoParam * s = (AudioAoParam*)f->private;
+	if (s->Enable == TRUE)
 	{
 		#if _AUDIO_AO_FILE_SAVE_
 		g711_ao_file_save(PCM_AO_AUDIO, (uint8 *)arg->address, arg->len);
 		#endif
 
 		#if _VOICE_SCALE_
-		pcm_audio_mult((unsigned char*)arg->address, arg->len, 16, 0.1);
+		if (fabs(s->AoAgc-1.0) > 0.000001)
+		{
+			pcm_audio_mult((unsigned char*)arg->address, arg->len, 16, s->AoAgc);
+		}
 		#endif
 
 		Alsa_Play_Func(arg->address, arg->len, &status);
@@ -307,7 +293,7 @@ void ms_audio_ao_proc(struct _MSMediaDesc * f, mblk_t * arg)
 static int ms_audio_ao_close(struct _MSMediaDesc * f, void * arg)
 {
 	uint32 ret = HI_FAILURE;
-	AudioAoState *data=(AudioAoState*)f->private;
+	AudioAoParam *data=(AudioAoParam*)f->private;
 
 	ms_media_lock(f);
 	if (f->mcount > 0)
@@ -320,6 +306,7 @@ static int ms_audio_ao_close(struct _MSMediaDesc * f, void * arg)
     		g711_ao_file_close(PCM_AO_AUDIO);
 			#endif
 
+			data->Enable = FALSE;
 			Alsa_Play_Close();
 			
 			if (f->postprocess)
@@ -327,6 +314,7 @@ static int ms_audio_ao_close(struct _MSMediaDesc * f, void * arg)
 				f->postprocess(f);
 			} 
 			ret = HI_SUCCESS;
+			st_audio_param_reset(data);
 		}
 	}
 	ms_media_unlock(f);
@@ -344,13 +332,13 @@ static int ms_audio_ao_close(struct _MSMediaDesc * f, void * arg)
 *************************************************/
 static int ms_audio_ao_param(struct _MSMediaDesc * f, void * arg)
 {
-	AudioAoState * data = (AudioAoState*)f->private;
+	AudioAoParam * data = (AudioAoParam*)f->private;
 	AUDIO_PARAM * param = (AUDIO_PARAM*)arg;
 
 	ms_media_lock(f);
 	if (f->mcount == 0)
 	{		
-	   memcpy(&data->AParam, param, sizeof(AUDIO_PARAM));
+	   data->AoAgc = param->AoAgc;
 	   ms_media_unlock(f);	
 	   return HI_SUCCESS;
 	}
@@ -369,13 +357,13 @@ static int ms_audio_ao_param(struct _MSMediaDesc * f, void * arg)
 *************************************************/
 static int ms_audio_ao_enable(struct _MSMediaDesc * f, void * arg)
 {
-	AudioAoState * data = (AudioAoState*)f->private;
+	AudioAoParam * data = (AudioAoParam*)f->private;
 	HI_BOOL param = *((HI_BOOL*)arg);
 
 	ms_media_lock(f);
 	if (f->mcount > 0)
 	{		
-	   data->AoEnable = param;
+	   data->Enable = param;
 	   ms_media_unlock(f);	
 	   return HI_SUCCESS;
 	}

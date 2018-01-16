@@ -97,14 +97,14 @@ static int get_AudioParam(LylyData *s)
 }
 
 /*************************************************
-  Function:		ms_avi_play_stop
+  Function:		st_lyly_hit_stop
   Description: 	 
   Input: 	
   Output:		
   Return:		 
   Others:
 *************************************************/
-static void ms_lyly_stop(struct _MSMediaDesc * f)
+static void st_lyly_hit_stop(struct _MSMediaDesc * f)
 {
 	log_printf("****************** ms_audio_play_stop *******************\n");
 	
@@ -129,14 +129,14 @@ static void ms_lyly_stop(struct _MSMediaDesc * f)
 }
 
 /*************************************************
-  Function:		ms_lyly_PackStream_pre
+  Function:		st_lyly_hit_PackStream_pre
   Description: 	
   Input: 		无
   Output:		无
   Return:		 
   Others:		
 *************************************************/
-static int ms_lyly_PackStream_pre(MSMediaDesc *f)
+static int st_lyly_hit_PackStream_pre(MSMediaDesc *f)
 {
 	int i;
 	mblk_t arg;
@@ -156,14 +156,14 @@ static int ms_lyly_PackStream_pre(MSMediaDesc *f)
 }
 
 /*************************************************
-  Function:		lyly_PackStream
+  Function:		st_lyly_hit_PackStream
   Description: 	
   Input: 		无
   Output:		无
   Return:		 
   Others:
 *************************************************/
-static int ms_lyly_PackStream(MSMediaDesc *f, char *pstStream, int len)
+static int st_lyly_hit_PackStream(MSMediaDesc *f, char *pstStream, int len)
 {
 	mblk_t arg;
 	char buf[512];
@@ -213,14 +213,14 @@ static int ms_lyly_PackStream(MSMediaDesc *f, char *pstStream, int len)
 }
 
 /*************************************************
-  Function:		ms_lyly_thread
+  Function:		ms_lyly_hit_thread
   Description: 	
   Input: 		
   Output:		
   Return:		 
   Others:
 *************************************************/
-static void *ms_lyly_thread(void *arg)
+static void *ms_lyly_hit_thread(void *arg)
 {
 	ms_return_val_if_fail(arg, NULL);
 	int state = 0;
@@ -263,11 +263,12 @@ static void *ms_lyly_thread(void *arg)
 	
 	if (1 == g_PerFrameNum && delay_time > 10)
 	{
-		delay_time -= 5;
+		// del by chenbh 20180110 目前不需要
+		//delay_time -= 5;
 	}
 	
 	// 先发送空数据 防止对方收到包后做丢包处理时将数据包丢弃造成声音播放不完整 暂时不用
-	//ms_lyly_PackStream_pre(f);
+	//st_lyly_hit_PackStream_pre(f);
 	
 	while (data->msplaythread.thread_run)
 	{	
@@ -286,7 +287,7 @@ static void *ms_lyly_thread(void *arg)
 		{
 			memset(alaw_buf, 0, g_ChunkSize);			
 			memcpy(alaw_buf, (g_ReadBuf->buffer+g_ReadBuf->iget), audio_len);
-			ms_lyly_PackStream(f, (char *)alaw_buf, audio_len);			
+			st_lyly_hit_PackStream(f, (char *)alaw_buf, audio_len);			
 		}
 		else if (g_Format_tag == AUDIO_U_LAW)
 		{
@@ -294,7 +295,7 @@ static void *ms_lyly_thread(void *arg)
 			memset(alaw_buf, 0, g_ChunkSize);
 			memcpy(ulaw_buf, (g_ReadBuf->buffer+g_ReadBuf->iget), audio_len);
 			ulaw_to_alaw(audio_len, alaw_buf, ulaw_buf);
-			ms_lyly_PackStream(f, (char *)alaw_buf, audio_len);			
+			st_lyly_hit_PackStream(f, (char *)alaw_buf, audio_len);			
 		}
 		else
 		{
@@ -302,7 +303,7 @@ static void *ms_lyly_thread(void *arg)
 			memset(alaw_buf, 0, g_ChunkSize);
 			memcpy(pcm_buf, (g_ReadBuf->buffer+g_ReadBuf->iget), audio_len);
 			G711Encoder((short *)pcm_buf, alaw_buf, audio_len/2, 0);
-			ms_lyly_PackStream(f, (char *)alaw_buf, audio_len/2);						
+			st_lyly_hit_PackStream(f, (char *)alaw_buf, audio_len/2);						
 		}
 		
 		g_ReadBuf->iget += audio_len;
@@ -329,21 +330,21 @@ error:
 		free(pcm_buf);
 	}
 	printf(" ms_audio_play_thread error!!! \n");
-	ms_lyly_stop(f);	
+	st_lyly_hit_stop(f);	
 	data->msplaythread.thread = -1;
 	pthread_detach(pthread_self());
     pthread_exit(NULL);
 }
 
 /*************************************************
-  Function:		ms_lyly_start
+  Function:		ms_lyly_hit_param
   Description: 	
   Input: 		
   Output:		
   Return:		 
   Others:
 *************************************************/
-static int ms_lyly_param(struct _MSMediaDesc * f, void * arg)
+static int ms_lyly_hit_param(struct _MSMediaDesc * f, void * arg)
 {
 	int ret = RT_FAILURE;
 	ms_return_val_if_fail(arg, -1);
@@ -368,14 +369,14 @@ static int ms_lyly_param(struct _MSMediaDesc * f, void * arg)
 }
 
 /*************************************************
-  Function:		ms_lyly_start
+  Function:		ms_lyly_hit_open
   Description: 	
   Input: 		
   Output:		
   Return:		 
   Others:
 *************************************************/
-static int ms_lyly_open(struct _MSMediaDesc * f, void * arg)
+static int ms_lyly_hit_open(struct _MSMediaDesc * f, void * arg)
 {
 	int ret = RT_FAILURE;
 	LylyData *s = (LylyData*)f->private;
@@ -394,7 +395,7 @@ static int ms_lyly_open(struct _MSMediaDesc * f, void * arg)
 		
 		// 开启播放线程
 		ms_thread_init(&s->msplaythread,20);	
-		ret = ms_thread_create(&s->msplaythread, ms_lyly_thread, f);		
+		ret = ms_thread_create(&s->msplaythread, ms_lyly_hit_thread, f);		
 		if (ret == RT_FAILURE)
 		{	
 			goto error;
@@ -431,14 +432,14 @@ error:
 }
 
 /*************************************************
-  Function:		ms_lyly_close
+  Function:		ms_lyly_hit_close
   Description: 	
   Input: 		无
   Output:		无
   Return:		 
   Others:
 *************************************************/
-static int ms_lyly_close(struct _MSMediaDesc * f, void * arg)
+static int ms_lyly_hit_close(struct _MSMediaDesc * f, void * arg)
 {
 	int ret = RT_FAILURE;
 	LylyData * data = (LylyData*)f->private;
@@ -464,14 +465,14 @@ static int ms_lyly_close(struct _MSMediaDesc * f, void * arg)
 
 
 /*************************************************
-  Function:		ms_lyly_init
+  Function:		ms_lyly_hit_init
   Description: 	
   Input: 		
   Output:		
   Return:		 
   Others:
 *************************************************/
-static int ms_lyly_init(struct _MSMediaDesc * f)
+static int ms_lyly_hit_init(struct _MSMediaDesc * f)
 {
 	if (NULL == f->private)
 	{
@@ -494,14 +495,14 @@ static int ms_lyly_init(struct _MSMediaDesc * f)
 }
 
 /*************************************************
-  Function:		ms_lyly_uninit
+  Function:		ms_lyly_hit_uninit
   Description: 	
   Input: 		
   Output:		
   Return:		 
   Others:
 *************************************************/
-static int ms_lyly_uninit(struct _MSMediaDesc * f)
+static int ms_lyly_hit_uninit(struct _MSMediaDesc * f)
 {
 	LylyData *data = (LylyData*)f->private;
 	if (f->mcount == 0)
@@ -515,22 +516,22 @@ static int ms_lyly_uninit(struct _MSMediaDesc * f)
 
 static MSMediaMethod methods[] = 
 {
-	{MS_AUDIO_LYLY_OPEN,	ms_lyly_open},
-	{MS_AUDIO_LYLY_CLOSE,	ms_lyly_close},
-	{MS_AUDIO_LYLY_PARAM , 	ms_lyly_param},
+	{MS_LYLY_HIT_OPEN,		ms_lyly_hit_open},
+	{MS_LYLY_HIT_CLOSE,		ms_lyly_hit_close},
+	{MS_LYLY_HIT_PARAM , 	ms_lyly_hit_param},
 	{0,						NULL}
 };
 
-MSMediaDesc ms_file_lyly_desc =
+MSMediaDesc ms_lyly_hit_desc =
 {
-	.id = MS_FILE_LYLY_ID,
+	.id = MS_LYLY_HIT_ID,
 	.name = "MSFileLYLY",
 	.text = "Raw files and wav reader",
 	.enc_fmt = "n32926",
 	.noutputs = 1,
 	.outputs = NULL,
-	.init = ms_lyly_init,
-	.uninit = ms_lyly_uninit,
+	.init = ms_lyly_hit_init,
+	.uninit = ms_lyly_hit_uninit,
 	.preprocess = NULL,
 	.process = NULL,
 	.postprocess = NULL,

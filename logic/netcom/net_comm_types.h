@@ -42,6 +42,7 @@ extern "C"
 #define MANAGER_LEN				2					// 管理员机编号长度
 #define SCREENSAVE_NUM			12					// 屏保数量
 
+#define PC_SET_UDP_PORT			14301				// PC机设置项 使用的端口
 #define NETCMD_UDP_PORT			20625 				// 统一的命令端口,外区为映射后的端口
 #define	NETVIDEO_UDP_PORT		24010				// 视频端口
 #define	NETAUDIO_UDP_PORT		24020				// 音频端口
@@ -79,6 +80,12 @@ extern "C"
 #define NETCMD_UDP_PORT			14301				// 统一的命令端口,外区为映射后的端口
 #define	NETVIDEO_UDP_PORT		31410
 #define	NETAUDIO_UDP_PORT		31420
+#endif
+
+#ifdef	_USE_AURINE_SET_
+#define	AU_MAIN_NET_HEAD_SIZE		(sizeof(MAIN_NET_HEAD))					// 主协议网络包头长度
+#define AU_NETCMD_UDP_PORT			14301									// 统一的命令端口,外区为映射后的端口
+#define	AU_NET_HEAD_SIZE			(sizeof(MAIN_NET_HEAD)+sizeof(NET_SET_HEAD))// 网络包头长度
 #endif
 
 #define NETCMD_ELEVATOR_PORT	8008				// 电梯授权命令端口
@@ -283,6 +290,25 @@ typedef struct
 	uint8 		Encrypt;							// 加密类型
 	uint16 		DataLen;							//数据长度
 }NET_HEAD, *PNET_HEAD;
+#endif
+
+#ifdef	_USE_AURINE_SET_
+typedef struct
+{ 
+	uint32		PackageID;                          // 包标识
+	uint16 		ProtocolVer;						// 协议版本
+	uint16 		Priry;								// 包优先级
+	DEVICE_SET_NO 	SrcDeviceNo;						// 源设备编号
+	DEVICE_SET_NO 	DestDeviceNo;						// 目标设备编号
+	//uint8 		Resver;								// 保留位
+	uint8 		DeviceType;
+	uint8 		DirectFlag;							// 方向标志
+	uint8 		SubSysCode;							// 子系统代号
+	uint8		command;							// 命令
+	uint8		EchoValue;							// 应答码
+	uint8 		Encrypt;							// 加密类型
+	uint16 		DataLen;							//数据长度
+}NET_SET_HEAD, *PNET_SET_HEAD;
 #endif
 
 // 网络时间结构体

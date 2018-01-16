@@ -26,6 +26,13 @@
 
 static int32 g_CmdSocketFd = -1;	 				// 网络命令Socket
 
+#ifdef	_USE_AURINE_SET_
+static int32 g_CmdSetSocketFd = -1;	 				// 网络命令Socket 用于设置
+static char g_ReciveSetData[NET_PACKBUF_SIZE]; 		// 网络接收包数据
+static struct sockaddr_in g_ReciveSetAddress; 		// 接收地址
+static struct sockaddr_in g_DestSetAddress; 		// 发送地址
+#endif
+
 static struct sockaddr_in g_DestAddress; 			// 发送地址
 static struct sockaddr_in g_ReciveAddress; 			// 接收地址
 static char g_ReciveData[NET_PACKBUF_SIZE]; 		// 网络接收包数据
@@ -53,28 +60,20 @@ NET_COMMAND net_get_cmd_by_nethead(const PNET_HEAD netHead);
   Return:       无  
   Others:   	MAC烧写工具默认ML协议
 *************************************************/
-static void net_set_mac(char *data, int32 len)
+void net_set_mac(const PRECIVE_PACKET recPacket)
 {   
 	uint8 mac[6] = {0}; 
-    RECIVE_PACKET RecPacket;
-	
-    g_SetMACFlag = TRUE;
-    RecPacket.data = data;
-    RecPacket.size = len;
-    RecPacket.address = ntohl(g_ReciveAddress.sin_addr.s_addr);
-    RecPacket.port = ntohs(g_ReciveAddress.sin_port);
-                   
-    memcpy(mac, data+NET_HEAD_SIZE, 6);
+               
+    memcpy(mac, recPacket->data+NET_HEAD_SIZE, 6);
     int32 ret = net_set_local_mac(mac);
     if (ret == TRUE)
     {
-        net_send_echo_packet(&RecPacket, ECHO_OK, 0, 0);
+        net_send_echo_packet_ext(recPacket, ECHO_OK, 0, 0);
     }
     else
     {
-        net_send_echo_packet(&RecPacket, ECHO_ERROR, 0, 0);
-    }
-    g_SetMACFlag = FALSE;
+        net_send_echo_packet_ext(recPacket, ECHO_ERROR, 0, 0);
+    }	
 }
 
 /*************************************************
@@ -133,6 +132,65 @@ static int32 create_cmd_socket(uint16 port, int32 RecBufSize, int32 SendBufSize)
     g_CmdSocketFd = socketFd;
     return TRUE;
 }
+
+#ifdef _USE_AURINE_SET_
+/*************************************************
+  Function:    		create_cmd_socket_exr
+  Description:		建立udpsocket
+  Input: 
+	1.port			端口号
+	2.RecBufSize	接收Buf大小
+	3.SendBufSize	发送Buf大小
+  Output:			无
+  Return:			TRUE / FALSE
+  Others:
+*************************************************/
+static int32 create_cmd_socket_exr(uint16 port, int32 RecBufSize, int32 SendBufSize)
+{
+	int32 socketFd;
+	int32 ret;
+	int32 flag;
+	struct sockaddr_in addrLocal;
+
+	socketFd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (socketFd < 0)
+    {
+    	log_printf("get socket err\n");
+        return FALSE;
+    }
+    else
+    {
+    	log_printf("get socket : %d\n", socketFd);
+    }
+
+#if 0		// lwip-v1.0.1的库设置不成功	
+	ret = setsockopt(socketFd, SOL_SOCKET, SO_RCVBUF, (char*)&RecBufSize, sizeof(RecBufSize)) ;
+	log_printf("set socket SO_RCVBUF ret : %d\n", ret);
+    ret = setsockopt(socketFd, SOL_SOCKET, SO_SNDBUF, (char*)&SendBufSize, sizeof(SendBufSize)) ;
+    log_printf("set socket SO_SNDBUF ret : %d\n", ret);
+#endif    
+
+    flag = 1;
+	ret = setsockopt(socketFd, SOL_SOCKET, SO_BROADCAST, &flag, sizeof(flag));
+	// 防止服务器出错时，端口未被释放，导致重新连接失败
+	ret = setsockopt(socketFd, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag));
+		
+    memset(&addrLocal, 0, SOCK_ADDR_SIZE);    
+    addrLocal.sin_family      = AF_INET;
+	addrLocal.sin_addr.s_addr = htonl(INADDR_ANY);
+    addrLocal.sin_port        = htons(port);
+    
+    if (bind(socketFd, (struct sockaddr *)&addrLocal, SOCK_ADDR_SIZE))
+    {
+    	close(socketFd);
+		perror("bind");
+    	log_printf("bind socket err\n");
+    	return FALSE;
+    }
+    g_CmdSetSocketFd = socketFd;
+    return TRUE;
+}
+#endif
 
 #if (_SUB_PROTOCOL_ENCRYPT_ != 0x00)
 /*************************************************
@@ -214,7 +272,6 @@ static int32 check_packet(const char * data, int32 size)
 {
 	int32 ret = FALSE;
 	PNET_HEAD nethead = NULL;
-	PMAIN_NET_HEAD PMainNethead = NULL;
 	
 	if (size > NET_PACKBUF_SIZE || size < NET_HEAD_SIZE)
 	{	
@@ -223,15 +280,6 @@ static int32 check_packet(const char * data, int32 size)
 	}	
 	
 	nethead = (PNET_HEAD)(data + MAIN_NET_HEAD_SIZE);
-	#ifndef _AU_PROTOCOL_
-	PMainNethead = (PMAIN_NET_HEAD)(data);
-	ret = check_MainNethead(PMainNethead);
-	if (ret == FALSE)
-	{
-		log_printf("MainNethead err !!!!\n");
-		return FALSE;
-	}
-	#endif
 	
 	// 长度
 	if (nethead->DataLen != (size-NET_HEAD_SIZE))
@@ -273,15 +321,6 @@ void* recive_cmd_data_proc(void *arg)
 	NET_COMMAND cmd = 0;
 	RECIVE_PACKET RecPacket;
 	PNET_HEAD head;
-	
-	#ifndef _AU_PROTOCOL_
-    PMAIN_NET_HEAD PMainNethead = NULL; // modify by caogw  20160418
-    #endif
-
-	#if (_SUB_PROTOCOL_ENCRYPT_ != 0x00)
-	char *encrypt_databuf = NULL;
-    //PMAIN_NET_HEAD PMainNethead = NULL; // modify by caogw  20160418
-	#endif
 
 	//static int32 RecvPacketCount = 0;				// 测试接收包个数	
 	
@@ -311,25 +350,53 @@ void* recive_cmd_data_proc(void *arg)
 
 			log_printf("***************** recv packet len : %d *******************  \n", len);
 			#ifndef _AU_PROTOCOL_
-            PMainNethead = (PMAIN_NET_HEAD)(g_ReciveData);
-            if (PMainNethead->subProtocolEncrypt == _NO_PROTOCOL_ENCRYPT_)
-            {
-                head = (PNET_HEAD)(g_ReciveData + MAIN_NET_HEAD_SIZE);
-                cmd = net_get_cmd_by_nethead(head);
-                if (cmd == CMD_SET_MAC)
-                {
-                    net_set_mac(g_ReciveData, len);
-                    continue;
-                }
-            }
-            g_SetMACFlag = FALSE;
+           	PMAIN_NET_HEAD PMainNethead = (PMAIN_NET_HEAD)(g_ReciveData);
+			ret = check_MainNethead(PMainNethead);
+			if (ret == FALSE)							// 返回FALSE 可能是mac设置 以色列设置项 TF统一协议
+			{
+				log_printf("MainNethead err !!!!\n");
+				if (PMainNethead->subProtocolEncrypt == _NO_PROTOCOL_ENCRYPT_)
+            	{
+               		head = (PNET_HEAD)(g_ReciveData + MAIN_NET_HEAD_SIZE);
+                	cmd = net_get_cmd_by_nethead(head);
+					
+                	switch (cmd)
+					{
+						case CMD_SET_MAC:
+							{
+								RecPacket.data = g_ReciveData;
+								RecPacket.size = len;
+								RecPacket.address = ntohl(g_ReciveAddress.sin_addr.s_addr);
+								RecPacket.port = ntohs(g_ReciveAddress.sin_port);
+								net_set_mac(&RecPacket);
+							}
+							break;
+							
+						case CMD_SOFT_SET_PARAM:
+						case CMD_SOFT_GET_PARAM:
+						case CMD_SOFT_TERMINAL_CMD:
+							{
+								RecPacket.data = g_ReciveData;
+								RecPacket.size = len;
+								RecPacket.address = ntohl(g_ReciveAddress.sin_addr.s_addr);
+								RecPacket.port = ntohs(g_ReciveAddress.sin_port);
+								net_add_recive_packet(RecPacket.data, RecPacket.size, RecPacket.address, RecPacket.port);
+							}
+							break;
+
+						default:
+							break;
+					}	                
+           		}
+				
+				continue;
+			}
 			#endif
-			
+
 			// 数据解密
 			#if (_SUB_PROTOCOL_ENCRYPT_ != 0x00)
+			char *encrypt_databuf = NULL;
 			encrypt_databuf = (char *)g_ReciveData + MAIN_NET_HEAD_SIZE;
-			PMainNethead = (PMAIN_NET_HEAD)(g_ReciveData);
-			log_printf("recv len : %d , PMainNethead->subPacketLen: %d\n", len, PMainNethead->subPacketLen);
 			data_encrypt(encrypt_databuf, (len - MAIN_NET_HEAD_SIZE));
 			#endif
 			
@@ -455,6 +522,97 @@ void* recive_cmd_data_proc(void *arg)
 	return NULL;
 }
 
+#ifdef	_USE_AURINE_SET_
+/*************************************************
+  Function:    		recive_set_cmd_data_proc
+  Description:		接收UDP网络命令
+  Input: 			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+void* recive_set_cmd_data_proc(void *arg)
+{
+	uint32 ret;
+	int32 len = 0;
+	int32 addr_len = SOCK_ADDR_SIZE;
+	NET_COMMAND cmd = 0;
+	RECIVE_PACKET RecPacket;
+	PNET_SET_HEAD head;
+
+	//static int32 RecvPacketCount = 0;				// 测试接收包个数	
+	
+	if (g_CmdSetSocketFd >= 0)
+	{
+		while (1)
+		{
+			len = recvfrom(g_CmdSetSocketFd, g_ReciveSetData, sizeof(g_ReciveSetData), 0, (struct sockaddr *)&g_ReciveSetAddress, &addr_len);
+			if (len <= 0)
+			{
+				continue;
+			}
+			else
+			{			
+				// 测试接收包个数
+				#if 0	
+				RecvPacketCount++;	
+				if ((RecvPacketCount%100==0) && (RecvPacketCount >= 100))
+				{
+					log_printf("len:%d, RecvPacketCount:%d, addr:0x%x, port:%d\n", len, RecvPacketCount, ntohl(g_ReciveAddress.sin_addr.s_addr), ntohs(g_ReciveAddress.sin_port));
+				}	
+				net_send_cmd_packet(g_ReciveData, 100, ntohl(g_ReciveAddress.sin_addr.s_addr), ntohs(g_ReciveAddress.sin_port));
+			
+				break;
+				#endif		
+			}
+
+			log_printf("***************** recv packet set len : %d *******************  \n", len);
+           	PMAIN_NET_HEAD PMainNethead = (PMAIN_NET_HEAD)(g_ReciveSetData);
+			if (PMainNethead->subProtocolEncrypt == _NO_PROTOCOL_ENCRYPT_)
+        	{
+           		head = (PNET_SET_HEAD)(g_ReciveSetData + AU_MAIN_NET_HEAD_SIZE);
+				cmd = au_net_get_cmd_by_nethead(head);				
+            	switch (cmd)
+				{
+					case CMD_SOFT_SET_PARAM:
+						RecPacket.data = g_ReciveSetData;
+						RecPacket.size = len;
+						RecPacket.address = ntohl(g_ReciveSetAddress.sin_addr.s_addr);
+						RecPacket.port = ntohs(g_ReciveSetAddress.sin_port);						
+						set_param_cmd_deal(&RecPacket);
+						break;
+
+					case CMD_SOFT_GET_PARAM:
+						RecPacket.data = g_ReciveSetData;
+						RecPacket.size = len;
+						RecPacket.address = ntohl(g_ReciveSetAddress.sin_addr.s_addr);
+						RecPacket.port = ntohs(g_ReciveSetAddress.sin_port);
+						get_param_cmd_deal(&RecPacket);
+						break;
+
+					case CMD_SOFT_TERMINAL_CMD:
+						RecPacket.data = g_ReciveSetData;
+						RecPacket.size = len;
+						RecPacket.address = ntohl(g_ReciveSetAddress.sin_addr.s_addr);
+						RecPacket.port = ntohs(g_ReciveSetAddress.sin_port);
+						terminal_cmd_deal(&RecPacket);
+						break;
+
+					default:
+						break;
+				}	                
+       		}
+			
+			continue;			
+		}
+		
+		pthread_exit(NULL);
+		return NULL;
+	}
+	
+	return NULL;
+}
+#endif
 
 /*************************************************
   Function:    		udp_get_cmd_by_nethead
@@ -469,6 +627,22 @@ NET_COMMAND net_get_cmd_by_nethead(const PNET_HEAD netHead)
 {
 	return ((netHead->SubSysCode<<8)&0xFF00) | netHead->command;
 }
+
+#ifdef	_USE_AURINE_SET_
+/*************************************************
+  Function:    		au_net_get_cmd_by_nethead
+  Description:		获得命令值(含子系统代号)
+  Input: 
+	1.netHead		网络包头
+  Output:			无
+  Return:			网络命令
+  Others:
+*************************************************/
+NET_COMMAND au_net_get_cmd_by_nethead(const PNET_SET_HEAD netHead)
+{
+	return ((netHead->SubSysCode<<8)&0xFF00) | netHead->command;
+}
+#endif
 
 /*************************************************
   Function:    		net_send_cmd_packet
@@ -541,6 +715,124 @@ int32 net_send_cmd_packet(char * data, int32 size, uint32 address, uint16 port)
 }
 
 /*************************************************
+  Function:    		net_send_cmd_packet_ext
+  Description:		发送cmd包 用于设置项等不需要加密的数据发送
+  Input: 
+	1.data			发送数据
+	2.size			数据大小
+	3.address		发送地址
+	4.port			发送端口
+  Output:			无
+  Return:			成功与否
+  Others:
+*************************************************/
+int32 net_send_cmd_packet_ext(char * data, int32 size, uint32 address, uint16 port)
+{
+	fd_set fdWrite; 
+	int32 ret = 0;
+	int32 SendSize = 0;
+	
+	if (g_CmdSocketFd < 0)
+	{
+		return FALSE;
+	}	
+	if (address == 0)
+	{
+		return FALSE;
+	}
+	
+	g_DestAddress.sin_addr.s_addr = htonl(address);
+  	g_DestAddress.sin_port        = htons(port);
+    
+	/*
+	struct timeval timeout;  
+	timeout.tv_sec  = 0 ;
+	timeout.tv_usec = 0;
+	*/
+
+	FD_ZERO(&fdWrite); 
+	FD_SET(g_CmdSocketFd, &fdWrite);
+	ret = select(FD_SETSIZE, NULL, &fdWrite, NULL, NULL);
+	
+	if (ret > 0)
+	{
+		SendSize = sendto(g_CmdSocketFd, data, size, 0, (struct sockaddr *)&g_DestAddress, SOCK_ADDR_SIZE);	
+		//usleep(10);
+	}
+
+	if (SendSize == size)
+	{	
+		log_printf("net_send_cmd_packet : size:  %d \n",size);
+		return TRUE;
+	}	
+	else
+	{
+		log_printf("send err: ret: %d\n", SendSize);
+		return FALSE;
+	}
+}
+
+#ifdef	_USE_AURINE_SET_
+/*************************************************
+  Function:    		au_net_send_cmd_packet_ext
+  Description:		发送cmd包 用于设置项等不需要加密的数据发送
+  Input: 
+	1.data			发送数据
+	2.size			数据大小
+	3.address		发送地址
+	4.port			发送端口
+  Output:			无
+  Return:			成功与否
+  Others:
+*************************************************/
+int32 au_net_send_cmd_packet_ext(char * data, int32 size, uint32 address, uint16 port)
+{
+	fd_set fdWrite; 
+	int32 ret = 0;
+	int32 SendSize = 0;
+	
+	if (g_CmdSetSocketFd < 0)
+	{
+		return FALSE;
+	}	
+	if (address == 0)
+	{
+		return FALSE;
+	}
+	
+	g_DestSetAddress.sin_addr.s_addr = htonl(address);
+  	g_DestSetAddress.sin_port        = htons(port);
+    
+	/*
+	struct timeval timeout;  
+	timeout.tv_sec  = 0 ;
+	timeout.tv_usec = 0;
+	*/
+
+	FD_ZERO(&fdWrite); 
+	FD_SET(g_CmdSetSocketFd, &fdWrite);
+	ret = select(FD_SETSIZE, NULL, &fdWrite, NULL, NULL);
+	
+	if (ret > 0)
+	{
+		SendSize = sendto(g_CmdSetSocketFd, data, size, 0, (struct sockaddr *)&g_DestSetAddress, SOCK_ADDR_SIZE);	
+		//usleep(10);
+	}
+
+	if (SendSize == size)
+	{	
+		log_printf("net_send_cmd_packet : size:  %d \n",size);
+		return TRUE;
+	}	
+	else
+	{
+		log_printf("send err: ret: %d\n", SendSize);
+		return FALSE;
+	}
+}
+#endif
+
+/*************************************************
   Function:    		net_start_udp_comm
   Description:		启动UDP通讯
   Input: 			无
@@ -556,7 +848,13 @@ int32 net_start_udp_comm(void)
     g_DestAddress.sin_port        = 0; 
     memset(&(g_DestAddress.sin_zero), 0, 8);
 	ret = create_cmd_socket(NETCMD_UDP_PORT, RECV_BUF_LEN, SEND_BUF_LEN);
+	#ifdef	_USE_AURINE_SET_
+	int32 aurine_ret;
+	aurine_ret = create_cmd_socket_exr(PC_SET_UDP_PORT, RECV_BUF_LEN, SEND_BUF_LEN);
+	if (ret && aurine_ret)
+	#else
 	if (ret)
+	#endif
 	{
 		net_start_comm_thread();
 		g_udpcomm = TRUE ;

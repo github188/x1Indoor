@@ -2137,6 +2137,17 @@ typedef struct _DRAGINFO {
  */
 #define MSG_USER            0x0800
 
+/**
+ *Mouse slider event	// add by zhengxc
+**/
+#define MOUSE_UP         0x0001  //Slide up
+#define MOUSE_DOWN       0x0002  //Slide down
+#define MOUSE_LEFT       0x0003  //Slide left
+#define MOUSE_RIGHT      0x0004  //Slide right
+#define MSG_MOUSE_FLING      (MSG_USER+1)  //滑动w= 方向+速度, l=xy
+#define MSG_MOUSE_SCROLL     (MSG_USER+2)
+// add end
+
 #define MSG_LASTUSERMSG     0xEFFF
 
     /** @} end of user_msgs */

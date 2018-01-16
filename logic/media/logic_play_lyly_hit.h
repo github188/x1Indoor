@@ -16,7 +16,7 @@ History:
 #define _LOGIC_AUDIO_LYLY_H_
 
 #include "logic_media_core.h"
-
+#include "logic_audio.h"
 
 
 // 音频文件播放参数
@@ -29,9 +29,9 @@ typedef struct
 	FILE_TYPE_E FileType;				// 文件类型
 }AUDIO_HIT_PARAM, *PAUDIO_HIT_PARAM;
 
-#define MS_AUDIO_LYLY_OPEN 		MS_MEDIA_METHOD_NO_ARG(MS_FILE_LYLY_ID, 0x00)
-#define MS_AUDIO_LYLY_CLOSE		MS_MEDIA_METHOD_NO_ARG(MS_FILE_LYLY_ID, 0x01)
-#define MS_AUDIO_LYLY_PARAM		MS_MEDIA_METHOD(MS_FILE_LYLY_ID, 0x02, const char)
+#define MS_LYLY_HIT_OPEN 		MS_MEDIA_METHOD_NO_ARG(MS_LYLY_HIT_ID, 0x00)
+#define MS_LYLY_HIT_CLOSE		MS_MEDIA_METHOD_NO_ARG(MS_LYLY_HIT_ID, 0x01)
+#define MS_LYLY_HIT_PARAM		MS_MEDIA_METHOD(MS_LYLY_HIT_ID, 0x02, const char)
 
 #endif
 

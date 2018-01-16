@@ -25,43 +25,148 @@
 
 #include "logic_video.h"
 #include "logic_h264_dec.h"
+#include "logic_h264_enc.h"
 #include "logic_jpeg_dec.h"
 #include "logic_jpeg_enc.h"
 #include "logic_avi_play.h"
 #include "logic_avi_record.h"
 #include "logic_mp3_play.h"
-#include "logic_rtsp_play.h"
 #include "logic_tran_rtp.h"
+#include "logic_cloud_itc.h"
 
 #define _SNAP_WAIT_TIME_		1000
 
-#if (_LCD_DPI_ == _LCD_800480_)
-#define _JPEG_ENC_WIDTH_		640
-#define _JPEG_ENC_HEIGHT_		480
 
-#define _JPEG_DEC_WIDTH_		640
-#define _JPEG_DEC_HEIGHT_		480
+static pthread_mutex_t g_video_mutex;
+#define VIDEO_MUTEX_LOCK 	pthread_mutex_lock(&g_video_mutex);
+#define VIDEO_MUTEX_UNLOCK 	pthread_mutex_unlock(&g_video_mutex);
+#define VIDEO_MUTEX_INIT 	pthread_mutex_init(&g_video_mutex, NULL);
 
-#define _H264_DEC_FULL_WIDTH_	1024
-#define _H264_DEC_FULL_HEIGHT_	600
-#define _H264_DEC_WIDTH_		820
-#define _H264_DEC_HEIGHT_		600
-#elif (_LCD_DPI_ == _LCD_1024600_)
-#define _JPEG_ENC_WIDTH_		640
-#define _JPEG_ENC_HEIGHT_		480
-
-#define _JPEG_DEC_WIDTH_		640
-#define _JPEG_DEC_HEIGHT_		480
-
-#define _H264_DEC_FULL_WIDTH_	1024
-#define _H264_DEC_FULL_HEIGHT_	600
-#define _H264_DEC_WIDTH_		820
-#define _H264_DEC_HEIGHT_		600
-#endif
-
+static int g_VideoErrTimes = 0;
+static VIDEO_STATE_E g_video_mode = VS_NONE;
 static JpegDecParam g_JpegDecParam;
 static JpegEncParam g_JpegEncParam;
 static RecordParam  g_RecordParam;
+
+static video_params g_VideoEnc_Param = {
+	.bit_rate = DEFAULT_BIT_RATE,
+    .width = DEFAULT_WIDTH,
+    .height = DEFAULT_HEIGHT,
+    .framerate = DEFAULT_FRAMERATE,
+};
+
+static video_params g_CloudVideoEnc_Param = {
+	.bit_rate = DEFAULT_CLOUD_BIT_RATE,
+    .width = DEFAULT_CLOUD_WIDTH,
+    .height = DEFAULT_CLOUD_HEIGHT,
+    .framerate = DEFAULT_CLOUD_FRAMERATE,
+    .gop_size = 15,
+};
+
+// 复位时使用参数
+const video_params g_Init_VideoEnc_Param = {
+	.bit_rate = DEFAULT_BIT_RATE,
+    .width = DEFAULT_WIDTH,
+    .height = DEFAULT_HEIGHT,
+    .framerate = DEFAULT_FRAMERATE,
+};
+
+const video_params g_Init_CloudVideoEnc_Param = {
+	.bit_rate = DEFAULT_CLOUD_BIT_RATE,
+    .width = DEFAULT_CLOUD_WIDTH,
+    .height = DEFAULT_CLOUD_HEIGHT,
+    .framerate = DEFAULT_CLOUD_FRAMERATE,
+    .gop_size = 15,
+};
+
+
+/*************************************************
+  Function:    		set_video_param
+  Description: 		设置视频参数
+  Input: 			
+  	1.param			视频参数
+  Output:			无
+  Return:			成功与否true/false
+  Others:
+*************************************************/
+int set_video_param(video_params *param)
+{
+	if (param == NULL)
+	{
+		return -1;
+	}
+
+	log_printf("param.bit_rate: %d, param.framerate: %d, param.width: %d, param.height: %d \n", \
+		param->bit_rate, param->framerate, param->width, param->height);
+	
+	memset(&g_VideoEnc_Param, 0, sizeof(video_params));	
+	memcpy(&g_VideoEnc_Param, param, sizeof(video_params));
+
+	return 0;
+}
+
+/*************************************************
+  Function:    		get_video_param
+  Description: 		获取视频参数
+  Input: 			
+  	1.param			视频参数
+  Output:			无
+  Return:			成功与否true/false
+  Others:
+*************************************************/
+int get_video_param(video_params * videoParam)
+{
+	if (videoParam)
+	{
+		memset(videoParam, 0, sizeof(video_params));
+		memcpy(videoParam, &g_VideoEnc_Param, sizeof(video_params));
+	}
+	return FALSE;
+}	
+
+/*************************************************
+  Function:    		set_cloud_video_param
+  Description: 		设置视频参数
+  Input: 			
+  	1.param			视频参数
+  Output:			无
+  Return:			成功与否true/false
+  Others:
+*************************************************/
+int set_cloud_video_param(video_params *param)
+{
+	if (param == NULL)
+	{
+		return -1;
+	}
+
+	log_printf("param.bit_rate: %d, param.framerate: %d, param.width: %d, param.height: %d \n", \
+		param->bit_rate, param->framerate, param->width, param->height);
+	
+	memset(&g_CloudVideoEnc_Param, 0, sizeof(video_params));	
+	memcpy(&g_CloudVideoEnc_Param, param, sizeof(video_params));
+
+	return 0;
+}
+
+/*************************************************
+  Function:    		get_cloud_video_param
+  Description: 		获取视频参数
+  Input: 			
+  	1.param			视频参数
+  Output:			无
+  Return:			成功与否true/false
+  Others:
+*************************************************/
+int get_cloud_video_param(video_params * videoParam)
+{
+	if (videoParam)
+	{
+		memset(videoParam, 0, sizeof(video_params));
+		memcpy(videoParam, &g_CloudVideoEnc_Param, sizeof(video_params));
+	}
+	return FALSE;
+}
 
 /*************************************************
   Function:			inter_full_screen
@@ -76,36 +181,21 @@ void set_full_screen(uint8 flg)
 {
 	V_RECT_S vorect;
 	
-	vorect.x = 0;
-	vorect.y = 0;
+	vorect.x = H264_DISPLAY_X;
+	vorect.y = H264_DISPLAY_Y;
 	log_printf("flg : %d\n", flg);
 	if (flg)
 	{
-		vorect.width  = _H264_DEC_FULL_WIDTH_;
-		vorect.height = _H264_DEC_FULL_HEIGHT_;
+		vorect.width  = H264_DISPLAY_W_FULL;
+		vorect.height = H264_DISPLAY_H_FULL;
 		ms_filter_call_method(mMediaStream.VideoDec, MS_H264_DEC_LEVEL, &vorect);
 	}
 	else
 	{
-		vorect.width  = _H264_DEC_WIDTH_;
-		vorect.height = _H264_DEC_HEIGHT_;
+		vorect.width  = H264_DISPLAY_W;
+		vorect.height = H264_DISPLAY_H;
 		ms_filter_call_method(mMediaStream.VideoDec, MS_H264_DEC_LEVEL, &vorect);
 	}
-}
-
-/*************************************************
-  Function:			rtsp_set_full_screen
-  Description:		全频操作
-  Input: 	
-  	1.flg			是否全屏		
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-int rtsp_set_full_screen(uint8 flg)
-{
-	uint8 ret = flg;
-	return ms_filter_call_method(mMediaStream.RtspPlay, MS_RTSP_PLAY_LEVEL, &ret);
 }
 
 /*************************************************
@@ -124,8 +214,8 @@ void set_jpg_enc_param(char *filename, uint16 width, uint16 heigh, DEVICE_TYPE_E
 	g_JpegEncParam.vorect.y = 0;
 	if (width == 0 || heigh == 0)
 	{
-		g_JpegEncParam.vorect.width = _JPEG_ENC_WIDTH_;
-		g_JpegEncParam.vorect.height = _JPEG_ENC_HEIGHT_;
+		g_JpegEncParam.vorect.width = JPEG_ENC_W;
+		g_JpegEncParam.vorect.height = JPEG_ENC_H;
 	}
 	else
 	{
@@ -133,17 +223,13 @@ void set_jpg_enc_param(char *filename, uint16 width, uint16 heigh, DEVICE_TYPE_E
 		g_JpegEncParam.vorect.height = heigh;
 	}
 
-	// add by chenbh 增加监视社区
-	if (DevType == DEVICE_TYPE_DOOR_PHONE ||
-		DevType == DEVICE_TYPE_AURINE_SERVER_STREAMINGSERVER)		
+	if (DevType == DEVICE_TYPE_DOOR_PHONE)
 	{
 		g_JpegEncParam.FB_Mode = FB_DISPLAY_MODE_YCBYCR;
-		g_JpegEncParam.src_mode = STREAM_SRC_ANOLOG;
 	}
 	else
 	{
 		g_JpegEncParam.FB_Mode = FB_DISPLAY_MODE_RGB565;
-		g_JpegEncParam.src_mode = STREAM_SRC_H264_DEC;
 	}
 }
 
@@ -164,7 +250,6 @@ int32 get_jpg_enc_param(JpegEncParam *jpgParam)
 	jpgParam->vorect.width = g_JpegEncParam.vorect.width;
 	jpgParam->vorect.height = g_JpegEncParam.vorect.height;	
 	jpgParam->FB_Mode = g_JpegEncParam.FB_Mode;
-	jpgParam->src_mode = g_JpegEncParam.src_mode;
 	return TRUE;
 }
 
@@ -184,8 +269,8 @@ void set_jpg_dec_param(char *filename, uint16 pos_x, uint16 pos_y, uint16 width,
 	g_JpegDecParam.vorect.y = pos_y;
 	if (width == 0 || heigh == 0)
 	{
-		g_JpegDecParam.vorect.width = _JPEG_DEC_WIDTH_;
-		g_JpegDecParam.vorect.height = _JPEG_DEC_HEIGHT_;
+		g_JpegDecParam.vorect.width = JPEG_DEC_W;
+		g_JpegDecParam.vorect.height = JPEG_DEC_H;
 	}
 	else
 	{
@@ -254,14 +339,14 @@ int32 set_avi_record_param(uint8 mode, uint8 atp, uint8 vtp, char * filename)
 	return TRUE;
 }
 /*************************************************
-  Function:    	open_video_rtp_send
+  Function:    	video_rtp_send_open
   Description: 		
   Input:		无
   Output:		无
   Return:		无
   Others:
 *************************************************/
-static int open_video_rtp_send(void)
+static int video_rtp_send_open(void)
 {
 	int ret = -1;
 	RTP_OPEN_S rtps;
@@ -276,14 +361,14 @@ static int open_video_rtp_send(void)
 }
 
 /*************************************************
-  Function:    	close_video_rtp_send
+  Function:    	video_rtp_send_close
   Description: 		
   Input:		无
   Output:		无
   Return:		无		
   Others:
 *************************************************/
-static int close_video_rtp_send(int level)
+static int video_rtp_send_close(void)
 {
 	int ret = -1;
 	
@@ -293,14 +378,14 @@ static int close_video_rtp_send(int level)
 }
 
 /*************************************************
-  Function:    	open_video_rtp_recv
+  Function:    	video_rtp_recv_open
   Description: 		
   Input:		无
   Output:		无
   Return:		无	
   Others:
 *************************************************/
-static int open_video_rtp_recv(int address)
+static int video_rtp_recv_open(int address)
 {
 	int ret = -1;
 	RTP_OPEN_S rtps;
@@ -324,14 +409,14 @@ static int open_video_rtp_recv(int address)
 }
 
 /*************************************************
-  Function:    		close_video_rtp_recv
+  Function:    		video_rtp_recv_close
   Description: 		
   Input:		无
   Output:		无
   Return:		无		
   Others:
 *************************************************/
-static int close_video_rtp_recv(void)
+static int video_rtp_recv_close(void)
 {
 	int ret = -1;
 	RTP_ADDRESS_S rtpaddr;
@@ -345,14 +430,14 @@ static int close_video_rtp_recv(void)
 }
 
 /*************************************************
-  Function:    	open_video_rtp_recv
+  Function:    	video_recvaddr_add
   Description: 		
   Input:		无
   Output:		无
   Return:		无	
   Others:
 *************************************************/
-int add_video_recvaddr(int address)
+static int video_recvaddr_add(int address)
 {
 	int ret = -1;
 	RTP_ADDRESS_S rtpaddr;
@@ -364,14 +449,14 @@ int add_video_recvaddr(int address)
 }
 
 /*************************************************
-  Function:    	open_video_rtp_recv
+  Function:    	video_recvport_add
   Description: 		
   Input:		无
   Output:		无
   Return:		无	
   Others:
 *************************************************/
-static int add_video_recvport(void)
+static int video_recvport_add(void)
 {
 	int ret = -1;
 	RTP_OPEN_S rtps;
@@ -386,7 +471,7 @@ static int add_video_recvport(void)
 
 
 /*************************************************
-  Function:    		add_video_sendaddr
+  Function:    		video_sendaddr_add
   Description: 		增加视频发送地址
   Input: 			
   	1.IP			IP地址
@@ -395,7 +480,7 @@ static int add_video_recvport(void)
   Return:			成功与否true/false
   Others:
 *************************************************/
-int add_video_sendaddr(uint32 IP, uint16 VideoPort) 
+int video_sendaddr_add(uint32 IP, uint16 VideoPort) 
 {
 	RTP_ADDRESS_S rtp_addr;
 
@@ -408,7 +493,7 @@ int add_video_sendaddr(uint32 IP, uint16 VideoPort)
 }
 
 /*************************************************
-  Function:    		del_video_sendaddr
+  Function:    		video_sendaddr_del
   Description: 		去除视频发送地址
   Input: 			
   	1.IP			IP地址
@@ -417,7 +502,7 @@ int add_video_sendaddr(uint32 IP, uint16 VideoPort)
   Return:			无
   Others:
 *************************************************/
-void del_video_sendaddr(uint32 IP, uint16 VideoPort)
+void video_sendaddr_del(uint32 IP, uint16 VideoPort)
 {
 	RTP_ADDRESS_S rtp_addr;
 
@@ -429,399 +514,175 @@ void del_video_sendaddr(uint32 IP, uint16 VideoPort)
 }
 
 
-
 /*************************************************
-  Function:    		get_video_addr_count
-  Description: 		获取RTP视频连接数
-  Input:			无
-  Output:			无
-  Return:			已连接的数量		
-  Others:
-*************************************************/
-int get_video_addr_count(void)
-{
-	int ret = -1;
-
-	ret = ms_filter_call_method(mMediaStream.VideoRtpSend, MS_RTP_ADDRESS_V_COUNT, NULL);
-	return ret;
-}
-
-/*************************************************
-  Function:			rtsp_play_close
-  Description:		关闭rtsp播放
-  Input: 			无
-  Output:			无
-  Return:		
-  Others:
-*************************************************/
-int32 rtsp_play_close(void)
-{
-	return ms_filter_call_method(mMediaStream.RtspPlay, MS_RTSP_PLAY_CLOSE, NULL);
-}
-
-/*************************************************
-  Function:			rtsp_play_open
-  Description:		开启rtsp播放
-  Input: 			无
-  Output:			无
-  Return:		
-  Others:
-*************************************************/
-int32 rtsp_play_open(V_RECT_S rect, char *Url, void *callback_func)
-{
-	int ret = -1;
-	RtspPlayParam param;
-	memset(&param, 0, sizeof(RtspPlayParam));
-	param.callback = callback_func;
-	param.val = Url;
-	memcpy(&param.rect, &rect, sizeof(V_RECT_S));
-	
-	ret = ms_filter_call_method(mMediaStream.RtspPlay, MS_RTSP_PLAY_PARAM, &param);
-	if (ret == 0)
-	{
-		return ms_filter_call_method(mMediaStream.RtspPlay, MS_RTSP_PLAY_OPEN, NULL);
-	}
-
-	return -1;
-}
-
-/*************************************************
-  Function:			lyly_play_pause
-  Description:		暂停/播放切换
-  Input: 			无
-  Output:			无
-  Return:		
-  Others:
-*************************************************/
-int32 lyly_play_pause(void)
-{
-	AviPlayState avistate;
-	memset(&avistate, 0, sizeof(avistate));
-	avistate.cmd = AVI_CMD_PAUSE;
-
-	int ret = ms_filter_call_method(mMediaStream.AviPlay, MS_AVI_PLAY_STATE, &avistate);
-	if (ret == RT_SUCCESS)
-	{
-		return ret;
-	}
-
-	return RT_FAILURE;
-}
-
-/*************************************************
-  Function:			lyly_play_start
-  Description:		启动留影留言
-  Input: 			无
-  Output:			无
-  Return:			TRUE/FALSE
-  Others:
-*************************************************/
-int32 lyly_play_start(char *filename, void * proc)
-{
-	AviPlayState avistate;
-/*	if (filename == NULL || proc == NULL)
-	{		
-		return FALSE;
-	}*/
-	memset(&avistate, 0, sizeof(avistate));
-	memcpy(avistate.filename, filename, sizeof(avistate.filename));
-	log_printf("avistate.filename : %s\n", avistate.filename);
-	avistate.callback = (PMEDIA_CALLBACK)proc;
-	avistate.cmd = AVI_CMD_PLAY;
-
-	int ret = ms_filter_call_method(mMediaStream.AviPlay, MS_AVI_PLAY_STATE, &avistate);
-	if (ret == RT_SUCCESS)
-	{
-		ret = ms_filter_call_method(mMediaStream.AviPlay, MS_AVI_PLAY_OPEN, NULL);
-		return TRUE;
-	}
-	return FALSE;
-}
-
-/*************************************************
-  Function:			lyly_play_stop
-  Description:		最后退出再调用
-  Input: 			无
-  Output:			无
-  Return:		
-  Others:
-*************************************************/
-void lyly_play_stop(void)
-{
-	ms_filter_call_method(mMediaStream.AviPlay, MS_AVI_PLAY_CLOSE, NULL);
-}
-
-/*************************************************
-  Function:    	lyly_record_start
+  Function:    	video_dec_open
   Description: 		
   Input:		无
   Output:		无
   Return:		无		
   Others:
 *************************************************/
-int32 lyly_record_start(void)
-{
-	RecordParam RecParam;
-	
-	if (TRUE == get_avi_record_param(&RecParam))
-	{
-		ms_filter_call_method(mMediaStream.AviRecord, MS_AVI_RECORD_PARAM, &RecParam);
-	}
-	return ms_filter_call_method(mMediaStream.AviRecord, MS_AVI_RECORD_OPEN, NULL);
-}
-
-/*************************************************
-  Function:    	lyly_record_stop
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
-  Others:
-*************************************************/
-int32 lyly_record_stop(void)
-{
-	return ms_filter_call_method(mMediaStream.AviRecord, MS_AVI_RECORD_CLOSE, NULL);	
-}
-
-/*************************************************
-  Function:			mp3_play_pause
-  Description:		暂停/播放切换
-  Input: 			无
-  Output:			无
-  Return:		
-  Others:
-*************************************************/
-int32 mp3_play_pause(void)
-{
-	Mp3PlayState mp3state;
-	memset(&mp3state, 0, sizeof(mp3state));
-	mp3state.cmd = MP3_CMD_PAUSE;
-
-	int ret = ms_filter_call_method(mMediaStream.Mp3Play, MS_MP3_PLAY_STATE, &mp3state);
-	if (ret == RT_SUCCESS)
-	{
-		return ret;
-	}
-
-	return RT_FAILURE;
-}
-
-/*************************************************
-  Function:			lyly_play_start
-  Description:		启动留影留言
-  Input: 			无
-  Output:			无
-  Return:			TRUE/FALSE
-  Others:
-*************************************************/
-int32 mp3_play_start(char *filename, void * proc)
-{
-	Mp3PlayState mp3state;
-/*	if (filename == NULL || proc == NULL)
-	{		
-		return FALSE;
-	}*/
-	memset(&mp3state, 0, sizeof(mp3state));
-	memcpy(mp3state.filename, filename, sizeof(mp3state.filename));
-	log_printf("avistate.filename : %s\n", mp3state.filename);
-	mp3state.callback = (PMEDIA_CALLBACK)proc;
-	mp3state.cmd = MP3_CMD_PLAY;
-
-	int ret = ms_filter_call_method(mMediaStream.Mp3Play, MS_MP3_PLAY_STATE, &mp3state);
-	if (ret == RT_SUCCESS)
-	{
-		ret = ms_filter_call_method(mMediaStream.Mp3Play, MS_MP3_PLAY_OPEN, NULL);
-		return ret;
-	}
-	return RT_FAILURE;
-}
-
-/*************************************************
-  Function:			mp3_play_stop
-  Description:		主动调用，播放完一首会自己反初始化
-  Input: 			无
-  Output:			无
-  Return:		
-  Others:
-*************************************************/
-void mp3_play_stop(void)
-{
-	ms_filter_call_method(mMediaStream.Mp3Play, MS_MP3_PLAY_CLOSE, NULL);
-}
-
-/*************************************************
-  Function:    	open_jpeg_enc
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
-  Others:
-*************************************************/
-int open_jpeg_enc(void)
-{
-	int ret = -1;
-	JpegEncParam JpegParam;
-	if (TRUE == get_jpg_enc_param(&JpegParam))
-	{
-		if (JpegParam.src_mode == STREAM_SRC_H264_DEC)
-		{
-			ret = ms_filter_call_method(mMediaStream.VideoDec, MS_H264_DEC_SNAP, NULL);
-		}
-
-		if (0 == ret)
-		{
-			ret = ms_filter_call_method(mMediaStream.JpegEnc, MS_JPEG_ENC_PARAM, &JpegParam);
-		}
-	}
-
-	if (0 == ret)
-	{
-		ret = ms_filter_call_method(mMediaStream.JpegEnc, MS_JPEG_ENC_OPEN, NULL);
-	}
-	return ret;
-}
-
-/*************************************************
-  Function:    	close_jpeg_enc
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
-  Others:
-*************************************************/
-int close_jpeg_enc(void)
-{
-	return ms_filter_call_method(mMediaStream.JpegEnc, MS_JPEG_ENC_CLOSE, NULL);
-}
-
-/*************************************************
-  Function:    	open_jpeg_dec
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
-  Others:
-*************************************************/
-int open_jpeg_dec(void)
-{
-	JpegDecParam JpegParam;
-	if (TRUE == get_jpg_dec_param(&JpegParam))
-	{
-		ms_filter_call_method(mMediaStream.JpegDec, MS_JPEG_DEC_PARAM, &JpegParam);
-	}
-	return ms_filter_call_method(mMediaStream.JpegDec, MS_JPEG_DEC_OPEN, NULL);
-}
-
-/*************************************************
-  Function:    	close_jpeg_dec
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
-  Others:
-*************************************************/
-int close_jpeg_dec(void)
-{
-	return ms_filter_call_method(mMediaStream.JpegDec, MS_JPEG_DEC_CLOSE, NULL);	
-}
-
-/*************************************************
-  Function:    	open_video_dec
-  Description: 		
-  Input:		无
-  Output:		无
-  Return:		无		
-  Others:
-*************************************************/
-static int open_video_dec(void)
+static int video_dec_open(void)
 {
 	V_RECT_S  vorect;
-	vorect.x = 0;
-	vorect.y = 0;
-	vorect.width  = _H264_DEC_WIDTH_;
-	vorect.height = _H264_DEC_HEIGHT_;	
-	
-	int32 ret = ms_filter_call_method(mMediaStream.VideoDec, MS_H264_DEC_LEVEL, &vorect);	
+	vorect.x = H264_DISPLAY_X;
+	vorect.y = H264_DISPLAY_Y;
+	vorect.width  = H264_DISPLAY_W;
+	vorect.height = H264_DISPLAY_H;
+
+	rtp_set_videoflag(0);
+	int32 ret = ms_filter_call_method(mMediaStream.VideoDec, MS_H264_DEC_PARAM, &vorect);	
 	if (ret == -1)
 	{
-		printf(" MS_H264_DEC_LEVEL return error\n");
+		printf(" MS_H264_DEC_PARAM return error\n");
 	}
-	
-	ret = ms_filter_call_method(mMediaStream.VideoDec, MS_H264_DEC_OPEN, NULL);	
-	return ret;
+	return ms_filter_call_method(mMediaStream.VideoDec, MS_H264_DEC_OPEN, NULL);	
 }
 
 /*************************************************
-  Function:    	close_video_dec
+  Function:    	video_dec_close
   Description: 		
   Input:		无
   Output:		无
   Return:		无		
   Others:
 *************************************************/
-static int close_video_dec(void)
+static int video_dec_close(void)
 {
 	rtp_set_videoflag(0);
 	return ms_filter_call_method(mMediaStream.VideoDec, MS_H264_DEC_CLOSE, NULL);	
 }
 
 /*************************************************
-  Function:    		stop_video_send_mode
+  Function:    		video_enc_open
+  Description: 		
+  Input: 			
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int video_enc_open(void)
+{
+	video_params param;
+	
+	memset(&param, 0, sizeof(video_params));
+	memcpy(&param, &g_VideoEnc_Param, sizeof(video_params));
+	log_printf("param.bit_rate: %d, param.framerate: %d, param.width: %d, param.height: %d \n", \
+		param.bit_rate, param.framerate, param.width, param.height);
+
+	int ret  = ms_filter_call_method(mMediaStream.VideoEnc, MS_H264_ENC_PARAM, &param);
+	if (RT_SUCCESS == ret)
+	{
+		ret = ms_filter_call_method(mMediaStream.VideoEnc, MS_H264_ENC_OPEN, NULL);
+	}
+	return ret;
+}
+
+/*************************************************
+  Function:    		video_enc_close
+  Description: 		
+  Input: 			
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int video_enc_close(void)
+{
+	return ms_filter_call_method(mMediaStream.VideoEnc, MS_H264_ENC_CLOSE, NULL);
+}
+
+/*************************************************
+  Function:    		request_video_IFrame
+  Description: 		
+  Input: 			
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+int video_request_IFrame(void)
+{
+	return ms_filter_call_method(mMediaStream.VideoEnc, MS_H264_ENC_IDR, NULL);
+}
+
+/*************************************************
+  Function:    		video_send_mode_stop
   Description:		
   Input: 			无
   Output:			无
   Return:			无
   Others:
 *************************************************/
-static void stop_video_send_mode(int net)
+static void video_send_mode_stop()
 {
+	int ret = -1;
+
+	// 将编码参数复位成默认值
+	video_params Init_VideoEnc_Param = g_Init_VideoEnc_Param;
+	set_video_param(&Init_VideoEnc_Param);
+		
+	ret = video_enc_close();
+	log_printf(" video_enc_close return %d !!!!\n", ret);
+
+	ret = video_rtp_send_close();
+	log_printf(" video_rtp_send_close return %d !!!!\n", ret);
+	
+	ms_media_unlink(mMediaStream.VideoEnc, mMediaStream.VideoRtpSend);
+
 	return;
 }
 
 /*************************************************
-  Function:    		start_video_send_mode
+  Function:    		video_send_mode_start
   Description:		
   Input:		无
   Output:		无
   Return:		无
   Others:
 *************************************************/
-static int start_video_send_mode(int net)
+static int video_send_mode_start(void)
 {
+	int ret = -1;
+	
+	ret = video_rtp_send_open();
+	if (ret == -1)
+	{
+		printf("video_rtp_send_open return error!!! \n");
+		goto error0;
+	}
+
+	ret = video_enc_open();
+	if (ret == -1)
+	{
+		printf("video_enc_open return error!!! \n");
+		goto error1;
+	}	
+	
+
+	ms_media_link(mMediaStream.VideoEnc, mMediaStream.VideoRtpSend);		
+	return 0;
+
+	
+error1:
+	video_rtp_send_close();
+	
+error0:
+	printf("start_video_mode_sendonly return error!!! \n");
 	return -1;
 }
 
 /*************************************************
-  Function:    		stop_video_recv_mode
-  Description:		
-  Input: 			无
-  Output:			无
-  Return:			无
-  Others:
-*************************************************/
-static void stop_video_recv_mode(void)
-{
-	int ret = close_video_rtp_recv();
-		
-	usleep(20000);
-	ret = close_video_dec();
-
-	ms_media_unlink(mMediaStream.VideoRtpRecv, mMediaStream.VideoDec);
-}
-
-/*************************************************
-  Function:    		start_video_send_mode
+  Function:    		video_recv_mode_start
   Description:		
   Input:		无
   Output:		无
   Return:		无
   Others:
 *************************************************/
-static int start_video_recv_mode(int32 addr)
+static int video_recv_mode_start(uint32 addr)
 {
 	log_printf("open_video_rtp_recv addr : 0X%x\n", addr);
-	rtp_set_videoflag(0);
-	int ret = open_video_rtp_recv(addr);
+	
+	int ret = video_rtp_recv_open(addr);
 	if (ret != 0)
 	{
 		return -1;
@@ -831,7 +692,7 @@ static int start_video_recv_mode(int32 addr)
 	ms_media_link(mMediaStream.VideoRtpRecv, mMediaStream.VideoDec);
 
 	log_printf("open_video_dec \n");
-	ret = open_video_dec();
+	ret = video_dec_open();
 	if (ret != 0)
 	{
 		goto errvideo1;
@@ -840,72 +701,363 @@ static int start_video_recv_mode(int32 addr)
 
 errvideo1:	
 	log_printf("return err !!!\n");
-	close_video_rtp_recv();
+	video_rtp_recv_close();
 	
 	return -1;
 }
 
 /*************************************************
-  Function:    		stop_video_both_mode
+  Function:    		video_recv_mode_stop
   Description:		
   Input: 			无
   Output:			无
   Return:			无
   Others:
 *************************************************/
-static void stop_video_both_mode(int net)
+static void video_recv_mode_stop(void)
 {
-	return;		
+	int ret = video_rtp_recv_close();
+		
+	usleep(20000);
+	ret = video_dec_close();
+
+	ms_media_unlink(mMediaStream.VideoRtpRecv, mMediaStream.VideoDec);
 }
 
 /*************************************************
-  Function:    		start_video_both_mode
+  Function:    		video_both_mode_start
   Description:		
   Input:		无
   Output:		无
   Return:		无
   Others:
 *************************************************/
-static int start_video_both_mode(int net, int32 addr)
+static int video_both_mode_start(uint32 addr)
 {
-	return 0;	
+	return -1;	
+}
+
+/*************************************************
+  Function:    		video_both_mode_stop
+  Description:		
+  Input: 			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static void video_both_mode_stop()
+{
+	// 将编码参数复位成默认值
+	video_params Init_VideoEnc_Param = g_Init_VideoEnc_Param;
+	set_video_param(&Init_VideoEnc_Param);
+	return;		
+}
+
+#ifdef _ENABLE_CLOUD_
+/*************************************************
+  Function:    	video_cloud_send_open
+  Description:	
+  Input: 			
+  Output:		无
+  Return:		无
+  Others:
+*************************************************/
+static int video_cloud_send_open()
+{
+	int ret = HI_FAILURE;
+	ret = ms_filter_call_method(mMediaStream.VideoCloudSend, MS_CLOUD_SEND_VIDEO_OPEN, NULL);
+	return ret;
+}
+
+/*************************************************
+  Function:    	video_cloud_send_close
+  Description:	
+  Input: 			
+  Output:		无
+  Return:		无
+  Others:
+*************************************************/
+static int video_cloud_send_close()
+{
+	int ret = HI_FAILURE;
+	ret = ms_filter_call_method(mMediaStream.VideoCloudSend, MS_CLOUD_SEND_VIDEO_CLOSE, NULL);
+	return ret;
+}
+
+/*************************************************
+  Function:    		video_cloud_enc_open
+  Description: 		
+  Input: 			
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int video_cloud_enc_open(void)
+{		
+	int ret  = ms_filter_call_method(mMediaStream.VideoCloudEnc, MS_CLOUD_H264_ENC_PARAM, &g_CloudVideoEnc_Param);
+	if (RT_SUCCESS == ret)
+	{
+		ret = ms_filter_call_method(mMediaStream.VideoCloudEnc, MS_CLOUD_H264_ENC_OPEN, NULL);
+	}
+	return ret;
+}
+
+/*************************************************
+  Function:    		video_cloud_enc_close
+  Description: 		
+  Input: 			
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int video_cloud_enc_close(void)
+{
+	return ms_filter_call_method(mMediaStream.VideoCloudEnc, MS_CLOUD_H264_ENC_CLOSE, NULL);
+}
+
+/*************************************************
+  Function:    	video_cloud_set_send_func
+  Description:	
+  Input: 			
+  Output:		无
+  Return:		无
+  Others:
+*************************************************/
+int video_cloud_set_send_func(void *func)
+{
+	return ms_filter_call_method(mMediaStream.VideoCloudSend, MS_CLOUD_SEND_VIDEO_FUNC, func);
+}
+
+/*************************************************
+  Function:    	video_cloud_enable_send
+  Description:	
+  Input: 			
+  Output:		无
+  Return:		无
+  Others:
+*************************************************/
+int video_cloud_enable_send()
+{
+	int ret = HI_FAILURE;
+	HI_BOOL param = HI_TRUE;
+	ret = ms_filter_call_method(mMediaStream.VideoCloudSend, MS_CLOUD_SEND_VIDEO_ENABLE, &param);
+	return ret;
+}
+
+/*************************************************
+  Function:    	video_cloud_disable_send
+  Description:	
+  Input: 			
+  Output:		无
+  Return:		无
+  Others:
+*************************************************/
+int video_cloud_disable_send()
+{
+	int ret = HI_FAILURE;
+	HI_BOOL param = HI_FALSE;
+	ret = ms_filter_call_method(mMediaStream.VideoCloudSend, MS_CLOUD_SEND_VIDEO_ENABLE, &param);
+	return ret;
+}
+
+/*************************************************
+  Function:    		video_cloud_request_IFrame
+  Description: 		
+  Input: 			
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+int video_cloud_request_IFrame(void)
+{
+	return ms_filter_call_method(mMediaStream.VideoCloudEnc, MS_CLOUD_H264_ENC_IDR, NULL);
+}
+
+/*************************************************
+  Function:    		video_cloud_mode_start
+  Description:		
+  Input:		无
+  Output:		无
+  Return:		无
+  Others:
+*************************************************/
+static int video_cloud_mode_start(void)
+{
+	int ret = -1;
+	
+	ret = video_cloud_send_open();
+	if (ret == -1)
+	{
+		err_printf("video_cloud_send_open return error!!! \n");
+		goto error0;
+	}
+
+	ret = video_cloud_enc_open();
+	if (ret == -1)
+	{
+		err_printf("video_cloud_enc_open return error!!! \n");
+		goto error1;
+	}	
+	
+
+	ms_media_link(mMediaStream.VideoCloudEnc, mMediaStream.VideoCloudSend);		
+	return 0;
+
+	
+error1:
+	video_cloud_send_close();
+	
+error0:
+	err_printf("video_cloud_mode_start return error!!! \n");
+	return -1;
+}
+
+/*************************************************
+  Function:    		video_both_mode_stop
+  Description:		
+  Input: 			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static void video_cloud_mode_stop(void)
+{
+	int ret = -1;
+	video_params Init_VideoEnc_Param = g_Init_CloudVideoEnc_Param;
+	set_cloud_video_param(&Init_VideoEnc_Param);
+	
+	ret = video_cloud_enc_close();
+	log_printf(" video_cloud_enc_close return %d !!!!\n", ret);
+
+	ret = video_cloud_send_close();
+	log_printf(" video_cloud_send_close return %d !!!!\n", ret);
+	
+	ms_media_unlink(mMediaStream.VideoCloudEnc, mMediaStream.VideoCloudSend);
+
+	return;
+}
+
+#endif
+
+
+/*************************************************
+  Function:    		video_mutex_init
+  Description:		
+  Input: 			
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+void video_mutex_init(void)
+{
+	pthread_mutex_init(&g_video_mutex, NULL);
 }
 
 /*************************************************
   Function:    		open_video_mode
   Description:		
   Input: 			
-    1.addres		对端地址
-  	2.mode			视频模式 发送、接收
   Output:			无
   Return:			无
   Others:
 *************************************************/
-int open_video_mode(VIDEO_STATE_E mode, int addr)
+int open_video_mode(VIDEO_STATE_E mode, void* arg1, void *arg2, void *arg3)
 {
+	VIDEO_MUTEX_LOCK
 	int ret = -1;
 	switch (mode)
 	{
 		case VS_NETTALK_BOTH:						// 双向视频
-			ret = start_video_both_mode(1, addr);
+			{
+				uint32 addr  = *(uint32 *)arg1;
+				ret = video_both_mode_start(addr);
+			}
 			break;
 			
 		case VS_NETTALK_SEND:						// 视频发送
-			ret = start_video_send_mode(1);
+			{
+				ret = video_send_mode_start();
+				if (0 == ret)
+				{
+					//video_request_IFrame();		// 不用这个 会导致视频刚出来马赛克
+				}
+			}
 			break;
 
 		case VS_NETTALK_RECIVE:						// 视频接收
-			ret = start_video_recv_mode(addr);
-			break;
-			
-		case VS_NETSNAP:							// 视频抓拍
-			ret = start_video_send_mode(0);
+			{
+				uint32 addr  = *(uint32 *)arg1;
+				ret = video_recv_mode_start(addr);
+			}
 			break;
 
+		#ifdef _ENABLE_CLOUD_
+		case VS_CLOUD_SEND:							// 云对讲视频发送
+			{
+				ret = video_cloud_mode_start();
+				if (0 == ret)
+				{
+					//video_cloud_request_IFrame();	// 不用这个 会导致视频刚出来马赛克
+				}
+			}
+			break;
+		#endif
+
+		case VS_LOCAL_RECORD:						// 本地录制
+			{
+				char *filename = (char *)arg1;
+				//ret = rk_media_start_mp4_record(filename);
+			}
+			break;
+			
+		case VS_NET_SNAP:							// 视频抓拍	
+			{
+				char *filename = (char *)arg1;
+				void *func = (void *)arg2;
+				
+			}
+			break;
+
+		case VS_LOCAL_SNAP:							// 本地抓拍 
+			{
+				char *filename = (char *)arg1;
+				void *func = (void *)arg2;
+			 	//ret = rk_media_takephoto(filename, func);			
+			}
+			break;
+						
+		case VS_LYLY_PLAY:
+			{
+				char *filename = (char *)arg1;
+				void *func = (void *)arg2;
+			 			
+			}
+			break;
+			
 		default:
 			break;			
 	}
 
+	if (0 == ret)
+	{
+		g_video_mode |= mode;
+		g_VideoErrTimes = 0;
+	}
+	else
+	{
+		g_VideoErrTimes++;
+		if (g_VideoErrTimes > 3)
+		{
+			err_printf("video err  g_VideoErrTimes :%d\n", g_VideoErrTimes);
+			//storage_sys_set_nightReboot(1);
+			//#ifdef USE_COM_FEETDOG
+			//hw_set_lcd_pwm0(TRUE);
+			//#else
+			//drviver_dog_stopfeat();
+			//#endif
+		}
+	}
+	VIDEO_MUTEX_UNLOCK
 	return ret;
 }
 
@@ -919,33 +1071,59 @@ int open_video_mode(VIDEO_STATE_E mode, int addr)
 *************************************************/
 int close_video_mode(VIDEO_STATE_E mode)
 {
+	VIDEO_MUTEX_LOCK
 	int ret = -1;
-
+	
 	switch (mode)
 	{
 		case VS_NETTALK_SEND:
-			stop_video_send_mode(1);
+			video_send_mode_stop();
 			ret = 0;
 			break;
 
-		case VS_NETSNAP:
-			stop_video_send_mode(0);
-			ret = 0;
-			break;	
-
 		case VS_NETTALK_RECIVE:
-			stop_video_recv_mode();
+			video_recv_mode_stop();
 			break;
 			
 		case VS_NETTALK_BOTH:
-			stop_video_both_mode(1);
+			video_both_mode_stop();
+			break;
+
+		#ifdef _ENABLE_CLOUD_
+		case VS_CLOUD_SEND:	
+			video_cloud_mode_stop();
+			break;
+		#endif
+
+		case VS_LOCAL_RECORD:
+			//rk_media_stop_mp4_record();
+			break;
+			
+		case VS_NET_SNAP:			
+			ret = 0;
+			break;
+
+		case VS_LOCAL_SNAP:							
+			ret = 0;
+			break;
+
+		case VS_LYLY_PLAY:
+			{
+				//rk_media_stop_mp4_play();
+			}
 			break;
 			
 		default:
-			break;			
+			VIDEO_MUTEX_UNLOCK
+			return -1;
 	}
 
+	g_video_mode &= ~mode;
+	if (VS_NONE == g_video_mode)
+	{
+		
+	}
+	VIDEO_MUTEX_UNLOCK
 	return ret;
 }
-
 
