@@ -18,21 +18,32 @@
 #include "gui_include.h"
 
 /************************常量定义************************/
-#define NET_XPOS				10
 #if (_LCD_DPI_ == _LCD_800480_)
-#define NET_YPOS				5
-#elif (_LCD_DPI_ == _LCD_1024600_)
-#define NET_YPOS				5
-#endif
 #define NET_W					28
 #define NET_H					28
-
+#define NET_XPOS				10
+#define NET_YPOS				5
 #ifdef _IP_MODULE_
 #define IP_NET_DISX				8
-#define IPMODULE_XPOS			(NET_XPOS + NET_W + IP_NET_DISX)
-#define IPMODULE_YPOS			NET_YPOS
 #define IPMODULE_W				28
 #define IPMODULE_H				28
+#endif
+#elif (_LCD_DPI_ == _LCD_1024600_)
+#define NET_W					28
+#define NET_H					28
+#define NET_XPOS				10
+#define NET_YPOS				5
+#ifdef _IP_MODULE_
+#define IP_NET_DISX				8
+#define IPMODULE_W				28
+#define IPMODULE_H				28
+#endif
+#endif
+
+
+#ifdef _IP_MODULE_
+#define IPMODULE_XPOS			(NET_XPOS + NET_W + IP_NET_DISX)
+#define IPMODULE_YPOS			NET_YPOS
 #endif
 
 #if (_UI_STYLE_ == _V6_UI_STYLE_)

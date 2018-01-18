@@ -47,340 +47,340 @@ static void get_filename(BMP_ID_E id, char * filename)
 	switch (id)
 	{		
 		// 背景图片
-	    get_file(BID_DEFAULT_BK,					"/mnt/mg/res/app/background.gif");
+	    get_file(BID_DEFAULT_BK,					UI_PIC_DIR_PATH"/background.gif");
 		
         // 主界面
-	    get_file(BID_Main1Alarm,					"/mnt/mg/res/app/main/Main1Alarm.png");
-		get_file(BID_Main2Call,					    "/mnt/mg/res/app/main/Main2Call.png");
-		get_file(BID_Main3Message,                  "/mnt/mg/res/app/main/Main3Message.png");
-		get_file(BID_Main5Monitor,                  "/mnt/mg/res/app/main/Main5Monitor.png");
-		get_file(BID_Main7_Media,                   "/mnt/mg/res/app/main/Main7_Media.png");
-		get_file(BID_Main9Setting,                  "/mnt/mg/res/app/main/Main9Setting.png");
-		get_file(BID_Main4Center,				    "/mnt/mg/res/app/main/Main4Center.png");				
-	    get_file(BID_MainControl_DianTi,            "/mnt/mg/res/app/main/MainControl_DianTi.png");
-		get_file(BID_Main4EControl,                 "/mnt/mg/res/app/main/Main4EControl.png");			// 缺	
-		get_file(BID_Main6Record,                   "/mnt/mg/res/app/main/Main6Record.png");          	// 缺
-		get_file(BID_Main8BianLi,                   "/mnt/mg/res/app/main/Main8BianLi.png");          	// 缺
-	    get_file(BID_Main_Photo,                    "/mnt/mg/res/app/main/Main_Photo.png");
-	   	get_file(BID_Main_KeyDown,                  "/mnt/mg/res/app/main/Main_KeyDown.png");		
-		get_file(BID_Main_Net_1,                    "/mnt/mg/res/app/main/net/Main_Net_1.gif");
-		get_file(BID_Main_Net_2,                    "/mnt/mg/res/app/main/net/Main_Net_2.gif");
-		get_file(BID_Main_Net_3,                    "/mnt/mg/res/app/main/net/Main_Net_3.gif");
-		get_file(BID_Main_Net_4,	                "/mnt/mg/res/app/main/net/Main_Net_4.gif");
-		get_file(BID_Main_Net_5,                    "/mnt/mg/res/app/main/net/Main_Net_5.gif");
-		get_file(BID_Ipmodule_Bind_Err,             "/mnt/mg/res/app/main/net/ipmodule_bind_err.png");
-        get_file(BID_Ipmodule_Online_Err,           "/mnt/mg/res/app/main/net/ipmodule_online_err.png");
-        get_file(BID_Ipmodule_Online_Ok,            "/mnt/mg/res/app/main/net/ipmodule_online_ok.png");
+	    get_file(BID_Main1Alarm,					UI_PIC_DIR_PATH"/main/Main1Alarm.png");
+		get_file(BID_Main2Call,					    UI_PIC_DIR_PATH"/main/Main2Call.png");
+		get_file(BID_Main3Message,                  UI_PIC_DIR_PATH"/main/Main3Message.png");
+		get_file(BID_Main5Monitor,                  UI_PIC_DIR_PATH"/main/Main5Monitor.png");
+		get_file(BID_Main7_Media,                   UI_PIC_DIR_PATH"/main/Main7_Media.png");
+		get_file(BID_Main9Setting,                  UI_PIC_DIR_PATH"/main/Main9Setting.png");
+		get_file(BID_Main4Center,				    UI_PIC_DIR_PATH"/main/Main4Center.png");				
+	    get_file(BID_MainControl_DianTi,            UI_PIC_DIR_PATH"/main/MainControl_DianTi.png");
+		get_file(BID_Main4EControl,                 UI_PIC_DIR_PATH"/main/Main4EControl.png");			// 缺	
+		get_file(BID_Main6Record,                   UI_PIC_DIR_PATH"/main/Main6Record.png");          	// 缺
+		get_file(BID_Main8BianLi,                   UI_PIC_DIR_PATH"/main/Main8BianLi.png");          	// 缺
+	    get_file(BID_Main_Photo,                    UI_PIC_DIR_PATH"/main/Main_Photo.png");
+	   	get_file(BID_Main_KeyDown,                  UI_PIC_DIR_PATH"/main/Main_KeyDown.png");		
+		get_file(BID_Main_Net_1,                    UI_PIC_DIR_PATH"/main/net/Main_Net_1.gif");
+		get_file(BID_Main_Net_2,                    UI_PIC_DIR_PATH"/main/net/Main_Net_2.gif");
+		get_file(BID_Main_Net_3,                    UI_PIC_DIR_PATH"/main/net/Main_Net_3.gif");
+		get_file(BID_Main_Net_4,	                UI_PIC_DIR_PATH"/main/net/Main_Net_4.gif");
+		get_file(BID_Main_Net_5,                    UI_PIC_DIR_PATH"/main/net/Main_Net_5.gif");
+		get_file(BID_Ipmodule_Bind_Err,             UI_PIC_DIR_PATH"/main/net/ipmodule_bind_err.png");
+        get_file(BID_Ipmodule_Online_Err,           UI_PIC_DIR_PATH"/main/net/ipmodule_online_err.png");
+        get_file(BID_Ipmodule_Online_Ok,            UI_PIC_DIR_PATH"/main/net/ipmodule_online_ok.png");
 
 		//e81s需要的主界面图片
-	    get_file(BID_Main1Alarm_1,					"/mnt/mg/res/app/main/Main1Alarm_1.png");
-	    get_file(BID_Main2Call_1,					"/mnt/mg/res/app/main/Main2Call1.png");
-	    get_file(BID_Main3Message_1,				"/mnt/mg/res/app/main/Main3Message_1.png");
-	    get_file(BID_Main5Monitor_1,				"/mnt/mg/res/app/main/Main5Monitor_1.png");
-	    get_file(BID_MainControl_DianTi_1,			"/mnt/mg/res/app/main/MainControl_DianTi_1.png");
-	    get_file(BID_Main4Center_1,					"/mnt/mg/res/app/main/Main4Center_1.png");
-	    get_file(BID_MainCall_User_1,				"/mnt/mg/res/app/main/maincall1_user1.png");
-	    get_file(BID_MainCall_FengJi_1,				"/mnt/mg/res/app/main/maincall2_fengji_1.png");
-	    get_file(BID_Main9Setting_1,				"/mnt/mg/res/app/main/Main9Setting_1.png");
-	    get_file(BID_MainMonitor1_Door_1,			"/mnt/mg/res/app/main/mainmonitor1_door_1.png");
-	    get_file(BID_MainMonitor2_Stair_1,			"/mnt/mg/res/app/main/mainmonitor2_stair_1.png");
-	    get_file(BID_MainMonitor3_Area_1,			"/mnt/mg/res/app/main/mainmonitor3_area_1.png");
-		get_file(BID_Main8BianLi_1,					"/mnt/mg/res/app/main/Main8BianLi_1.png");
-	    get_file(BID_Main_JRLY_1,					"/mnt/mg/res/app/main/Main_JRLY_1.png");
+	    get_file(BID_Main1Alarm_1,					UI_PIC_DIR_PATH"/main/Main1Alarm_1.png");
+	    get_file(BID_Main2Call_1,					UI_PIC_DIR_PATH"/main/Main2Call1.png");
+	    get_file(BID_Main3Message_1,				UI_PIC_DIR_PATH"/main/Main3Message_1.png");
+	    get_file(BID_Main5Monitor_1,				UI_PIC_DIR_PATH"/main/Main5Monitor_1.png");
+	    get_file(BID_MainControl_DianTi_1,			UI_PIC_DIR_PATH"/main/MainControl_DianTi_1.png");
+	    get_file(BID_Main4Center_1,					UI_PIC_DIR_PATH"/main/Main4Center_1.png");
+	    get_file(BID_MainCall_User_1,				UI_PIC_DIR_PATH"/main/maincall1_user1.png");
+	    get_file(BID_MainCall_FengJi_1,				UI_PIC_DIR_PATH"/main/maincall2_fengji_1.png");
+	    get_file(BID_Main9Setting_1,				UI_PIC_DIR_PATH"/main/Main9Setting_1.png");
+	    get_file(BID_MainMonitor1_Door_1,			UI_PIC_DIR_PATH"/main/mainmonitor1_door_1.png");
+	    get_file(BID_MainMonitor2_Stair_1,			UI_PIC_DIR_PATH"/main/mainmonitor2_stair_1.png");
+	    get_file(BID_MainMonitor3_Area_1,			UI_PIC_DIR_PATH"/main/mainmonitor3_area_1.png");
+		get_file(BID_Main8BianLi_1,					UI_PIC_DIR_PATH"/main/Main8BianLi_1.png");
+	    get_file(BID_Main_JRLY_1,					UI_PIC_DIR_PATH"/main/Main_JRLY_1.png");
 
-	    get_file(BID_MAIN_TOP,						"/mnt/mg/res/app/main/MainTop.png");
-		get_file(BID_Inter_Volume0_1,               "/mnt/mg/res/app/comm/volume/Volume0.png");
-		get_file(BID_Inter_Volume1_1,               "/mnt/mg/res/app/comm/volume/Volume1.png");
-		get_file(BID_Inter_Volume2_1,               "/mnt/mg/res/app/comm/volume/Volume2.png");
-		get_file(BID_Inter_Volume3_1,               "/mnt/mg/res/app/comm/volume/Volume3.png");
-		get_file(BID_Inter_Volume4_1,               "/mnt/mg/res/app/comm/volume/Volume4.png");
-		get_file(BID_Inter_Volume5_1,               "/mnt/mg/res/app/comm/volume/Volume5.png");
-		get_file(BID_Inter_Volume6_1,               "/mnt/mg/res/app/comm/volume/Volume6.png");
-		get_file(BID_Inter_Volume7_1,               "/mnt/mg/res/app/comm/volume/Volume7.png");		
-		get_file(BID_Inter_Volume8_1,               "/mnt/mg/res/app/comm/volume/Volume8.png");
-	    get_file(BID_Main7LyLy_1,					"/mnt/mg/res/app/main/Main7LyLy_1.png");
-	    get_file(BID_Main7_Snap_1,					"/mnt/mg/res/app/main/Main7_Snap_1.png");
+	    get_file(BID_MAIN_TOP,						UI_PIC_DIR_PATH"/main/MainTop.png");
+		get_file(BID_Inter_Volume0_1,               UI_PIC_DIR_PATH"/comm/volume/Volume0.png");
+		get_file(BID_Inter_Volume1_1,               UI_PIC_DIR_PATH"/comm/volume/Volume1.png");
+		get_file(BID_Inter_Volume2_1,               UI_PIC_DIR_PATH"/comm/volume/Volume2.png");
+		get_file(BID_Inter_Volume3_1,               UI_PIC_DIR_PATH"/comm/volume/Volume3.png");
+		get_file(BID_Inter_Volume4_1,               UI_PIC_DIR_PATH"/comm/volume/Volume4.png");
+		get_file(BID_Inter_Volume5_1,               UI_PIC_DIR_PATH"/comm/volume/Volume5.png");
+		get_file(BID_Inter_Volume6_1,               UI_PIC_DIR_PATH"/comm/volume/Volume6.png");
+		get_file(BID_Inter_Volume7_1,               UI_PIC_DIR_PATH"/comm/volume/Volume7.png");		
+		get_file(BID_Inter_Volume8_1,               UI_PIC_DIR_PATH"/comm/volume/Volume8.png");
+	    get_file(BID_Main7LyLy_1,					UI_PIC_DIR_PATH"/main/Main7LyLy_1.png");
+	    get_file(BID_Main7_Snap_1,					UI_PIC_DIR_PATH"/main/Main7_Snap_1.png");
 
 		// 对讲类
-	    get_file(BID_MainCall_User,                 "/mnt/mg/res/app/main/MainCall_User.png");
-	    get_file(BID_MainCall_FengJi,               "/mnt/mg/res/app/main/MainCall_FengJi.png");
-	    get_file(BID_MainCenter_1,                  "/mnt/mg/res/app/main/MainCenter_1.png");         	// 缺
-	    get_file(BID_MainCenter_2,                  "/mnt/mg/res/app/main/MainCenter_2.png");         	// 缺
-	    get_file(BID_MainCenter_3,                  "/mnt/mg/res/app/main/MainCenter_3.png");         	// 缺
-	    get_file(BID_MainMonitor1_Door,             "/mnt/mg/res/app/main/MainMonitor1_Door.png");
-	    get_file(BID_MainMonitor2_Stair,            "/mnt/mg/res/app/main/MainMonitor2_Stair.png");
-		get_file(BID_MainMonitor3_Area,             "/mnt/mg/res/app/main/MainMonitor3_Area.png");     	// 缺
-	    get_file(BID_MainMonitor3_Camera,           "/mnt/mg/res/app/main/MainMonitor3_Camera.png");
-		//get_file(BID_Inter_VideoWinBK,              "/mnt/mg/res/app/call/Inter_VideoWinBK.png");
-		get_file(BID_Inter_VideoWinBK,              "/mnt/mg/res/app/call/Inter_VideoWinBK.gif");
-        get_file(BID_Inter_VideoWinBK2,             "/mnt/mg/res/app/call/Inter_VideoWinBK2.png");
-		get_file(BID_Inter_VideoWinBK3,             "/mnt/mg/res/app/call/Inter_VideoWinBK3.png");
-		get_file(BID_Inter_VideoWinBK4,             "/mnt/mg/res/app/call/Inter_VideoWinBK4.gif");
-		get_file(BID_Inter_ListCamera,				"/mnt/mg/res/app/call/Inter_ListCamera.png");
-        get_file(BID_Inter_VideoWinBK_Room,         "/mnt/mg/res/app/call/Inter_VideoWinBK_Room.png");
-        get_file(BID_Inter_CallHouseIcon,           "/mnt/mg/res/app/call/Inter_CallHouseIcon.png");
+	    get_file(BID_MainCall_User,                 UI_PIC_DIR_PATH"/main/MainCall_User.png");
+	    get_file(BID_MainCall_FengJi,               UI_PIC_DIR_PATH"/main/MainCall_FengJi.png");
+	    get_file(BID_MainCenter_1,                  UI_PIC_DIR_PATH"/main/MainCenter_1.png");         	// 缺
+	    get_file(BID_MainCenter_2,                  UI_PIC_DIR_PATH"/main/MainCenter_2.png");         	// 缺
+	    get_file(BID_MainCenter_3,                  UI_PIC_DIR_PATH"/main/MainCenter_3.png");         	// 缺
+	    get_file(BID_MainMonitor1_Door,             UI_PIC_DIR_PATH"/main/MainMonitor1_Door.png");
+	    get_file(BID_MainMonitor2_Stair,            UI_PIC_DIR_PATH"/main/MainMonitor2_Stair.png");
+		get_file(BID_MainMonitor3_Area,             UI_PIC_DIR_PATH"/main/MainMonitor3_Area.png");     	// 缺
+	    get_file(BID_MainMonitor3_Camera,           UI_PIC_DIR_PATH"/main/MainMonitor3_Camera.png");
+		//get_file(BID_Inter_VideoWinBK,              UI_PIC_DIR_PATH"/call/Inter_VideoWinBK.png");
+		get_file(BID_Inter_VideoWinBK,              UI_PIC_DIR_PATH"/call/Inter_VideoWinBK.gif");
+        get_file(BID_Inter_VideoWinBK2,             UI_PIC_DIR_PATH"/call/Inter_VideoWinBK2.png");
+		get_file(BID_Inter_VideoWinBK3,             UI_PIC_DIR_PATH"/call/Inter_VideoWinBK3.png");
+		get_file(BID_Inter_VideoWinBK4,             UI_PIC_DIR_PATH"/call/Inter_VideoWinBK4.gif");
+		get_file(BID_Inter_ListCamera,				UI_PIC_DIR_PATH"/call/Inter_ListCamera.png");
+        get_file(BID_Inter_VideoWinBK_Room,         UI_PIC_DIR_PATH"/call/Inter_VideoWinBK_Room.png");
+        get_file(BID_Inter_CallHouseIcon,           UI_PIC_DIR_PATH"/call/Inter_CallHouseIcon.png");
 
 		// 设置类
-		get_file(BID_Set_AF,                        "/mnt/mg/res/app/set/Set_AF.png");
-		get_file(BID_Set_PRJ,                       "/mnt/mg/res/app/set/Set_PRJ.png");
-		get_file(BID_Set_SYS,                       "/mnt/mg/res/app/set/Set_SYS.png");
-		get_file(BID_Set_USER,                      "/mnt/mg/res/app/set/Set_USER.png");
-		get_file(BID_BJ_Set_Alarm_Num1,             "/mnt/mg/res/app/set/af/BJ_Set_Alarm_Num1.png");
-		get_file(BID_BJ_Set_ISO_TM,                 "/mnt/mg/res/app/set/af/BJ_Set_ISO_TM.png");
-		get_file(BID_BJ_Set_Isolate1,               "/mnt/mg/res/app/set/af/BJ_Set_Isolate1.png");
-		get_file(BID_BJ_Set_Joint1,                 "/mnt/mg/res/app/set/af/BJ_Set_Joint1.png");
-		get_file(BID_BJ_Set_Lock_Pass1,             "/mnt/mg/res/app/set/af/BJ_Set_Lock_Pass1.png");
-		get_file(BID_BJ_Set_Num1,                   "/mnt/mg/res/app/set/af/BJ_Set_Num1.png");
-		get_file(BID_BJ_Set_Part_Vald1,             "/mnt/mg/res/app/set/af/BJ_Set_Part_Vald1.png");
-		get_file(BID_BJ_Set_Part_Vald,              "/mnt/mg/res/app/set/af/BJ_Set_Part_Vald.png");
-		get_file(BID_BJ_Set_Pass1,                  "/mnt/mg/res/app/set/af/BJ_Set_Pass1.png");
-		get_file(BID_BJ_Set_Remote1,                "/mnt/mg/res/app/set/af/BJ_Set_Remote1.png");
-	   	get_file(BID_Set_AFparam1,                  "/mnt/mg/res/app/set/af/Set_AFparam1.png");
-		get_file(BID_Set_AFproperty1,               "/mnt/mg/res/app/set/af/Set_AFproperty1.png");
-		get_file(BID_Set_AFproperty,                "/mnt/mg/res/app/set/project/Set_AFproperty.png");
-		get_file(BID_Set_Back,                      "/mnt/mg/res/app/set/project/Set_Back.png");
-		get_file(BID_Set_Ext,                       "/mnt/mg/res/app/set/project/Set_Ext.png");
-		get_file(BID_Set_IP,                        "/mnt/mg/res/app/set/project/Set_IP.png");
-	   	get_file(BID_Set_JD,                        "/mnt/mg/res/app/set/project/Set_JD.png");
-		get_file(BID_Set_Mic,                       "/mnt/mg/res/app/set/project/Set_Mic.png");
-		get_file(BID_Set_Monitor1,                  "/mnt/mg/res/app/set/project/Set_Monitor1.png");
-		get_file(BID_Set_Netdoor,                   "/mnt/mg/res/app/set/project/Set_Netdoor.png");
-		get_file(BID_Set_Netparam,                  "/mnt/mg/res/app/set/project/Set_Netparam.png");
-		get_file(BID_Set_PrjPass,                   "/mnt/mg/res/app/set/project/Set_PrjPass.png");
-	   	get_file(BID_Set_Room,                      "/mnt/mg/res/app/set/project/Set_Room.png");
-		get_file(BID_Set_Date,                      "/mnt/mg/res/app/set/system/Set_Date.png");
-		get_file(BID_Set_Desktop,                   "/mnt/mg/res/app/set/system/Set_Desktop.png");
-		get_file(BID_Set_Language,                  "/mnt/mg/res/app/set/system/Set_Language.png");
-		get_file(BID_Set_Photo,                     "/mnt/mg/res/app/set/system/Set_Photo.png");
-		get_file(BID_Set_Screen_Light,              "/mnt/mg/res/app/set/system/Set_Screen_Light.png");
-		get_file(BID_Set_SDcard,                    "/mnt/mg/res/app/set/system/Set_SDcard.png");
-		get_file(BID_Set_SYSInfo,                   "/mnt/mg/res/app/set/system/Set_SYSInfo.png");
-		get_file(BID_Set_Sel,                       "/mnt/mg/res/app/set/system/Set_Sel.png");
-		get_file(BID_Set_BK,                        "/mnt/mg/res/app/set/system/Set_BK.png");
-		get_file(BID_Set_CHINESE,                   "/mnt/mg/res/app/set/system/Set_CHINESE.png");
-		get_file(BID_Set_CHBIG,                     "/mnt/mg/res/app/set/system/Set_CHBIG.png");
-		get_file(BID_Set_ENGLISH,                   "/mnt/mg/res/app/set/system/Set_ENGLISH.png");
-		get_file(BID_Set_Distrub,                   "/mnt/mg/res/app/set/user/Set_Distrub.png");
-		get_file(BID_Set_LYLY,                      "/mnt/mg/res/app/set/user/Set_LYLY.png");
-		get_file(BID_Set_Melody,                    "/mnt/mg/res/app/set/user/Set_Melody.png");
-		get_file(BID_Set_PT,                        "/mnt/mg/res/app/set/user/Set_PT.png");
-		get_file(BID_Set_Scenem,                    "/mnt/mg/res/app/set/user/Set_Scenem.png");
-		get_file(BID_Set_AddVolume,                 "/mnt/mg/res/app/set/user/Set_AddVolume.png");
-		get_file(BID_Set_AddVolume_on,              "/mnt/mg/res/app/set/user/Set_AddVolume_on.png");
-		get_file(BID_Set_DelVolume,                 "/mnt/mg/res/app/set/user/Set_DelVolume.png");
-		get_file(BID_Set_DelVolume_on,              "/mnt/mg/res/app/set/user/Set_DelVolume_on.png");
-		get_file(BID_Set_Volume,                    "/mnt/mg/res/app/set/user/Set_Volume.png");
-		get_file(BID_Set_VolumeIcon,                "/mnt/mg/res/app/set/user/Set_VolumeIcon.png");
-		get_file(BID_Set_IP_protocol,				"/mnt/mg/res/app/set/project/Set_IP.png");
+		get_file(BID_Set_AF,                        UI_PIC_DIR_PATH"/set/Set_AF.png");
+		get_file(BID_Set_PRJ,                       UI_PIC_DIR_PATH"/set/Set_PRJ.png");
+		get_file(BID_Set_SYS,                       UI_PIC_DIR_PATH"/set/Set_SYS.png");
+		get_file(BID_Set_USER,                      UI_PIC_DIR_PATH"/set/Set_USER.png");
+		get_file(BID_BJ_Set_Alarm_Num1,             UI_PIC_DIR_PATH"/set/af/BJ_Set_Alarm_Num1.png");
+		get_file(BID_BJ_Set_ISO_TM,                 UI_PIC_DIR_PATH"/set/af/BJ_Set_ISO_TM.png");
+		get_file(BID_BJ_Set_Isolate1,               UI_PIC_DIR_PATH"/set/af/BJ_Set_Isolate1.png");
+		get_file(BID_BJ_Set_Joint1,                 UI_PIC_DIR_PATH"/set/af/BJ_Set_Joint1.png");
+		get_file(BID_BJ_Set_Lock_Pass1,             UI_PIC_DIR_PATH"/set/af/BJ_Set_Lock_Pass1.png");
+		get_file(BID_BJ_Set_Num1,                   UI_PIC_DIR_PATH"/set/af/BJ_Set_Num1.png");
+		get_file(BID_BJ_Set_Part_Vald1,             UI_PIC_DIR_PATH"/set/af/BJ_Set_Part_Vald1.png");
+		get_file(BID_BJ_Set_Part_Vald,              UI_PIC_DIR_PATH"/set/af/BJ_Set_Part_Vald.png");
+		get_file(BID_BJ_Set_Pass1,                  UI_PIC_DIR_PATH"/set/af/BJ_Set_Pass1.png");
+		get_file(BID_BJ_Set_Remote1,                UI_PIC_DIR_PATH"/set/af/BJ_Set_Remote1.png");
+	   	get_file(BID_Set_AFparam1,                  UI_PIC_DIR_PATH"/set/af/Set_AFparam1.png");
+		get_file(BID_Set_AFproperty1,               UI_PIC_DIR_PATH"/set/af/Set_AFproperty1.png");
+		get_file(BID_Set_AFproperty,                UI_PIC_DIR_PATH"/set/project/Set_AFproperty.png");
+		get_file(BID_Set_Back,                      UI_PIC_DIR_PATH"/set/project/Set_Back.png");
+		get_file(BID_Set_Ext,                       UI_PIC_DIR_PATH"/set/project/Set_Ext.png");
+		get_file(BID_Set_IP,                        UI_PIC_DIR_PATH"/set/project/Set_IP.png");
+	   	get_file(BID_Set_JD,                        UI_PIC_DIR_PATH"/set/project/Set_JD.png");
+		get_file(BID_Set_Mic,                       UI_PIC_DIR_PATH"/set/project/Set_Mic.png");
+		get_file(BID_Set_Monitor1,                  UI_PIC_DIR_PATH"/set/project/Set_Monitor1.png");
+		get_file(BID_Set_Netdoor,                   UI_PIC_DIR_PATH"/set/project/Set_Netdoor.png");
+		get_file(BID_Set_Netparam,                  UI_PIC_DIR_PATH"/set/project/Set_Netparam.png");
+		get_file(BID_Set_PrjPass,                   UI_PIC_DIR_PATH"/set/project/Set_PrjPass.png");
+	   	get_file(BID_Set_Room,                      UI_PIC_DIR_PATH"/set/project/Set_Room.png");
+		get_file(BID_Set_Date,                      UI_PIC_DIR_PATH"/set/system/Set_Date.png");
+		get_file(BID_Set_Desktop,                   UI_PIC_DIR_PATH"/set/system/Set_Desktop.png");
+		get_file(BID_Set_Language,                  UI_PIC_DIR_PATH"/set/system/Set_Language.png");
+		get_file(BID_Set_Photo,                     UI_PIC_DIR_PATH"/set/system/Set_Photo.png");
+		get_file(BID_Set_Screen_Light,              UI_PIC_DIR_PATH"/set/system/Set_Screen_Light.png");
+		get_file(BID_Set_SDcard,                    UI_PIC_DIR_PATH"/set/system/Set_SDcard.png");
+		get_file(BID_Set_SYSInfo,                   UI_PIC_DIR_PATH"/set/system/Set_SYSInfo.png");
+		get_file(BID_Set_Sel,                       UI_PIC_DIR_PATH"/set/system/Set_Sel.png");
+		get_file(BID_Set_BK,                        UI_PIC_DIR_PATH"/set/system/Set_BK.png");
+		get_file(BID_Set_CHINESE,                   UI_PIC_DIR_PATH"/set/system/Set_CHINESE.png");
+		get_file(BID_Set_CHBIG,                     UI_PIC_DIR_PATH"/set/system/Set_CHBIG.png");
+		get_file(BID_Set_ENGLISH,                   UI_PIC_DIR_PATH"/set/system/Set_ENGLISH.png");
+		get_file(BID_Set_Distrub,                   UI_PIC_DIR_PATH"/set/user/Set_Distrub.png");
+		get_file(BID_Set_LYLY,                      UI_PIC_DIR_PATH"/set/user/Set_LYLY.png");
+		get_file(BID_Set_Melody,                    UI_PIC_DIR_PATH"/set/user/Set_Melody.png");
+		get_file(BID_Set_PT,                        UI_PIC_DIR_PATH"/set/user/Set_PT.png");
+		get_file(BID_Set_Scenem,                    UI_PIC_DIR_PATH"/set/user/Set_Scenem.png");
+		get_file(BID_Set_AddVolume,                 UI_PIC_DIR_PATH"/set/user/Set_AddVolume.png");
+		get_file(BID_Set_AddVolume_on,              UI_PIC_DIR_PATH"/set/user/Set_AddVolume_on.png");
+		get_file(BID_Set_DelVolume,                 UI_PIC_DIR_PATH"/set/user/Set_DelVolume.png");
+		get_file(BID_Set_DelVolume_on,              UI_PIC_DIR_PATH"/set/user/Set_DelVolume_on.png");
+		get_file(BID_Set_Volume,                    UI_PIC_DIR_PATH"/set/user/Set_Volume.png");
+		get_file(BID_Set_VolumeIcon,                UI_PIC_DIR_PATH"/set/user/Set_VolumeIcon.png");
+		get_file(BID_Set_IP_protocol,				UI_PIC_DIR_PATH"/set/project/Set_IP.png");
 
 		//网络门前机
-        get_file(BID_Set_Netdoor_Second,           	"/mnt/mg/res/app/set/project/Set_Netdoor.png");
-        get_file(BID_NetDoor_Netparam,              "/mnt/mg/res/app/set/project/Set_Netparam.png");
-		get_file(BID_NetDoor_SysInfo,         		"/mnt/mg/res/app/set/system/Set_SYSInfo.png");
-		get_file(BID_NetDoor_LockType,              "/mnt/mg/res/app/set/project/NetDoor_LockType.png");
-        get_file(BID_NetDoor_Card,        			"/mnt/mg/res/app/set/project/NetDoor_Card.png");
-        get_file(BID_NetDoor_Other,       			"/mnt/mg/res/app/set/project/NetDoor_Other.png");
+        get_file(BID_Set_Netdoor_Second,           	UI_PIC_DIR_PATH"/set/project/Set_Netdoor.png");
+        get_file(BID_NetDoor_Netparam,              UI_PIC_DIR_PATH"/set/project/Set_Netparam.png");
+		get_file(BID_NetDoor_SysInfo,         		UI_PIC_DIR_PATH"/set/system/Set_SYSInfo.png");
+		get_file(BID_NetDoor_LockType,              UI_PIC_DIR_PATH"/set/project/NetDoor_LockType.png");
+        get_file(BID_NetDoor_Card,        			UI_PIC_DIR_PATH"/set/project/NetDoor_Card.png");
+        get_file(BID_NetDoor_Other,       			UI_PIC_DIR_PATH"/set/project/NetDoor_Other.png");
 
 		// 安防类
-		get_file(BID_BJ_Balcony0,					"/mnt/mg/res/app/alarm/BJ_Balcony0.png");
-		get_file(BID_BJ_Balcony1,					"/mnt/mg/res/app/alarm/BJ_Balcony1.png");
-		get_file(BID_BJ_Balcony2,					"/mnt/mg/res/app/alarm/BJ_Balcony2.png");
-		get_file(BID_BJ_Balcony3,					"/mnt/mg/res/app/alarm/BJ_Balcony3.png");
-		get_file(BID_BJ_Balcony4,					"/mnt/mg/res/app/alarm/BJ_Balcony4.png");
-		get_file(BID_BJ_Balcony5,					"/mnt/mg/res/app/alarm/BJ_Balcony5.png");
-		get_file(BID_BJ_Custom0,					"/mnt/mg/res/app/alarm/BJ_Custom0.png");
-		get_file(BID_BJ_Custom1,					"/mnt/mg/res/app/alarm/BJ_Custom1.png");
-		get_file(BID_BJ_Custom2,					"/mnt/mg/res/app/alarm/BJ_Custom2.png");
-		get_file(BID_BJ_Custom3,					"/mnt/mg/res/app/alarm/BJ_Custom3.png");
-		get_file(BID_BJ_Custom4,					"/mnt/mg/res/app/alarm/BJ_Custom4.png");
-		get_file(BID_BJ_Custom5,					"/mnt/mg/res/app/alarm/BJ_Custom5.png");
-		get_file(BID_BJ_Door0,						"/mnt/mg/res/app/alarm/BJ_Door0.png");
-		get_file(BID_BJ_Door1,						"/mnt/mg/res/app/alarm/BJ_Door1.png");
-		get_file(BID_BJ_Door2,						"/mnt/mg/res/app/alarm/BJ_Door2.png");
-		get_file(BID_BJ_Door3,						"/mnt/mg/res/app/alarm/BJ_Door3.png");
-		get_file(BID_BJ_Door4,						"/mnt/mg/res/app/alarm/BJ_Door4.png");
-		get_file(BID_BJ_Door5,						"/mnt/mg/res/app/alarm/BJ_Door5.png");
-		get_file(BID_BJ_Fire0,						"/mnt/mg/res/app/alarm/BJ_Fire0.png");
-		get_file(BID_BJ_Fire1,						"/mnt/mg/res/app/alarm/BJ_Fire1.png");
-		get_file(BID_BJ_Fire2,						"/mnt/mg/res/app/alarm/BJ_Fire2.png");
-		get_file(BID_BJ_Fire3,						"/mnt/mg/res/app/alarm/BJ_Fire3.png");
-		get_file(BID_BJ_Fire4,						"/mnt/mg/res/app/alarm/BJ_Fire4.png");
-		get_file(BID_BJ_Fire5,						"/mnt/mg/res/app/alarm/BJ_Fire5.png");
-		get_file(BID_BJ_Gas0,						"/mnt/mg/res/app/alarm/BJ_Gas0.png");
-		get_file(BID_BJ_Gas1,						"/mnt/mg/res/app/alarm/BJ_Gas1.png");
-		get_file(BID_BJ_Gas2,						"/mnt/mg/res/app/alarm/BJ_Gas2.png");
-		get_file(BID_BJ_Gas3,						"/mnt/mg/res/app/alarm/BJ_Gas3.png");
-		get_file(BID_BJ_Gas4,						"/mnt/mg/res/app/alarm/BJ_Gas4.png");
-		get_file(BID_BJ_Gas5,						"/mnt/mg/res/app/alarm/BJ_Gas5.png");
-		get_file(BID_BJ_Room0,						"/mnt/mg/res/app/alarm/BJ_Room0.png");
-		get_file(BID_BJ_Room1,						"/mnt/mg/res/app/alarm/BJ_Room1.png");
-		get_file(BID_BJ_Room2,						"/mnt/mg/res/app/alarm/BJ_Room2.png");
-		get_file(BID_BJ_Room3,						"/mnt/mg/res/app/alarm/BJ_Room3.png");
-		get_file(BID_BJ_Room4,						"/mnt/mg/res/app/alarm/BJ_Room4.png");
-		get_file(BID_BJ_Room5,						"/mnt/mg/res/app/alarm/BJ_Room5.png");
-		get_file(BID_BJ_Urgency0,					"/mnt/mg/res/app/alarm/BJ_Urgency0.png");
-		get_file(BID_BJ_Urgency1,					"/mnt/mg/res/app/alarm/BJ_Urgency1.png");
-		get_file(BID_BJ_Urgency2,					"/mnt/mg/res/app/alarm/BJ_Urgency2.png");
-		get_file(BID_BJ_Urgency3,					"/mnt/mg/res/app/alarm/BJ_Urgency3.png");
-		get_file(BID_BJ_Urgency4,					"/mnt/mg/res/app/alarm/BJ_Urgency4.png");
-		get_file(BID_BJ_Urgency5,					"/mnt/mg/res/app/alarm/BJ_Urgency5.png");
-		get_file(BID_BJ_Window0,					"/mnt/mg/res/app/alarm/BJ_Window0.png");
-		get_file(BID_BJ_Window1,					"/mnt/mg/res/app/alarm/BJ_Window1.png");
-		get_file(BID_BJ_Window2,					"/mnt/mg/res/app/alarm/BJ_Window2.png");
-		get_file(BID_BJ_Window3,					"/mnt/mg/res/app/alarm/BJ_Window3.png");
-		get_file(BID_BJ_Window4,					"/mnt/mg/res/app/alarm/BJ_Window4.png");
-		get_file(BID_BJ_Window5,					"/mnt/mg/res/app/alarm/BJ_Window5.png");
-		get_file(BID_FQ_Icon_BJ,					"/mnt/mg/res/app/alarm/FQ_Icon_BJ.png");
+		get_file(BID_BJ_Balcony0,					UI_PIC_DIR_PATH"/alarm/BJ_Balcony0.png");
+		get_file(BID_BJ_Balcony1,					UI_PIC_DIR_PATH"/alarm/BJ_Balcony1.png");
+		get_file(BID_BJ_Balcony2,					UI_PIC_DIR_PATH"/alarm/BJ_Balcony2.png");
+		get_file(BID_BJ_Balcony3,					UI_PIC_DIR_PATH"/alarm/BJ_Balcony3.png");
+		get_file(BID_BJ_Balcony4,					UI_PIC_DIR_PATH"/alarm/BJ_Balcony4.png");
+		get_file(BID_BJ_Balcony5,					UI_PIC_DIR_PATH"/alarm/BJ_Balcony5.png");
+		get_file(BID_BJ_Custom0,					UI_PIC_DIR_PATH"/alarm/BJ_Custom0.png");
+		get_file(BID_BJ_Custom1,					UI_PIC_DIR_PATH"/alarm/BJ_Custom1.png");
+		get_file(BID_BJ_Custom2,					UI_PIC_DIR_PATH"/alarm/BJ_Custom2.png");
+		get_file(BID_BJ_Custom3,					UI_PIC_DIR_PATH"/alarm/BJ_Custom3.png");
+		get_file(BID_BJ_Custom4,					UI_PIC_DIR_PATH"/alarm/BJ_Custom4.png");
+		get_file(BID_BJ_Custom5,					UI_PIC_DIR_PATH"/alarm/BJ_Custom5.png");
+		get_file(BID_BJ_Door0,						UI_PIC_DIR_PATH"/alarm/BJ_Door0.png");
+		get_file(BID_BJ_Door1,						UI_PIC_DIR_PATH"/alarm/BJ_Door1.png");
+		get_file(BID_BJ_Door2,						UI_PIC_DIR_PATH"/alarm/BJ_Door2.png");
+		get_file(BID_BJ_Door3,						UI_PIC_DIR_PATH"/alarm/BJ_Door3.png");
+		get_file(BID_BJ_Door4,						UI_PIC_DIR_PATH"/alarm/BJ_Door4.png");
+		get_file(BID_BJ_Door5,						UI_PIC_DIR_PATH"/alarm/BJ_Door5.png");
+		get_file(BID_BJ_Fire0,						UI_PIC_DIR_PATH"/alarm/BJ_Fire0.png");
+		get_file(BID_BJ_Fire1,						UI_PIC_DIR_PATH"/alarm/BJ_Fire1.png");
+		get_file(BID_BJ_Fire2,						UI_PIC_DIR_PATH"/alarm/BJ_Fire2.png");
+		get_file(BID_BJ_Fire3,						UI_PIC_DIR_PATH"/alarm/BJ_Fire3.png");
+		get_file(BID_BJ_Fire4,						UI_PIC_DIR_PATH"/alarm/BJ_Fire4.png");
+		get_file(BID_BJ_Fire5,						UI_PIC_DIR_PATH"/alarm/BJ_Fire5.png");
+		get_file(BID_BJ_Gas0,						UI_PIC_DIR_PATH"/alarm/BJ_Gas0.png");
+		get_file(BID_BJ_Gas1,						UI_PIC_DIR_PATH"/alarm/BJ_Gas1.png");
+		get_file(BID_BJ_Gas2,						UI_PIC_DIR_PATH"/alarm/BJ_Gas2.png");
+		get_file(BID_BJ_Gas3,						UI_PIC_DIR_PATH"/alarm/BJ_Gas3.png");
+		get_file(BID_BJ_Gas4,						UI_PIC_DIR_PATH"/alarm/BJ_Gas4.png");
+		get_file(BID_BJ_Gas5,						UI_PIC_DIR_PATH"/alarm/BJ_Gas5.png");
+		get_file(BID_BJ_Room0,						UI_PIC_DIR_PATH"/alarm/BJ_Room0.png");
+		get_file(BID_BJ_Room1,						UI_PIC_DIR_PATH"/alarm/BJ_Room1.png");
+		get_file(BID_BJ_Room2,						UI_PIC_DIR_PATH"/alarm/BJ_Room2.png");
+		get_file(BID_BJ_Room3,						UI_PIC_DIR_PATH"/alarm/BJ_Room3.png");
+		get_file(BID_BJ_Room4,						UI_PIC_DIR_PATH"/alarm/BJ_Room4.png");
+		get_file(BID_BJ_Room5,						UI_PIC_DIR_PATH"/alarm/BJ_Room5.png");
+		get_file(BID_BJ_Urgency0,					UI_PIC_DIR_PATH"/alarm/BJ_Urgency0.png");
+		get_file(BID_BJ_Urgency1,					UI_PIC_DIR_PATH"/alarm/BJ_Urgency1.png");
+		get_file(BID_BJ_Urgency2,					UI_PIC_DIR_PATH"/alarm/BJ_Urgency2.png");
+		get_file(BID_BJ_Urgency3,					UI_PIC_DIR_PATH"/alarm/BJ_Urgency3.png");
+		get_file(BID_BJ_Urgency4,					UI_PIC_DIR_PATH"/alarm/BJ_Urgency4.png");
+		get_file(BID_BJ_Urgency5,					UI_PIC_DIR_PATH"/alarm/BJ_Urgency5.png");
+		get_file(BID_BJ_Window0,					UI_PIC_DIR_PATH"/alarm/BJ_Window0.png");
+		get_file(BID_BJ_Window1,					UI_PIC_DIR_PATH"/alarm/BJ_Window1.png");
+		get_file(BID_BJ_Window2,					UI_PIC_DIR_PATH"/alarm/BJ_Window2.png");
+		get_file(BID_BJ_Window3,					UI_PIC_DIR_PATH"/alarm/BJ_Window3.png");
+		get_file(BID_BJ_Window4,					UI_PIC_DIR_PATH"/alarm/BJ_Window4.png");
+		get_file(BID_BJ_Window5,					UI_PIC_DIR_PATH"/alarm/BJ_Window5.png");
+		get_file(BID_FQ_Icon_BJ,					UI_PIC_DIR_PATH"/alarm/FQ_Icon_BJ.png");
 	
       	// 便利类
-   	    get_file(BID_Main_JRLY,                     "/mnt/mg/res/app/main/Main_JRLY.png");               // 缺
-	    get_file(BID_Main_CleanScreen,              "/mnt/mg/res/app/main/Main_CleanScreen.png");         // 缺
+   	    get_file(BID_Main_JRLY,                     UI_PIC_DIR_PATH"/main/Main_JRLY.png");               // 缺
+	    get_file(BID_Main_CleanScreen,              UI_PIC_DIR_PATH"/main/Main_CleanScreen.png");         // 缺
 
 		// 留影留言类
-     	get_file(BID_Main7LyLy,                     "/mnt/mg/res/app/main/Main7LyLy.png");
-	    get_file(BID_Main7_Snap,                    "/mnt/mg/res/app/main/Main7_Snap.png");              // 缺
+     	get_file(BID_Main7LyLy,                     UI_PIC_DIR_PATH"/main/Main7LyLy.png");
+	    get_file(BID_Main7_Snap,                    UI_PIC_DIR_PATH"/main/Main7_Snap.png");              // 缺
 		
 		// 输入框
-		get_file(BID_Num0,                           "/mnt/mg/res/app/ctrl/input/Num0.png");
-		get_file(BID_Num1,                           "/mnt/mg/res/app/ctrl/input/Num1.png");
-		get_file(BID_Num2,                           "/mnt/mg/res/app/ctrl/input/Num2.png");
-		get_file(BID_Num3,                           "/mnt/mg/res/app/ctrl/input/Num3.png");
-		get_file(BID_Num4,                           "/mnt/mg/res/app/ctrl/input/Num4.png");
-		get_file(BID_Num5,                           "/mnt/mg/res/app/ctrl/input/Num5.png");
-		get_file(BID_Num6,                           "/mnt/mg/res/app/ctrl/input/Num6.png");
-	    get_file(BID_Num7,                           "/mnt/mg/res/app/ctrl/input/Num7.png");
-		get_file(BID_Num8,                           "/mnt/mg/res/app/ctrl/input/Num8.png");
-		get_file(BID_Num9,                           "/mnt/mg/res/app/ctrl/input/Num9.png");
-		get_file(BID_NumXin,                         "/mnt/mg/res/app/ctrl/input/NumXin.png");
-		get_file(BID_NumJin,                         "/mnt/mg/res/app/ctrl/input/NumXin.png");
-		get_file(BID_Input_Ctrl,                     "/mnt/mg/res/app/ctrl/input/Input_Ctrl.png");	
-		get_file(BID_Input_Black,                    "/mnt/mg/res/app/ctrl/input/Input_Black.png");
-		get_file(BID_InputButton_date1,              "/mnt/mg/res/app/ctrl/input/InputButton_date1.png");
-		get_file(BID_InputButton_date2,              "/mnt/mg/res/app/ctrl/input/InputButton_date2.png");
-		get_file(BID_InputButton_pass1,              "/mnt/mg/res/app/ctrl/input/InputButton_pass1.png");
-	    get_file(BID_InputButton_pass2,              "/mnt/mg/res/app/ctrl/input/InputButton_pass2.png");
-		get_file(BID_InputButton_pass3,              "/mnt/mg/res/app/ctrl/input/InputButton_pass3.png");
-		get_file(BID_InputButton_num_ON,             "/mnt/mg/res/app/ctrl/input/InputButton_num_ON.png");
-		get_file(BID_InputButton_num,                "/mnt/mg/res/app/ctrl/input/InputButton_num.png");
-		get_file(BID_InputButton_dev,                "/mnt/mg/res/app/ctrl/input/InputButton_dev.png");
+		get_file(BID_Num0,                           UI_PIC_DIR_PATH"/ctrl/input/Num0.png");
+		get_file(BID_Num1,                           UI_PIC_DIR_PATH"/ctrl/input/Num1.png");
+		get_file(BID_Num2,                           UI_PIC_DIR_PATH"/ctrl/input/Num2.png");
+		get_file(BID_Num3,                           UI_PIC_DIR_PATH"/ctrl/input/Num3.png");
+		get_file(BID_Num4,                           UI_PIC_DIR_PATH"/ctrl/input/Num4.png");
+		get_file(BID_Num5,                           UI_PIC_DIR_PATH"/ctrl/input/Num5.png");
+		get_file(BID_Num6,                           UI_PIC_DIR_PATH"/ctrl/input/Num6.png");
+	    get_file(BID_Num7,                           UI_PIC_DIR_PATH"/ctrl/input/Num7.png");
+		get_file(BID_Num8,                           UI_PIC_DIR_PATH"/ctrl/input/Num8.png");
+		get_file(BID_Num9,                           UI_PIC_DIR_PATH"/ctrl/input/Num9.png");
+		get_file(BID_NumXin,                         UI_PIC_DIR_PATH"/ctrl/input/NumXin.png");
+		get_file(BID_NumJin,                         UI_PIC_DIR_PATH"/ctrl/input/NumXin.png");
+		get_file(BID_Input_Ctrl,                     UI_PIC_DIR_PATH"/ctrl/input/Input_Ctrl.png");	
+		get_file(BID_Input_Black,                    UI_PIC_DIR_PATH"/ctrl/input/Input_Black.png");
+		get_file(BID_InputButton_date1,              UI_PIC_DIR_PATH"/ctrl/input/InputButton_date1.png");
+		get_file(BID_InputButton_date2,              UI_PIC_DIR_PATH"/ctrl/input/InputButton_date2.png");
+		get_file(BID_InputButton_pass1,              UI_PIC_DIR_PATH"/ctrl/input/InputButton_pass1.png");
+	    get_file(BID_InputButton_pass2,              UI_PIC_DIR_PATH"/ctrl/input/InputButton_pass2.png");
+		get_file(BID_InputButton_pass3,              UI_PIC_DIR_PATH"/ctrl/input/InputButton_pass3.png");
+		get_file(BID_InputButton_num_ON,             UI_PIC_DIR_PATH"/ctrl/input/InputButton_num_ON.png");
+		get_file(BID_InputButton_num,                UI_PIC_DIR_PATH"/ctrl/input/InputButton_num.png");
+		get_file(BID_InputButton_dev,                UI_PIC_DIR_PATH"/ctrl/input/InputButton_dev.png");
 
 		// 键盘控件
-	    get_file(BID_Keyboard_Select,                "/mnt/mg/res/app/ctrl/keybord/Keyboard_Select.png");
-        get_file(BID_KeyBoardBK_Pass,                "/mnt/mg/res/app/ctrl/keybord/KeyBoardBK_Pass.png");
-		get_file(BID_KeyBoardBK_Pass_1,              "/mnt/mg/res/app/ctrl/keybord/KeyBoardBK_Pass_1.png");
-        get_file(BID_KeyBoardBK_Call,                "/mnt/mg/res/app/ctrl/keybord/KeyBoardBK_Call.png");
+	    get_file(BID_Keyboard_Select,                UI_PIC_DIR_PATH"/ctrl/keybord/Keyboard_Select.png");
+        get_file(BID_KeyBoardBK_Pass,                UI_PIC_DIR_PATH"/ctrl/keybord/KeyBoardBK_Pass.png");
+		get_file(BID_KeyBoardBK_Pass_1,              UI_PIC_DIR_PATH"/ctrl/keybord/KeyBoardBK_Pass_1.png");
+        get_file(BID_KeyBoardBK_Call,                UI_PIC_DIR_PATH"/ctrl/keybord/KeyBoardBK_Call.png");
 		
 		//右边控件
-		get_file(BID_RightCtrlBK,				     "/mnt/mg/res/app/ctrl/right/RightCtrlBK.png");
-		get_file(BID_Right_Down,				     "/mnt/mg/res/app/ctrl/right/Right_Down.png");
-		get_file(BID_Right_Exit,				     "/mnt/mg/res/app/ctrl/right/Right_Exit.png");
-		get_file(BID_Right_Full,			         "/mnt/mg/res/app/ctrl/right/Right_Full.png");
-		get_file(BID_Right_Left,				     "/mnt/mg/res/app/ctrl/right/Right_Left.png");
-		get_file(BID_Right_Right,			         "/mnt/mg/res/app/ctrl/right/Right_Right.png");
-		get_file(BID_Right_Table,			         "/mnt/mg/res/app/ctrl/right/Right_Table.png");
-		get_file(BID_Right_Up,				         "/mnt/mg/res/app/ctrl/right/Right_Up.png");
-		get_file(BID_RightButtonBK1,             	 "/mnt/mg/res/app/ctrl/right/RightButtonBK1.png");
-		get_file(BID_RightButtonBK2,	             "/mnt/mg/res/app/ctrl/right/RightButtonBK2.png");
-		get_file(BID_RightButtonBK3,	             "/mnt/mg/res/app/ctrl/right/RightButtonBK3.png");
+		get_file(BID_RightCtrlBK,				     UI_PIC_DIR_PATH"/ctrl/right/RightCtrlBK.png");
+		get_file(BID_Right_Down,				     UI_PIC_DIR_PATH"/ctrl/right/Right_Down.png");
+		get_file(BID_Right_Exit,				     UI_PIC_DIR_PATH"/ctrl/right/Right_Exit.png");
+		get_file(BID_Right_Full,			         UI_PIC_DIR_PATH"/ctrl/right/Right_Full.png");
+		get_file(BID_Right_Left,				     UI_PIC_DIR_PATH"/ctrl/right/Right_Left.png");
+		get_file(BID_Right_Right,			         UI_PIC_DIR_PATH"/ctrl/right/Right_Right.png");
+		get_file(BID_Right_Table,			         UI_PIC_DIR_PATH"/ctrl/right/Right_Table.png");
+		get_file(BID_Right_Up,				         UI_PIC_DIR_PATH"/ctrl/right/Right_Up.png");
+		get_file(BID_RightButtonBK1,             	 UI_PIC_DIR_PATH"/ctrl/right/RightButtonBK1.png");
+		get_file(BID_RightButtonBK2,	             UI_PIC_DIR_PATH"/ctrl/right/RightButtonBK2.png");
+		get_file(BID_RightButtonBK3,	             UI_PIC_DIR_PATH"/ctrl/right/RightButtonBK3.png");
 
         //列表控件
-        get_file(BID_ListCtrl_BK5_0,				 "/mnt/mg/res/app/ctrl/list/ListCtrl_BK5_0.png");
-	    get_file(BID_ListCtrl_BK5_1,				 "/mnt/mg/res/app/ctrl/list/ListCtrl_BK5_1.png");
-	    get_file(BID_ListCtrl_Title,			     "/mnt/mg/res/app/ctrl/list/ListCtrl_Title.png");
-	    get_file(BID_ListCtrl_TopBK5_0,			     "/mnt/mg/res/app/ctrl/list/ListCtrl_TopBK5_0.png");
-	    get_file(BID_ListCtrl_TopBK5_1,			     "/mnt/mg/res/app/ctrl/list/ListCtrl_TopBK5_1.png");
-		get_file(BID_ListCtrl_BK8_0,				 "/mnt/mg/res/app/ctrl/list/ListCtrl_BK8_0.png");
-	    get_file(BID_ListCtrl_BK8_1,				 "/mnt/mg/res/app/ctrl/list/ListCtrl_BK8_1.png");
-	    get_file(BID_ListCtrl_TopBK8_0,			     "/mnt/mg/res/app/ctrl/list/ListCtrl_TopBK8_0.png");
-	    get_file(BID_ListCtrl_TopBK8_1,			     "/mnt/mg/res/app/ctrl/list/ListCtrl_TopBK8_1.png");
-	    get_file(BID_ListIcon,			             "/mnt/mg/res/app/ctrl/list/ListIcon.png");
-	    get_file(BID_ScrollBK2,		                 "/mnt/mg/res/app/ctrl/list/ScrollBK2.png");
-	    get_file(BID_ScrollDown,		             "/mnt/mg/res/app/ctrl/list/ScrollDown.png");
-	    get_file(BID_ScrollDownON,		             "/mnt/mg/res/app/ctrl/list/ScrollDownON.png");
-	    get_file(BID_ScrollIcon,		             "/mnt/mg/res/app/ctrl/list/ScrollIcon.png");
-	    get_file(BID_ScrollIconON,		             "/mnt/mg/res/app/ctrl/list/ScrollIconON.png");
-	    get_file(BID_ScrollUp,			             "/mnt/mg/res/app/ctrl/list/ScrollUp.png");
-	    get_file(BID_ScrollUpON,		             "/mnt/mg/res/app/ctrl/list/ScrollUpON.png");
-	    get_file(BID_SidebarBK,			             "/mnt/mg/res/app/ctrl/list/SidebarBK.png");
+        get_file(BID_ListCtrl_BK5_0,				 UI_PIC_DIR_PATH"/ctrl/list/ListCtrl_BK5_0.png");
+	    get_file(BID_ListCtrl_BK5_1,				 UI_PIC_DIR_PATH"/ctrl/list/ListCtrl_BK5_1.png");
+	    get_file(BID_ListCtrl_Title,			     UI_PIC_DIR_PATH"/ctrl/list/ListCtrl_Title.png");
+	    get_file(BID_ListCtrl_TopBK5_0,			     UI_PIC_DIR_PATH"/ctrl/list/ListCtrl_TopBK5_0.png");
+	    get_file(BID_ListCtrl_TopBK5_1,			     UI_PIC_DIR_PATH"/ctrl/list/ListCtrl_TopBK5_1.png");
+		get_file(BID_ListCtrl_BK8_0,				 UI_PIC_DIR_PATH"/ctrl/list/ListCtrl_BK8_0.png");
+	    get_file(BID_ListCtrl_BK8_1,				 UI_PIC_DIR_PATH"/ctrl/list/ListCtrl_BK8_1.png");
+	    get_file(BID_ListCtrl_TopBK8_0,			     UI_PIC_DIR_PATH"/ctrl/list/ListCtrl_TopBK8_0.png");
+	    get_file(BID_ListCtrl_TopBK8_1,			     UI_PIC_DIR_PATH"/ctrl/list/ListCtrl_TopBK8_1.png");
+	    get_file(BID_ListIcon,			             UI_PIC_DIR_PATH"/ctrl/list/ListIcon.png");
+	    get_file(BID_ScrollBK2,		                 UI_PIC_DIR_PATH"/ctrl/list/ScrollBK2.png");
+	    get_file(BID_ScrollDown,		             UI_PIC_DIR_PATH"/ctrl/list/ScrollDown.png");
+	    get_file(BID_ScrollDownON,		             UI_PIC_DIR_PATH"/ctrl/list/ScrollDownON.png");
+	    get_file(BID_ScrollIcon,		             UI_PIC_DIR_PATH"/ctrl/list/ScrollIcon.png");
+	    get_file(BID_ScrollIconON,		             UI_PIC_DIR_PATH"/ctrl/list/ScrollIconON.png");
+	    get_file(BID_ScrollUp,			             UI_PIC_DIR_PATH"/ctrl/list/ScrollUp.png");
+	    get_file(BID_ScrollUpON,		             UI_PIC_DIR_PATH"/ctrl/list/ScrollUpON.png");
+	    get_file(BID_SidebarBK,			             UI_PIC_DIR_PATH"/ctrl/list/SidebarBK.png");
 
 		// IP控件
-		get_file(BID_Spin_BK,		          	     "/mnt/mg/res/app/ctrl/spin/Spin_BK.png");
-	    get_file(BID_Spin_Sel,			             "/mnt/mg/res/app/ctrl/spin/Spin_Sel.png");
+		get_file(BID_Spin_BK,		          	     UI_PIC_DIR_PATH"/ctrl/spin/Spin_BK.png");
+	    get_file(BID_Spin_Sel,			             UI_PIC_DIR_PATH"/ctrl/spin/Spin_Sel.png");
 
 		// 进度控件
-		get_file(BID_Proc1_Bk,			         	 "/mnt/mg/res/app/ctrl/prcoressctrl/Proc1_Bk.png");
-		get_file(BID_Proc2_Bk,			         	 "/mnt/mg/res/app/ctrl/prcoressctrl/Proc2_Bk.png");
-		get_file(BID_Proc1_Left,			         "/mnt/mg/res/app/ctrl/prcoressctrl/Proc1_Left.png");
-		get_file(BID_Proc1_On,			         	 "/mnt/mg/res/app/ctrl/prcoressctrl/Proc1_On.png");
-		get_file(BID_Proc1_Right,			         "/mnt/mg/res/app/ctrl/prcoressctrl/Proc1_Right.png");
-		get_file(BID_Proc2_Left,			         "/mnt/mg/res/app/ctrl/prcoressctrl/Proc2_Left.png");
-		get_file(BID_Proc2_On,			         	 "/mnt/mg/res/app/ctrl/prcoressctrl/Proc2_On.png");
-		get_file(BID_Proc2_Right,			         "/mnt/mg/res/app/ctrl/prcoressctrl/Proc2_Right.png");
+		get_file(BID_Proc1_Bk,			         	 UI_PIC_DIR_PATH"/ctrl/prcoressctrl/Proc1_Bk.png");
+		get_file(BID_Proc2_Bk,			         	 UI_PIC_DIR_PATH"/ctrl/prcoressctrl/Proc2_Bk.png");
+		get_file(BID_Proc1_Left,			         UI_PIC_DIR_PATH"/ctrl/prcoressctrl/Proc1_Left.png");
+		get_file(BID_Proc1_On,			         	 UI_PIC_DIR_PATH"/ctrl/prcoressctrl/Proc1_On.png");
+		get_file(BID_Proc1_Right,			         UI_PIC_DIR_PATH"/ctrl/prcoressctrl/Proc1_Right.png");
+		get_file(BID_Proc2_Left,			         UI_PIC_DIR_PATH"/ctrl/prcoressctrl/Proc2_Left.png");
+		get_file(BID_Proc2_On,			         	 UI_PIC_DIR_PATH"/ctrl/prcoressctrl/Proc2_On.png");
+		get_file(BID_Proc2_Right,			         UI_PIC_DIR_PATH"/ctrl/prcoressctrl/Proc2_Right.png");
 
 		// 公共类
-		get_file(BID_Inter_MuteOff1,                 "/mnt/mg/res/app/comm/volume/Inter_MuteOff1.png");
-		get_file(BID_Inter_MuteOff2,                 "/mnt/mg/res/app/comm/volume/Inter_MuteOff2.png");
-		get_file(BID_Inter_MuteOn1,                  "/mnt/mg/res/app/comm/volume/Inter_MuteOn1.png");
-	    get_file(BID_Inter_MuteOn2,                  "/mnt/mg/res/app/comm/volume/Inter_MuteOn2.png");
-		get_file(BID_Inter_Volume0,                  "/mnt/mg/res/app/comm/volume/Inter_Volume0.png");
-		get_file(BID_Inter_Volume1,                  "/mnt/mg/res/app/comm/volume/Inter_Volume1.png");
-		get_file(BID_Inter_Volume2,                  "/mnt/mg/res/app/comm/volume/Inter_Volume2.png");
-		get_file(BID_Inter_Volume3,                  "/mnt/mg/res/app/comm/volume/Inter_Volume3.png");
-		get_file(BID_Inter_Volume4,                  "/mnt/mg/res/app/comm/volume/Inter_Volume4.png");
-		get_file(BID_Inter_Volume5,                  "/mnt/mg/res/app/comm/volume/Inter_Volume5.png");
-		get_file(BID_Inter_Volume6,                  "/mnt/mg/res/app/comm/volume/Inter_Volume6.png");
-		get_file(BID_Inter_Volume7,                  "/mnt/mg/res/app/comm/volume/Inter_Volume7.png");
-		get_file(BID_Inter_Volume8,                  "/mnt/mg/res/app/comm/volume/Inter_Volume8.png");
-    	get_file(BID_MsgBoxBK,						 "/mnt/mg/res/app/comm/msg/MsgBoxBK.png");
-    	get_file(BID_QueryBoxBK,					 "/mnt/mg/res/app/comm/msg/QueryBoxBK.png");
-    	get_file(BID_Msg_BK1,						 "/mnt/mg/res/app/comm/msg/Msg_BK1.png");
-		get_file(BID_Msg_BK2,						 "/mnt/mg/res/app/comm/msg/Msg_BK2.png");
-		get_file(BID_MsgRight,						 "/mnt/mg/res/app/comm/msg/MsgRight.png");
-		get_file(BID_MsgBoxAlarm,					 "/mnt/mg/res/app/comm/msg/MsgBoxAlarm.png");
-		get_file(BID_MsgBoxMsg,						 "/mnt/mg/res/app/comm/msg/MsgBoxMsg.png");
-		get_file(BID_MsgBoxCallIn,					 "/mnt/mg/res/app/comm/msg/MsgBoxCallIn.png");
-		get_file(BID_MsgInfoIcon,					 "/mnt/mg/res/app/comm/msg/MsgInfoIcon.png");
-		get_file(BID_MsgLock,                        "/mnt/mg/res/app/comm/msg/MsgLock.png");
-		get_file(BID_MsgQueryIcon,                   "/mnt/mg/res/app/comm/msg/MsgQueryIcon.png");
-		get_file(BID_MsgTalk,                        "/mnt/mg/res/app/comm/msg/MsgTalk.png");
-		get_file(BID_QueryButton,                    "/mnt/mg/res/app/comm/msg/QueryButton.png");
-        get_file(BID_QueryButtonON,                  "/mnt/mg/res/app/comm/msg/QueryButtonON.png");
-		get_file(BID_Un_Read_1,						 "/mnt/mg/res/app/comm/unread/Un_Read_1.png");
-		get_file(BID_Un_Read_2,						 "/mnt/mg/res/app/comm/unread/Un_Read_2.png");
-		get_file(BID_Un_Read_3,						 "/mnt/mg/res/app/comm/unread/Un_Read_3.png");
-		get_file(BID_Un_Read_4,						 "/mnt/mg/res/app/comm/unread/Un_Read_4.png");
-		get_file(BID_Un_Read_5,						 "/mnt/mg/res/app/comm/unread/Un_Read_5.png");
-		get_file(BID_Un_Read_6,						 "/mnt/mg/res/app/comm/unread/Un_Read_6.png");
-		get_file(BID_Un_Read_7,						 "/mnt/mg/res/app/comm/unread/Un_Read_7.png");
-		get_file(BID_Un_Read_8,						 "/mnt/mg/res/app/comm/unread/Un_Read_8.png");
-		get_file(BID_Un_Read_9,						 "/mnt/mg/res/app/comm/unread/Un_Read_9.png");
-		get_file(BID_Un_Read_10,					 "/mnt/mg/res/app/comm/unread/Un_Read_10.png");
-		get_file(BID_Com_Chose,						 "/mnt/mg/res/app/comm/Com_Chose.png");
-		get_file(BID_Com_Chose_Unenable,			 "/mnt/mg/res/app/comm/Com_Chose_Unenable.png");
-		get_file(BID_Com_UnChose,					 "/mnt/mg/res/app/comm/Com_UnChose.png");
-		get_file(BID_Com_UnChose_Unenable,			 "/mnt/mg/res/app/comm/Com_UnChose_Unenable.png");
+		get_file(BID_Inter_MuteOff1,                 UI_PIC_DIR_PATH"/comm/volume/Inter_MuteOff1.png");
+		get_file(BID_Inter_MuteOff2,                 UI_PIC_DIR_PATH"/comm/volume/Inter_MuteOff2.png");
+		get_file(BID_Inter_MuteOn1,                  UI_PIC_DIR_PATH"/comm/volume/Inter_MuteOn1.png");
+	    get_file(BID_Inter_MuteOn2,                  UI_PIC_DIR_PATH"/comm/volume/Inter_MuteOn2.png");
+		get_file(BID_Inter_Volume0,                  UI_PIC_DIR_PATH"/comm/volume/Inter_Volume0.png");
+		get_file(BID_Inter_Volume1,                  UI_PIC_DIR_PATH"/comm/volume/Inter_Volume1.png");
+		get_file(BID_Inter_Volume2,                  UI_PIC_DIR_PATH"/comm/volume/Inter_Volume2.png");
+		get_file(BID_Inter_Volume3,                  UI_PIC_DIR_PATH"/comm/volume/Inter_Volume3.png");
+		get_file(BID_Inter_Volume4,                  UI_PIC_DIR_PATH"/comm/volume/Inter_Volume4.png");
+		get_file(BID_Inter_Volume5,                  UI_PIC_DIR_PATH"/comm/volume/Inter_Volume5.png");
+		get_file(BID_Inter_Volume6,                  UI_PIC_DIR_PATH"/comm/volume/Inter_Volume6.png");
+		get_file(BID_Inter_Volume7,                  UI_PIC_DIR_PATH"/comm/volume/Inter_Volume7.png");
+		get_file(BID_Inter_Volume8,                  UI_PIC_DIR_PATH"/comm/volume/Inter_Volume8.png");
+    	get_file(BID_MsgBoxBK,						 UI_PIC_DIR_PATH"/comm/msg/MsgBoxBK.png");
+    	get_file(BID_QueryBoxBK,					 UI_PIC_DIR_PATH"/comm/msg/QueryBoxBK.png");
+    	get_file(BID_Msg_BK1,						 UI_PIC_DIR_PATH"/comm/msg/Msg_BK1.png");
+		get_file(BID_Msg_BK2,						 UI_PIC_DIR_PATH"/comm/msg/Msg_BK2.png");
+		get_file(BID_MsgRight,						 UI_PIC_DIR_PATH"/comm/msg/MsgRight.png");
+		get_file(BID_MsgBoxAlarm,					 UI_PIC_DIR_PATH"/comm/msg/MsgBoxAlarm.png");
+		get_file(BID_MsgBoxMsg,						 UI_PIC_DIR_PATH"/comm/msg/MsgBoxMsg.png");
+		get_file(BID_MsgBoxCallIn,					 UI_PIC_DIR_PATH"/comm/msg/MsgBoxCallIn.png");
+		get_file(BID_MsgInfoIcon,					 UI_PIC_DIR_PATH"/comm/msg/MsgInfoIcon.png");
+		get_file(BID_MsgLock,                        UI_PIC_DIR_PATH"/comm/msg/MsgLock.png");
+		get_file(BID_MsgQueryIcon,                   UI_PIC_DIR_PATH"/comm/msg/MsgQueryIcon.png");
+		get_file(BID_MsgTalk,                        UI_PIC_DIR_PATH"/comm/msg/MsgTalk.png");
+		get_file(BID_QueryButton,                    UI_PIC_DIR_PATH"/comm/msg/QueryButton.png");
+        get_file(BID_QueryButtonON,                  UI_PIC_DIR_PATH"/comm/msg/QueryButtonON.png");
+		get_file(BID_Un_Read_1,						 UI_PIC_DIR_PATH"/comm/unread/Un_Read_1.png");
+		get_file(BID_Un_Read_2,						 UI_PIC_DIR_PATH"/comm/unread/Un_Read_2.png");
+		get_file(BID_Un_Read_3,						 UI_PIC_DIR_PATH"/comm/unread/Un_Read_3.png");
+		get_file(BID_Un_Read_4,						 UI_PIC_DIR_PATH"/comm/unread/Un_Read_4.png");
+		get_file(BID_Un_Read_5,						 UI_PIC_DIR_PATH"/comm/unread/Un_Read_5.png");
+		get_file(BID_Un_Read_6,						 UI_PIC_DIR_PATH"/comm/unread/Un_Read_6.png");
+		get_file(BID_Un_Read_7,						 UI_PIC_DIR_PATH"/comm/unread/Un_Read_7.png");
+		get_file(BID_Un_Read_8,						 UI_PIC_DIR_PATH"/comm/unread/Un_Read_8.png");
+		get_file(BID_Un_Read_9,						 UI_PIC_DIR_PATH"/comm/unread/Un_Read_9.png");
+		get_file(BID_Un_Read_10,					 UI_PIC_DIR_PATH"/comm/unread/Un_Read_10.png");
+		get_file(BID_Com_Chose,						 UI_PIC_DIR_PATH"/comm/Com_Chose.png");
+		get_file(BID_Com_Chose_Unenable,			 UI_PIC_DIR_PATH"/comm/Com_Chose_Unenable.png");
+		get_file(BID_Com_UnChose,					 UI_PIC_DIR_PATH"/comm/Com_UnChose.png");
+		get_file(BID_Com_UnChose_Unenable,			 UI_PIC_DIR_PATH"/comm/Com_UnChose_Unenable.png");
 
 		// 信息									
-        get_file(BID_Message_Read,                	 "/mnt/mg/res/app/message/Message_Read.png");
-		get_file(BID_Message_UnRead,                 "/mnt/mg/res/app/message/Message_UnRead.png");
-		get_file(BID_Message_ImageBK1,               "/mnt/mg/res/app/message/Message_ImageBK1.png");
-		//get_file(BID_Message_ImageBK2,                "/mnt/mg/res/app/message/Message_ImageBK2.png");
+        get_file(BID_Message_Read,                	 UI_PIC_DIR_PATH"/message/Message_Read.png");
+		get_file(BID_Message_UnRead,                 UI_PIC_DIR_PATH"/message/Message_UnRead.png");
+		get_file(BID_Message_ImageBK1,               UI_PIC_DIR_PATH"/message/Message_ImageBK1.png");
+		//get_file(BID_Message_ImageBK2,                UI_PIC_DIR_PATH"/message/Message_ImageBK2.png");
 		
 		// 便利功能
-		get_file(BID_Dianti_Call_main,				 "/mnt/mg/res/app/blgn/Dianti_Call_main.png");
-		get_file(BID_Jrly_FLag_1,					 "/mnt/mg/res/app/blgn/Jrly_FLag_1.png");
-		get_file(BID_Jrly_FLag_2,					 "/mnt/mg/res/app/blgn/Jrly_FLag_2.png");
-		get_file(BID_Play,                       	 "/mnt/mg/res/app/blgn/Play.png");
-		get_file(BID_Rec,                       	 "/mnt/mg/res/app/blgn/Rec.png");
+		get_file(BID_Dianti_Call_main,				 UI_PIC_DIR_PATH"/blgn/Dianti_Call_main.png");
+		get_file(BID_Jrly_FLag_1,					 UI_PIC_DIR_PATH"/blgn/Jrly_FLag_1.png");
+		get_file(BID_Jrly_FLag_2,					 UI_PIC_DIR_PATH"/blgn/Jrly_FLag_2.png");
+		get_file(BID_Play,                       	 UI_PIC_DIR_PATH"/blgn/Play.png");
+		get_file(BID_Rec,                       	 UI_PIC_DIR_PATH"/blgn/Rec.png");
 		
 		// 照片
-		get_file(BID_Snap_Bk,						"/mnt/mg/res/app/photo/Snap_Bk.png");
-		get_file(BID_Hand_Dc,						"/mnt/mg/res/app/photo/Hand_Dc.png");
+		get_file(BID_Snap_Bk,						UI_PIC_DIR_PATH"/photo/Snap_Bk.png");
+		get_file(BID_Hand_Dc,						UI_PIC_DIR_PATH"/photo/Hand_Dc.png");
 
 		// 留影留言
-		get_file(BID_LyLy_Read,            		  	"/mnt/mg/res/app/lyly/LyLy_Read.png");
-		get_file(BID_LyLy_UnRead,					"/mnt/mg/res/app/lyly/LyLy_UnRead.png");
-		get_file(BID_LYLY_BK,						"/mnt/mg/res/app/lyly/LYLY_BK.png");
+		get_file(BID_LyLy_Read,            		  	UI_PIC_DIR_PATH"/lyly/LyLy_Read.png");
+		get_file(BID_LyLy_UnRead,					UI_PIC_DIR_PATH"/lyly/LyLy_UnRead.png");
+		get_file(BID_LYLY_BK,						UI_PIC_DIR_PATH"/lyly/LYLY_BK.png");
 		
 		default:
 			break;

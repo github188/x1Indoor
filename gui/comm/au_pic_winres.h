@@ -21,7 +21,7 @@ extern "C" {
 #include "gui_include.h"
 
 // 皮肤及默认背景
-#define SKIN_FILE							"/mnt/mg/res/app/skin.bmp"					
+#define SKIN_FILE							UI_PIC_DIR_PATH"/skin.bmp"					
 
 
 // 图片资源ID

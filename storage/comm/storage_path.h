@@ -21,10 +21,10 @@
 /**************************************************************************/
 #define SOFTWARE_VER_PATH		"/etc/firmVer"									// 软件版本路径
 #define HARDWARE_VER_PATH		"/etc/chipVer"									// 固件版本路径
-#if 0
+#if 1
 #define CFG_PUBLIC_DRIVE		"/sdcard/user/nand-2"						// 存放记录 临时文件
 #define CFG_PRIVATE_DRIVE		"/sdcard/user/nand-1"						// 系统配置 重要文件
-#define CFG_RES_DRIVE			"/sdcard/user/res/"							// 资源文件 必须原本就存在的路径
+#define CFG_RES_DRIVE			"/sdcard/user/res"							// 资源文件 必须原本就存在的路径
 #else
 #define CFG_PUBLIC_DRIVE		"/nand/user/nand-2"								// 存放记录 临时文件
 #define CFG_PRIVATE_DRIVE		"/nand/user/nand-1"								// 系统配置 重要文件
@@ -42,8 +42,8 @@
 
 
 // 来电铃声
-#define CALL_RING1_PATH			AUDIO_RES_DIR_PATH"/Ring/RING1.WAV"			// 铃声1
-#define CALL_RING2_PATH			AUDIO_RES_DIR_PATH"/Ring/RING2.WAV"			// 铃声2
+#define CALL_RING1_PATH			AUDIO_RES_DIR_PATH"Ring/RING1.WAV"			// 铃声1
+#define CALL_RING2_PATH			AUDIO_RES_DIR_PATH"Ring/RING2.WAV"			// 铃声2
 #define CALL_RING3_PATH			AUDIO_RES_DIR_PATH"Ring/RING3.WAV"			// 铃声3
 #define CALL_RING4_PATH			AUDIO_RES_DIR_PATH"Ring/RING4.WAV"			// 铃声4
 #define CALL_RING5_PATH			AUDIO_RES_DIR_PATH"Ring/RING5.WAV"			// 铃声5
