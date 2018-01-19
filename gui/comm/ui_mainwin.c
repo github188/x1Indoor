@@ -40,6 +40,10 @@
 #endif
 #endif
 
+#if (_LCD_DPI_ == _LCD_800480_)
+#elif (_LCD_DPI_ == _LCD_1024600_)
+#endif
+
 
 #ifdef _IP_MODULE_
 #define IPMODULE_XPOS			(NET_XPOS + NET_W + IP_NET_DISX)
@@ -47,6 +51,7 @@
 #endif
 
 #if (_UI_STYLE_ == _V6_UI_STYLE_)
+#if (_LCD_DPI_ == _LCD_800480_)
 #define TOP_DISY				30					// 图标距顶部的间距
 #define MAIN_RIGHT_W			160					// 右边控件宽度
 #define MAIN_ICON_DISX			90					// 图标X轴间距
@@ -58,6 +63,20 @@
 #define ICON_SEL_DIS			6					// 选中框间距
 #define NEW_HIT_DISX			70					// 新事件提示X轴间距
 #define NEW_HIT_DISY			10					// 新事件提示Y轴间距
+#elif (_LCD_DPI_ == _LCD_1024600_)
+#define TOP_DISY				30					// 图标距顶部的间距
+#define MAIN_RIGHT_W			160					// 右边控件宽度
+#define MAIN_ICON_DISX			90					// 图标X轴间距
+#define MAIN_ICON_DISY			90					// 图标Y轴间距
+#define MAIN_ICON_W				88					// 图标宽
+#define MAIN_ICON_H				88					// 图标高
+#define ICON_TEXT_DISY      	15 					// 字与图标间距
+
+#define ICON_SEL_DIS			6					// 选中框间距
+#define NEW_HIT_DISX			70					// 新事件提示X轴间距
+#define NEW_HIT_DISY			10					// 新事件提示Y轴间距
+#endif
+
 #elif (_UI_STYLE_ == _E81S_UI_STYLE_)
 #define TOP_DISY				20					// 图标距顶部的间距
 #define MAIN_RIGHT_W			160					// 右边控件宽度
