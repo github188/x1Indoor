@@ -28,13 +28,13 @@ extern "C" {
 #define SIDEBAR_YDIS			21
 #define SIDEBAR_SCRLEN			384
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define SIDEBAR_W				80
-#define SIDEBAR_H				428
-#define SIDEBAR_DOWN_ICON_Y		389
-#define SIDEBAR_ICON_W			30
-#define SIDEBAR_ICON_H			70
+#define SIDEBAR_W				102
+#define SIDEBAR_H				535
+#define SIDEBAR_DOWN_ICON_Y		496
+#define SIDEBAR_ICON_W			35
+#define SIDEBAR_ICON_H			87
 #define SIDEBAR_YDIS			21
-#define SIDEBAR_SCRLEN			384
+#define SIDEBAR_SCRLEN			480
 #endif
 
 #if (_UI_STYLE_ == _E81S_UI_STYLE_)

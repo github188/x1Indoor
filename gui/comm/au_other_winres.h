@@ -163,7 +163,7 @@ extern "C" {
 #define LIST_CTRL_X				0
 #define LIST_CTRL_Y				0
 #define LIST_CTRL_W				FORM_LEFT_W
-#define LIST_CTRL_H				LCD_H
+#define LIST_CTRL_H				FORM_LEFT_H
 
 // 主叫、被叫、监视提示字位置
 #define TEXT_XPOS           	40
