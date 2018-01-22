@@ -63,11 +63,11 @@ static void get_filename(BMP_ID_E id, char * filename)
 		get_file(BID_Main8BianLi,                   UI_PIC_DIR_PATH"/main/Main8BianLi.png");          	// ȱ
 	    get_file(BID_Main_Photo,                    UI_PIC_DIR_PATH"/main/Main_Photo.png");
 	   	get_file(BID_Main_KeyDown,                  UI_PIC_DIR_PATH"/main/Main_KeyDown.png");		
-		get_file(BID_Main_Net_1,                    UI_PIC_DIR_PATH"/main/net/Main_Net_1.gif");
-		get_file(BID_Main_Net_2,                    UI_PIC_DIR_PATH"/main/net/Main_Net_2.gif");
-		get_file(BID_Main_Net_3,                    UI_PIC_DIR_PATH"/main/net/Main_Net_3.gif");
-		get_file(BID_Main_Net_4,	                UI_PIC_DIR_PATH"/main/net/Main_Net_4.gif");
-		get_file(BID_Main_Net_5,                    UI_PIC_DIR_PATH"/main/net/Main_Net_5.gif");
+		get_file(BID_Main_Net_1,                    UI_PIC_DIR_PATH"/main/net/Main_Net_1.png");
+		get_file(BID_Main_Net_2,                    UI_PIC_DIR_PATH"/main/net/Main_Net_2.png");
+		get_file(BID_Main_Net_3,                    UI_PIC_DIR_PATH"/main/net/Main_Net_3.png");
+		get_file(BID_Main_Net_4,	                UI_PIC_DIR_PATH"/main/net/Main_Net_4.png");
+		get_file(BID_Main_Net_5,                    UI_PIC_DIR_PATH"/main/net/Main_Net_5.png");
 		get_file(BID_Ipmodule_Bind_Err,             UI_PIC_DIR_PATH"/main/net/ipmodule_bind_err.png");
         get_file(BID_Ipmodule_Online_Err,           UI_PIC_DIR_PATH"/main/net/ipmodule_online_err.png");
         get_file(BID_Ipmodule_Online_Ok,            UI_PIC_DIR_PATH"/main/net/ipmodule_online_ok.png");

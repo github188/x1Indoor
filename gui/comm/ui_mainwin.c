@@ -29,14 +29,14 @@
 #define IPMODULE_H				28
 #endif
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define NET_W					28
-#define NET_H					28
-#define NET_XPOS				10
-#define NET_YPOS				5
+#define NET_W					36
+#define NET_H					36
+#define NET_XPOS				13
+#define NET_YPOS				7
 #ifdef _IP_MODULE_
 #define IP_NET_DISX				8
-#define IPMODULE_W				28
-#define IPMODULE_H				28
+#define IPMODULE_W				36
+#define IPMODULE_H				36
 #endif
 #endif
 
@@ -64,17 +64,17 @@
 #define NEW_HIT_DISX			70					// 新事件提示X轴间距
 #define NEW_HIT_DISY			10					// 新事件提示Y轴间距
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define TOP_DISY				30					// 图标距顶部的间距
-#define MAIN_RIGHT_W			160					// 右边控件宽度
-#define MAIN_ICON_DISX			90					// 图标X轴间距
-#define MAIN_ICON_DISY			90					// 图标Y轴间距
-#define MAIN_ICON_W				88					// 图标宽
-#define MAIN_ICON_H				88					// 图标高
-#define ICON_TEXT_DISY      	15 					// 字与图标间距
+#define TOP_DISY				40					// 图标距顶部的间距
+#define MAIN_RIGHT_W			RIGHT_CTRL_W		// 右边控件宽度
+#define MAIN_ICON_DISX			116					// 图标X轴间距
+#define MAIN_ICON_DISY			112					// 图标Y轴间距
+#define MAIN_ICON_W				112					// 图标宽
+#define MAIN_ICON_H				112					// 图标高
+#define ICON_TEXT_DISY      	19 					// 字与图标间距
 
-#define ICON_SEL_DIS			6					// 选中框间距
-#define NEW_HIT_DISX			70					// 新事件提示X轴间距
-#define NEW_HIT_DISY			10					// 新事件提示Y轴间距
+#define ICON_SEL_DIS			8					// 选中框间距
+#define NEW_HIT_DISX			88					// 新事件提示X轴间距
+#define NEW_HIT_DISY			13					// 新事件提示Y轴间距
 #endif
 
 #elif (_UI_STYLE_ == _E81S_UI_STYLE_)
@@ -897,16 +897,16 @@ static void draw_icon(HDC hdc)
 		// 画图标下的文字
 		if (storage_get_language() != ENGLISH)
 		{
-			SelectFont(hdc, GetFont(FONT_16));
+			SelectFont(hdc, GetFont(FONT_20));
 		}
 		else
 		{
-			SelectFont(hdc, GetFont_ABC(FONT_16));
+			SelectFont(hdc, GetFont_ABC(FONT_20));
 		}
 		rc.left = x-MAIN_ICON_DISX/2;
 		rc.top = y+MAIN_ICON_H+ICON_TEXT_DISY;
 		rc.right = rc.left + MAIN_ICON_W+ MAIN_ICON_DISX;
-		rc.bottom = rc.top + FONT_16;
+		rc.bottom = rc.top + FONT_20;
 		DrawText(hdc, get_str(get_icon_text_image(1, i)), -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
 		
 		if (i == 2 || i == 5)
@@ -1374,7 +1374,7 @@ static void CreateRightCtrl(HWND hDlg)
 	
 	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	uint32 TextID[RIGHT_NUM_MAX] = {SID_Bj_Bf_Home, SID_MainCenter, 0, SID_Right_Sure, SID_MainBianLi_Dianti};
-	#else
+	#elif (_UI_STYLE_ == _V6_UI_STYLE_)
 	uint32 TextID[RIGHT_NUM_MAX] = {SID_Bj_Bf_Home, SID_MainInfo, 0, SID_Right_Sure, SID_MainBianLi_Dianti};	
 	#endif
 	DEFEND_STATE defend_state = storage_get_defend_state();
@@ -1383,7 +1383,7 @@ static void CreateRightCtrl(HWND hDlg)
 	g_rightCtrl.VideoMode = 0;
 	g_rightCtrl.MaxNum = RIGHT_NUM_MAX;
 	g_rightCtrl.BmpBk = BID_RightCtrlBK;
-	g_rightCtrl.TextSize = Font16X16;
+	g_rightCtrl.TextSize = RIGHT_CTRL_FONT;
 	for (i = 0; i < g_rightCtrl.MaxNum; i++)
 	{
 		g_rightCtrl.buttons[i].Enabled = TRUE;

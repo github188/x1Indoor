@@ -366,7 +366,7 @@ static void CreateRightCtrl(HWND hDlg)
 	g_rightCtrl.holdmode = 1;
 	g_rightCtrl.MaxNum = RIGHT_NUM_MAX;
 	g_rightCtrl.BmpBk = BID_RightCtrlBK;
-	g_rightCtrl.TextSize = Font16X16;
+	g_rightCtrl.TextSize = RIGHT_CTRL_FONT;
 	g_rightCtrl.parent = hDlg;
 	
 	for(i = 0; i < g_rightCtrl.MaxNum; i++)

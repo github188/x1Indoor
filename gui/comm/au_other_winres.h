@@ -103,6 +103,7 @@ extern "C" {
 #define VOLUME_TOTAL_H			48					// 音量图标总高度
 #define VOLUME_TOTAL_W			(210+48+20)
 #define VOLUME_ALL_ICON_Y		((VIDEO_WIN_H-VOLUME_TOTAL_H)/2+150)
+
 #elif (_LCD_DPI_ == _LCD_1024600_)
 #define SCREEN_WIDTH	  		1024				// 窗体的宽度
 #define SCREEN_HEIGHT     		600					// 窗体的高度
@@ -150,6 +151,7 @@ extern "C" {
 #define KEYBOARD_CTRL_Y         (FORM_H-KEYBOARD_CTRL_H)
 
 // 右边控件宏定义
+#define RIGHT_CTRL_FONT			FONT_20
 #define RIGHT_CTRL_X			FORM_LEFT_W
 #define RIGHT_CTRL_Y			0
 #define RIGHT_CTRL_W			FORM_RIGHT_W

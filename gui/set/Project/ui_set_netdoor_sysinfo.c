@@ -528,7 +528,7 @@ static void CreateRightCtrl(HWND hDlg)
 	g_rightCtrl.VideoMode = 0;
 	g_rightCtrl.MaxNum = RIGHT_NUM_MAX;
 	g_rightCtrl.BmpBk = BID_RightCtrlBK;
-	g_rightCtrl.TextSize = Font16X16;
+	g_rightCtrl.TextSize = RIGHT_CTRL_FONT;
 	for (i = 0; i < g_rightCtrl.MaxNum; i++)
 	{
 		g_rightCtrl.buttons[i].Enabled = TRUE;
