@@ -67,7 +67,7 @@
 #define TOP_DISY				40					// 图标距顶部的间距
 #define MAIN_RIGHT_W			RIGHT_CTRL_W		// 右边控件宽度
 #define MAIN_ICON_DISX			116					// 图标X轴间距
-#define MAIN_ICON_DISY			112					// 图标Y轴间距
+#define MAIN_ICON_DISY			116					// 图标Y轴间距
 #define MAIN_ICON_W				112					// 图标宽
 #define MAIN_ICON_H				112					// 图标高
 #define ICON_TEXT_DISY      	19 					// 字与图标间距
@@ -1200,7 +1200,6 @@ static void RightCtrlCommand(HWND hDlg, LPARAM lParam)
 	uint32 TextId = 0;
 	uint32 image = SendMessage(GetDlgItem(hDlg, IDC_RIGHT_BUTTON),
 		WM_Right_Get_ImageOrTextID, lParam, 0);
-
 	switch (image)
 	{
 		case BID_Right_Table:
@@ -1432,6 +1431,67 @@ static void create_ctrls(HWND hDlg)
 	CreateRightCtrl(hDlg);
 }
 
+/*************************************************
+  Function:		hook_msg_proc
+  Description: 	钩子信号处理
+  Input: 		
+	1.hDlg		句柄
+  	2.message	消息
+  	3.wParam	参数1
+  	4.lParam	参数2
+  Output:		无
+  Return:		是否继续传递事件
+  Others:
+*************************************************/
+static int hook_msg_proc(void* context, HWND hWnd, int message, WPARAM wParam, LPARAM lParam)
+{	
+	// 防止连续按触摸屏引起死机重启
+	hw_clr_monitor_dog();
+
+	printf("x: %d  y: %d\n ", LOWORD(lParam), HIWORD(lParam));
+	int32 x = LOWORD(lParam);
+	int32 y = HIWORD(lParam);
+	int32 msg = 0;
+
+	if (x > 820)
+	{
+		if (MSG_LBUTTONUP == message)
+		{
+			if (y > 0 && y < 120)
+			{
+				msg = RIGHT_SCANCODE_F1;
+			}
+			else if(y > 120 && y < 240)
+			{
+				msg = RIGHT_SCANCODE_F2;
+			}
+			else if(y > 240 && y < 360)
+			{
+				msg = RIGHT_SCANCODE_F3;
+			}
+			else if(y > 360 && y < 480)
+			{
+				msg = RIGHT_SCANCODE_F4;
+			}
+			else
+			{
+				msg = RIGHT_SCANCODE_F5;
+			}
+
+			PGUI_FORM frm = get_cur_form();
+			if(frm == NULL)
+			{
+				log_printf("get_cur_form is NULL!\n");
+				return FALSE;
+			}
+			SendNotifyMessage(GetDlgItem(frm->hWnd, IDC_RIGHT_BUTTON), MSG_KEYUP, msg, lParam);
+			return HOOK_STOP;
+		}
+	}
+	return HOOK_GOON;
+}
+
+
 #ifdef _ENABLE_TOUCH_
 /*************************************************
   Function:		get_touch_down
@@ -1519,6 +1579,8 @@ static int WindowProc(HWND hDlg, int message, WPARAM wParam, LPARAM lParam)
 		case MSG_CREATE:
 			set_skin(SKIN_1);						// 设置皮肤方案
 			create_ctrls(hDlg);
+			RegisterKeyMsgHook(hDlg, hook_msg_proc);	// 注册钩子
+			RegisterMouseMsgHook(hDlg, hook_msg_proc);
 			break;
 		
 		case MSG_INITDIALOG:
