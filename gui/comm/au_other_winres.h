@@ -27,6 +27,7 @@ extern "C" {
 #define FONT_14				14						// 14号字体
 #define FONT_16				16						// 16号字体
 #define FONT_20				20						// 20号字体
+#define FONT_22				22						// 22号字体
 #define FONT_24				24						// 24号字体
 #define FONT_26				26						// 26号字体
 #define FONT_28				28						// 28号字体
@@ -158,10 +159,11 @@ extern "C" {
 #define RIGHT_CTRL_H			FORM_RIGHT_H
 
 // 列表控件宏定义
+#define LIST_CTRL_FONT			FONT_22									// 列表控件字体大小
 #define LIST_CTRL_X				0
 #define LIST_CTRL_Y				0
-#define LIST_CTRL_W				640
-#define LIST_CTRL_H				480
+#define LIST_CTRL_W				FORM_LEFT_W
+#define LIST_CTRL_H				LCD_H
 
 // 主叫、被叫、监视提示字位置
 #define TEXT_XPOS           	40

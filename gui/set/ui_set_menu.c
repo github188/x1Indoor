@@ -555,7 +555,7 @@ static void CreateListCtrl(HWND hDlg)
 	g_listCtrl.SideBarMode = 1;
 	g_listCtrl.KeyCallBack = (SidebarKeyCallBack)get_Sidebar_key;
 	g_listCtrl.Drawcallback = (SidebarCallBack)draw_Sidebar;// 侧边栏
-	g_listCtrl.fonttype = Font16X16;				// 文字显示大小
+	g_listCtrl.fonttype = LIST_CTRL_FONT;				// 文字显示大小
 	g_listCtrl.Width[0] = 70;
 	g_listCtrl.Width[1] = 200;
 	#if (_UI_STYLE_ == _E81S_UI_STYLE_)

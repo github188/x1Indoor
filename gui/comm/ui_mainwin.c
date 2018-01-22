@@ -363,25 +363,13 @@ static uint8 g_RtspKeepTime = 0;	// 与流媒体保持的心跳通讯时间
 *************************************************/
 static void reflash_page(void)
 {
-	#if 0
 	RECT rc;
-	uint8 i, j;
 	
-	i = index /3;
-	j = index %3;
-	rc.left = MAIN_ICON_XPOS+j*(MAIN_ICON_W+MAIN_ICON_DIS_X*3/4);
-	rc.top = MAIN_ICON_YPOS+i*(MAIN_ICON_H+MAIN_ICON_DIS_Y+FONT_16);
-	rc.right = rc.left+(MAIN_ICON_W+MAIN_ICON_DIS_X*3/4)+FONT_16;
-	rc.bottom = rc.top+(MAIN_ICON_H+MAIN_ICON_DIS_Y+FONT_16);
-	InvalidateRect(self->hWnd, &rc, TRUE);
-	#else	
-	RECT rc;
-	rc.left = FORM_X;
-	rc.top = FORM_Y;
-	rc.right = FORM_W;
+	rc.left   = FORM_X;
+	rc.top    = FORM_Y;
+	rc.right  = FORM_W;
 	rc.bottom = FORM_H;
-	InvalidateRect(self->hWnd, &rc, FALSE);
-	#endif
+	InvalidateRect(self->hWnd, &rc, TRUE);
 }
 
 /*************************************************
@@ -1215,12 +1203,11 @@ static void RightCtrlCommand(HWND hDlg, LPARAM lParam)
 					g_CurKey = 0;
 				}
 			}
-			
 			#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 			RECT rc;
 			MAIN_RC (rc);
 			InvalidateRect(self->hWnd, &rc, FALSE);
-			#else
+			#elif (_UI_STYLE_ == _V6_UI_STYLE_)
 			reflash_page();
 			#endif			
 			break;
