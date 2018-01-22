@@ -31,7 +31,7 @@ extern "C" {
 #define SIDEBAR_W				102
 #define SIDEBAR_H				535
 #define SIDEBAR_DOWN_ICON_Y		496
-#define SIDEBAR_ICON_W			35
+#define SIDEBAR_ICON_W			36
 #define SIDEBAR_ICON_H			87
 #define SIDEBAR_YDIS			21
 #define SIDEBAR_SCRLEN			480

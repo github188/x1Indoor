@@ -343,38 +343,6 @@ ECHO_STORAGE Fwrite_common (char * Filename, void * Data, int DataSize, int Data
 	return ret;
 }
 
-#if 0
-/*************************************************
-  Function:    		get_filesize
-  Description: 		获得指定路径文件的大小
-  Input:                  
-  	1.filepath		文件路径
-  Output:			无
-  Return:			成功:指定文件的大小(单位字节)
-					不成功:FALSE
-  Others:
-*************************************************/
-int32 get_filesize(int8 *filepath)
-{
-	struct stat buf;
-	int32 ret;
-	
-	if (NULL == filepath)
-	{
-	   	printf(" not find \n");
-	   	return -1;
-	}
-
-	ret = stat(filepath,&buf);
-	if (ret == -1)
-	{
-		return -1;
-	}
-    printf("buf.st_size: %d \n", (int)buf.st_size);
-	return buf.st_size;
-}
-#endif
-
 /*************************************************
   Function:		Fread_common
   Description: 	读数据
@@ -1673,22 +1641,27 @@ uint32 storage_get_closelcd_time(void)
 			return (60*3);
 			
 		case EPHOTO_TIME_5:
-			return 5;
+			return (60*5);
 			
 		case EPHOTO_TIME_10:
-			return 10;
+			return (60*10);
 
 		case EPHOTO_TIME_15:
-			return 15;
+			return (60*15);
 			
 		case EPHOTO_TIME_30:
-			return 30;
+			return (60*30);
 			
 		case EPHOTO_TIME_60:
-			return 60;
+			return (60*60);
 
 		case EPHOTO_TIME_120:
-			return 120;
+			return (120*60);
+
+		// 因每天室内机会重启
+		// 故此关屏时间>1天则视为永不关屏
+		case EPHOTO_TIME_NEVER:
+			return (48*60*60);
 			
 		default:
 			return (60*60);
