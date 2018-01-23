@@ -24,11 +24,11 @@ typedef struct hiRECT_S
 }RECT_S, * PRECT_S;
 
 #define FONT_TYPE		FONT_TYPE_NAME_ALL			// 字体类型
-#define FONT_COUNT		3							// 字体个数
+#define FONT_COUNT		4							// 字体个数
 #define FONT_ABC_COUNT	3							// 英文数字字体个数
 #define	FORM_COUNT		50							// 窗体最大数
 
-static int g_FontSize[FONT_COUNT] = {FONT_12, FONT_16, FONT_20};		// 逻辑字体大小
+static int g_FontSize[FONT_COUNT] = {FONT_16, FONT_20, FONT_22, FONT_28};		// 逻辑字体大小
 static PLOGFONT g_FontBIG5[FONT_COUNT];				// Big5常规字体
 static PLOGFONT g_FontBIG5Bold[FONT_COUNT];			// Big5粗体字体
 static PLOGFONT g_FontGB[FONT_COUNT];				// GB2312常规字体
@@ -76,6 +76,7 @@ void InitLogFont(void)
 	
 	for (i = 0; i < FONT_COUNT; i++)
 	{
+		#if 0
 		g_FontBIG5[i] = CreateLogFont(FONT_TYPE, "ming", "g_Big5", 
 						FONT_WEIGHT_REGULAR, FONT_SLANT_ROMAN, FONT_SETWIDTH_NORMAL,
 						FONT_SPACING_CHARCELL, FONT_UNDERLINE_NONE, FONT_STRUCKOUT_NONE, 
@@ -95,10 +96,32 @@ void InitLogFont(void)
 						FONT_WEIGHT_BOLD, FONT_SLANT_ROMAN, FONT_SETWIDTH_NORMAL,
 						FONT_SPACING_CHARCELL, FONT_UNDERLINE_NONE, FONT_STRUCKOUT_NONE, 
 						g_FontSize[i], 0);
+		#else
+		g_FontBIG5[i] = CreateLogFont(FONT_TYPE, "song", FONT_CHARSET_GB2312_0, 
+						FONT_WEIGHT_BOOK, FONT_SLANT_ROMAN, FONT_SETWIDTH_NORMAL,
+						FONT_SPACING_CHARCELL, FONT_UNDERLINE_NONE, FONT_STRUCKOUT_NONE, 
+						g_FontSize[i], 0);
+						
+		g_FontBIG5Bold[i] = CreateLogFont(FONT_TYPE, "song", FONT_CHARSET_GB2312_0, 
+						FONT_WEIGHT_DEMIBOLD, FONT_SLANT_ROMAN, FONT_SETWIDTH_NORMAL,
+						FONT_SPACING_CHARCELL, FONT_UNDERLINE_NONE, FONT_STRUCKOUT_NONE, 
+						g_FontSize[i], 0);
+
+		g_FontGB[i] = CreateLogFont (FONT_TYPE, "fixed", FONT_CHARSET_GB2312_0,
+						FONT_WEIGHT_BOOK, FONT_SLANT_ROMAN, FONT_FLIP_NIL,
+						FONT_FLIP_NIL, FONT_UNDERLINE_NONE, FONT_STRUCKOUT_NONE,
+						g_FontSize[i], 0);
+
+		g_FontGBBold[i] = CreateLogFont(FONT_TYPE, "fixed", FONT_CHARSET_GB2312_0, 
+						FONT_WEIGHT_DEMIBOLD, FONT_SLANT_ROMAN, FONT_SETWIDTH_NORMAL,
+						FONT_SPACING_CHARCELL, FONT_UNDERLINE_NONE, FONT_STRUCKOUT_NONE, 
+						g_FontSize[i], 0);
+		#endif
 	}			
 
 	for (i = 0; i < FONT_ABC_COUNT; i++)
 	{
+		#if 0
 		g_FontABC[i] = CreateLogFont(FONT_TYPE, "Arial", "ascii", 
 						FONT_WEIGHT_REGULAR, FONT_SLANT_ROMAN, FONT_SETWIDTH_NORMAL,
 						FONT_SPACING_CHARCELL, FONT_UNDERLINE_NONE, FONT_STRUCKOUT_NONE, 
@@ -108,6 +131,17 @@ void InitLogFont(void)
 						FONT_WEIGHT_BOLD, FONT_SLANT_ROMAN, FONT_SETWIDTH_NORMAL,
 						FONT_SPACING_CHARCELL, FONT_UNDERLINE_NONE, FONT_STRUCKOUT_NONE, 
 						g_FontABCSize[i], 0);
+		#else
+		g_FontABC[i] = CreateLogFont(FONT_TYPE, "times", FONT_CHARSET_ISO8859_1, 
+						FONT_WEIGHT_BOOK, FONT_SLANT_ROMAN, FONT_SETWIDTH_NORMAL,
+						FONT_SPACING_CHARCELL, FONT_UNDERLINE_NONE, FONT_STRUCKOUT_NONE, 
+						g_FontABCSize[i], 0);
+
+		g_FontABCBold[i] = CreateLogFont(FONT_TYPE, "times", FONT_CHARSET_ISO8859_1, 
+						FONT_WEIGHT_DEMIBOLD, FONT_SLANT_ROMAN, FONT_SETWIDTH_NORMAL,
+						FONT_SPACING_CHARCELL, FONT_UNDERLINE_NONE, FONT_STRUCKOUT_NONE, 
+						g_FontABCSize[i], 0);
+		#endif
 	}	
 }
 
