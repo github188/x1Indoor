@@ -137,18 +137,18 @@ extern "C" {
 #define MAX_LEN					8     
 #define PASSWORD_LEN 			6
 
-#define INPUT_CTRL_W			356
-#define INPUT_CTRL_H			74
+#define INPUT_CTRL_W			450
+#define INPUT_CTRL_H			90
 #define	 INPUT_CTRL_X			((FORM_W-RIGHT_CTRL_W-INPUT_CTRL_W)/2)
-#define INPUT_CTRL_Y			90
+#define INPUT_CTRL_Y			113
 
 // ¼üÅÌ¿Ø¼þºê¶¨Òå
 #define KEYBORD_NUM_MAX         11
 #define KEYDOWN  			    1
 #define KEYUP  					0
 
-#define KEYBOARD_CTRL_W         640
-#define KEYBOARD_CTRL_H         90  
+#define KEYBOARD_CTRL_W         820
+#define KEYBOARD_CTRL_H         115  
 #define KEYBOARD_CTRL_X         0
 #define KEYBOARD_CTRL_Y         (FORM_H-KEYBOARD_CTRL_H)
 

@@ -26,11 +26,11 @@
 #elif (_LCD_DPI_ == _LCD_1024600_)
 #define KEYBOARD_BK_X			0
 #define KEYBOARD_BK_Y      	    0
-#define KEYBOARD_BK_W       	640
-#define KEYBOARD_BK_H       	90			   		             		
-#define KEYBOARD_NUM_DISX       52             		// Ñ¡Ôñ¼üÌøÔ¾¼ä¾à
-#define KEYBOARD_SELECT_XPOS    1              		
-#define KEYBOARD_SELECT_YPOS    8 
+#define KEYBOARD_BK_W       	820
+#define KEYBOARD_BK_H       	115			   		             		
+#define KEYBOARD_NUM_DISX       66             		// Ñ¡Ôñ¼üÌøÔ¾¼ä¾à
+#define KEYBOARD_SELECT_XPOS    25              		
+#define KEYBOARD_SELECT_YPOS    10 
 #endif
 
 #define KEYBOARD_MODE0_BK		BID_KeyBoardBK_Pass

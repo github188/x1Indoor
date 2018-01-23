@@ -29,31 +29,31 @@
 #define INPUT_CTRL_PW_H			INPUT_ICON_H
 
 #define PW_MAX_NUM				2					// 密码输入框最大数
-#define	PW_TEXT_LEFT1			(INPUT_CTRL_X_2 - 50)
+#define	 PW_TEXT_LEFT1			(INPUT_CTRL_X_2 - 50)
 #define PW_TEXT_TOP1			INPUT_CTRL_PW_Y + 15//(INPUT_ICON_W -FONT_16)/2 
-#define	PW_TEXT_DISX			(INPUT_CTRL_DISX_2-15)	// 2个密码框时文字的距离
-#define	PW_TEXT_LEFT2			(INPUT_CTRL_X_1 - 50)
+#define	 PW_TEXT_DISX			(INPUT_CTRL_DISX_2-15)	// 2个密码框时文字的距离
+#define	 PW_TEXT_LEFT2			(INPUT_CTRL_X_1 - 50)
 #define PW_TEXT_TOP2			PW_TEXT_TOP1
 #define PW_TEXT					50
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define LIST_ITEM_DISX			40
-#define LIST_TOP_H				52
-#define INPUT_ICON_W			102
-#define INPUT_ICON_H			42
+#define LIST_ITEM_DISX			50
+#define LIST_TOP_H				65
+#define INPUT_ICON_W			128
+#define INPUT_ICON_H			50
 #define INPUT_CTRL_X_1	 		(FORM_W - RIGHT_CTRL_W - INPUT_ICON_W)/2
 #define INPUT_CTRL_DISX_1		0				    // 一个输入框x坐标和间距
 #define INPUT_CTRL_DISX			(FORM_W - RIGHT_CTRL_W - 2*INPUT_ICON_W)/3
 #define INPUT_CTRL_DISX_2		INPUT_CTRL_DISX + INPUT_ICON_W	// 两个输入框x坐标和间距
 #define INPUT_CTRL_X_2	 		(FORM_W - RIGHT_CTRL_W - 2*INPUT_ICON_W - INPUT_CTRL_DISX)/2					
-#define INPUT_CTRL_PW_Y			(LIST_TOP_H + 30)	// password 输入框坐标
+#define INPUT_CTRL_PW_Y			(LIST_TOP_H + 38)	// password 输入框坐标
 #define INPUT_CTRL_PW_W			INPUT_ICON_W
 #define INPUT_CTRL_PW_H			INPUT_ICON_H
 
 #define PW_MAX_NUM				2					// 密码输入框最大数
-#define	PW_TEXT_LEFT1			(INPUT_CTRL_X_2 - 50)
-#define PW_TEXT_TOP1			INPUT_CTRL_PW_Y + 15//(INPUT_ICON_W -FONT_16)/2 
-#define	PW_TEXT_DISX			(INPUT_CTRL_DISX_2-15)	// 2个密码框时文字的距离
-#define	PW_TEXT_LEFT2			(INPUT_CTRL_X_1 - 50)
+#define	 PW_TEXT_LEFT1			(INPUT_CTRL_X_2 - 63)
+#define PW_TEXT_TOP1			INPUT_CTRL_PW_Y + 19//(INPUT_ICON_W -FONT_16)/2 
+#define PW_TEXT_DISX			(INPUT_CTRL_DISX_2-19)	// 2个密码框时文字的距离
+#define	 PW_TEXT_LEFT2			(INPUT_CTRL_X_1 - 63)
 #define PW_TEXT_TOP2			PW_TEXT_TOP1
 #define PW_TEXT					50
 #endif
