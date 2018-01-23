@@ -335,11 +335,16 @@ static void CreateListCtrl(HWND hDlg)
 	g_listCtrl.Mode = LIST_MODE_COMMON;				// 抬起释放，没有高亮显示
 	g_listCtrl.Caption = 1;							// 是否有标题栏
 	g_listCtrl.SideBarMode = 1;
-	g_listCtrl.fonttype = Font16X16;				// 文字显示大小
+	g_listCtrl.fonttype = LIST_CTRL_FONT;				// 文字显示大小
 	g_listCtrl.HeadInfo.Image = BID_ListCtrl_Title;
 	g_listCtrl.HeadInfo.TextID = SID_Net_Door_LockType;
+	#if (_LCD_DPI_ == _LCD_800480_)
 	g_listCtrl.Width[0] = 200;
 	g_listCtrl.Width[1] = 100;	
+	#elif (_LCD_DPI_ == _LCD_1024600_)
+	g_listCtrl.Width[0] = 250;
+	g_listCtrl.Width[1] = 125;	
+	#endif
 
 	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	g_listCtrl.Sidebar = 0;							// 侧边栏

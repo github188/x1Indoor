@@ -781,14 +781,18 @@ static void CreateListCtrl(HWND hDlg)
 	g_listCtrl.PageCount = 5;						// 显示个数
 	g_listCtrl.Sidebar = 0;							// 侧边栏
 	g_listCtrl.SideBarMode = 0;
-	g_listCtrl.fonttype = Font16X16;				// 文字显示大小
+	g_listCtrl.fonttype = LIST_CTRL_FONT;				// 文字显示大小
 	g_listCtrl.ImageTopBk = BID_ListCtrl_TopBK5_0;
 	g_listCtrl.ImageBk = BID_ListCtrl_BK5_0;
 	g_listCtrl.HeadInfo.Image = 0;
 	g_listCtrl.HeadInfo.TextID = 0;
+#if (_LCD_DPI_ == _LCD_800480_)
 	g_listCtrl.Width[0] = 100;
 	g_listCtrl.Width[1] = 300;
-
+#elif (_LCD_DPI_ == _LCD_1024600_)
+	g_listCtrl.Width[0] = 125;
+	g_listCtrl.Width[1] = 375;
+#endif
 	g_listwin = CreateWindow(AU_LIST_CTRL, "", 
 	 		 WS_VISIBLE | BS_NOTIFY | BS_DEFPUSHBUTTON, 
 			 IDC_LIST_CTRL, 

@@ -104,14 +104,18 @@ static void CreateListCtrl(HWND hDlg)
 	g_listctrl.Sidebar = 0;							// 侧边栏
 	g_listctrl.SideBarMode = 1;
 	g_listctrl.Drawcallback = NULL;					// 侧边栏
-	g_listctrl.fonttype = Font16X16;				// 文字显示大小
+	g_listctrl.fonttype = LIST_CTRL_FONT;				// 文字显示大小
 	g_listctrl.ImageTopBk = BID_ListCtrl_TopBK5_0;
 	g_listctrl.ImageBk = BID_ListCtrl_BK5_0;
 	g_listctrl.HeadInfo.Image = BID_ListCtrl_Title;
 	g_listctrl.HeadInfo.TextID = SID_Set_UAlarm_Remote;
+	#if (_LCD_DPI_ == _LCD_800480_)
 	g_listctrl.Width[0] = 70;
 	g_listctrl.Width[1] = 200;
-	
+	#elif (_LCD_DPI_ == _LCD_1024600_)
+	g_listctrl.Width[0] = 88;
+	g_listctrl.Width[1] = 250;
+	#endif
 	g_listwin = CreateWindow(AU_LIST_CTRL, "", 
 		 		 WS_VISIBLE | BS_NOTIFY | BS_DEFPUSHBUTTON, 
 				 IDC_LIST_CTRL, 

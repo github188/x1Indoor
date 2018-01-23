@@ -140,10 +140,15 @@ static void CreateListCtrl(HWND hDlg)
 	g_listctrl.Sidebar = 0;							// 侧边栏
 	g_listctrl.SideBarMode = 1;
 	g_listctrl.Drawcallback = NULL;					// 侧边栏
-	g_listctrl.fonttype = Font16X16;				// 文字显示大小
+	g_listctrl.fonttype = LIST_CTRL_FONT;				// 文字显示大小
 	g_listctrl.HeadInfo.Image = BID_ListCtrl_Title;
+	#if (_LCD_DPI_ == _LCD_800480_)
 	g_listctrl.Width[0] = 200;
 	g_listctrl.Width[1] = 100;
+	#elif (_LCD_DPI_ == _LCD_1024600_)
+	g_listctrl.Width[0] = 250;
+	g_listctrl.Width[1] = 125;
+	#endif
 
 	if (1 == g_pass_type)
 	{

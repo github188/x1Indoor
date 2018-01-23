@@ -196,7 +196,7 @@ static void CreateListCtrl(HWND hDlg)
 	g_listCtrl.Mode = LIST_MODE_COMMON;				// 抬起释放，没有高亮显示
 	g_listCtrl.Caption = 1;							// 是否有标题栏
 	g_listCtrl.SideBarMode = 1;
-	g_listCtrl.fonttype = Font16X16;				// 文字显示大小
+	g_listCtrl.fonttype = LIST_CTRL_FONT;				// 文字显示大小
 
 	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	g_listCtrl.Sidebar = 0;										// 侧边栏
@@ -209,14 +209,16 @@ static void CreateListCtrl(HWND hDlg)
 	g_listCtrl.PageCount = 8;						// 显示个数
 	g_listCtrl.ImageTopBk = BID_ListCtrl_TopBK8_0;
 	g_listCtrl.ImageBk = BID_ListCtrl_BK8_0;
+	g_listCtrl.Width[0] = 100;
+	g_listCtrl.Width[1] = 200;
 	#elif (_LCD_DPI_ == _LCD_1024600_)
 	g_listCtrl.PageCount = 8;						// 显示个数
 	g_listCtrl.ImageTopBk = BID_ListCtrl_TopBK8_0;
 	g_listCtrl.ImageBk = BID_ListCtrl_BK8_0;
+	g_listCtrl.Width[0] = 125;
+	g_listCtrl.Width[1] = 250;
 	#endif
 	g_listCtrl.HeadInfo.Image = BID_ListCtrl_Title;
-	g_listCtrl.Width[0] = 100;
-	g_listCtrl.Width[1] = 200;
 	g_listCtrl.HeadInfo.TextID = SID_Bj_Fangqu1+ g_area_num;
 
 	g_listwin = CreateWindow(AU_LIST_CTRL, "", 

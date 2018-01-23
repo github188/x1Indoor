@@ -272,14 +272,18 @@ static void CreateListCtrl(HWND hDlg)
 	g_listCtrl.SideBarMode = 1;
 	g_listCtrl.KeyCallBack = (SidebarKeyCallBack)get_Sidebar_key;
 	g_listCtrl.Drawcallback = (SidebarCallBack)draw_Sidebar;// 侧边栏
-	g_listCtrl.fonttype = Font16X16;				// 文字显示大小
+	g_listCtrl.fonttype = LIST_CTRL_FONT;				// 文字显示大小
 	g_listCtrl.ImageTopBk = BID_ListCtrl_TopBK5_0;
 	g_listCtrl.ImageBk = BID_ListCtrl_BK5_0;
 	g_listCtrl.HeadInfo.Image = BID_ListCtrl_Title;
 	g_listCtrl.HeadInfo.TextID = get_dev_textid();
+	#if (_LCD_DPI_ == _LCD_800480_)
 	g_listCtrl.Width[0] = 80;
 	g_listCtrl.Width[1] = 220;
-
+	#elif (_LCD_DPI_ == _LCD_1024600_)
+	g_listCtrl.Width[0] = 100;
+	g_listCtrl.Width[1] = 275;
+	#endif
  	g_listwin = CreateWindow(AU_LIST_CTRL, "", 
 	 						  WS_VISIBLE | BS_NOTIFY | BS_DEFPUSHBUTTON, 
 							  IDC_LIST_CTRL, 

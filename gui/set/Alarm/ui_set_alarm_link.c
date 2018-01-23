@@ -165,11 +165,17 @@ static void CreateListCtrl(HWND hDlg)
 	g_listctrl.Sidebar = 0;							// 侧边栏
 	g_listctrl.SideBarMode = 1;
 	g_listctrl.Drawcallback = NULL;					// 侧边栏
-	g_listctrl.fonttype = Font16X16;				// 文字显示大小
+	g_listctrl.fonttype = LIST_CTRL_FONT;				// 文字显示大小
 	g_listctrl.HeadInfo.Image = BID_ListCtrl_Title;
 	g_listctrl.HeadInfo.TextID = SID_Set_Alarm_AfLink;
+#if (_LCD_DPI_ == _LCD_800480_)
 	g_listctrl.Width[0] = 70;
 	g_listctrl.Width[1] = 250;
+#elif (_LCD_DPI_ == _LCD_1024600_)
+	=g_listctrl.Width[0] = 88;
+	g_listctrl.Width[1] = 313;
+#endif
+
 
 	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
 	g_listctrl.PageCount = 8;						// 显示个数

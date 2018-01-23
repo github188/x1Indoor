@@ -425,25 +425,23 @@ static void CreateListCtrl(HWND hDlg)
 	g_listCtrl.Caption = 1;							// 是否有标题栏
 	g_listCtrl.SideBarMode = 1;
 	g_listCtrl.Drawcallback = (SidebarCallBack)draw_Sidebar; // 侧边栏
-	g_listCtrl.fonttype = Font16X16;				// 文字显示大小
+	g_listCtrl.fonttype = LIST_CTRL_FONT;				// 文字显示大小
 	g_listCtrl.Sidebar = 1;							// 不显示侧边栏
 	#if (_LCD_DPI_ == _LCD_800480_)
 	g_listCtrl.PageCount = 8;						// 显示个数
 	g_listCtrl.ImageTopBk = BID_ListCtrl_TopBK8_0;
 	g_listCtrl.ImageBk = BID_ListCtrl_BK8_0;
+	g_listCtrl.Width[0] = 110;
+	g_listCtrl.Width[1] = 450;
 	#elif (_LCD_DPI_ == _LCD_1024600_)
 	g_listCtrl.PageCount = 8;						// 显示个数
 	g_listCtrl.ImageTopBk = BID_ListCtrl_TopBK8_0;
 	g_listCtrl.ImageBk = BID_ListCtrl_BK8_0;
+	g_listCtrl.Width[0] = 138;
+	g_listCtrl.Width[1] = 563;
 	#endif
 	g_listCtrl.HeadInfo.Image = BID_ListCtrl_Title;
-	g_listCtrl.HeadInfo.TextID = SID_Set_Prj_Set_IPModule;
-	g_listCtrl.Width[0] = 110;
-	#if (_LCD_DPI_ == _LCD_800480_)
-	g_listCtrl.Width[1] = 450;
-	#elif (_LCD_DPI_ == _LCD_1024600_)
-	g_listCtrl.Width[1] = 450;
-	#endif
+	g_listCtrl.HeadInfo.TextID = SID_Set_Prj_Set_IPModule;	
 	
 	g_listwin = CreateWindow(AU_LIST_CTRL, "", 
 		 		 WS_VISIBLE | BS_NOTIFY | BS_DEFPUSHBUTTON, 

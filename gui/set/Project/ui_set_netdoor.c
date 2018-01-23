@@ -329,11 +329,16 @@ static void CreateListCtrl(HWND hDlg)
 	g_listCtrl.Caption = 1;							// 是否有标题栏
 	g_listCtrl.SideBarMode = 1;
 	g_listCtrl.KeyCallBack = (SidebarKeyCallBack)get_Sidebar_key;
-	g_listCtrl.fonttype = Font16X16;				// 文字显示大小
+	g_listCtrl.fonttype = LIST_CTRL_FONT;				// 文字显示大小
 	g_listCtrl.PageCount = 6;						// 显示个数
 	g_listCtrl.HeadInfo.Image = BID_ListCtrl_Title;
+	#if (_LCD_DPI_ == _LCD_800480_)
 	g_listCtrl.Width[0] = 70;
 	g_listCtrl.Width[1] = 200;
+	#elif (_LCD_DPI_ == _LCD_1024600_)
+	g_listCtrl.Width[0] = 88;
+	g_listCtrl.Width[1] = 250;
+	#endif
 
 	if (1 == g_devIndex)
 	{

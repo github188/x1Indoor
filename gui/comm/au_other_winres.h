@@ -138,7 +138,7 @@ extern "C" {
 
 #define INPUT_CTRL_W			356
 #define INPUT_CTRL_H			74
-#define	INPUT_CTRL_X			((FORM_W-RIGHT_CTRL_W-INPUT_CTRL_W)/2)
+#define	 INPUT_CTRL_X			((FORM_W-RIGHT_CTRL_W-INPUT_CTRL_W)/2)
 #define INPUT_CTRL_Y			90
 
 // ¼üÅÌ¿Ø¼þºê¶¨Òå

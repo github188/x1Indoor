@@ -314,7 +314,7 @@ static void CreateListCtrl(HWND hDlg)
 	g_ListCtrl.SideBarMode = 1;
 	g_ListCtrl.KeyCallBack = (SidebarKeyCallBack)get_Sidebar_key;
 	g_ListCtrl.Drawcallback = (SidebarCallBack)draw_Sidebar;	// 侧边栏
-	g_ListCtrl.fonttype = Font16X16;				// 文字显示大小
+	g_ListCtrl.fonttype = LIST_CTRL_FONT;				// 文字显示大小
 	g_ListCtrl.ImageTopBk = BID_ListCtrl_TopBK5_0;
 	g_ListCtrl.ImageBk = BID_ListCtrl_BK5_0;
 	g_ListCtrl.HeadInfo.Image = BID_ListCtrl_Title;
@@ -324,9 +324,9 @@ static void CreateListCtrl(HWND hDlg)
 	g_ListCtrl.Width[1] = 200;
 	g_ListCtrl.Width[2] = 200;
 	#elif (_LCD_DPI_ == _LCD_1024600_)
-	g_ListCtrl.Width[0] = 40;
-	g_ListCtrl.Width[1] = 200;
-	g_ListCtrl.Width[2] = 200;
+	g_ListCtrl.Width[0] = 50;
+	g_ListCtrl.Width[1] = 250;
+	g_ListCtrl.Width[2] = 250;
 	#endif
 	g_ListhDlg = CreateWindow(AU_LIST_CTRL, "", 
 				WS_VISIBLE | BS_NOTIFY | BS_DEFPUSHBUTTON, 

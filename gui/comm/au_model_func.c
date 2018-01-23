@@ -3595,14 +3595,14 @@ uint8 pageCount, uint8 count, uint8 keystate, uint8 select, uint32 curSelect)
 
 	if (count <= pageCount || curSelect == 0)
 	{		
-		DrawBmpID(hDlg, xpos+(SIDEBAR_W-SIDEBAR_ICON_W)/2-2, ypos+SIDEBAR_YDIS, SIDEBAR_ICON_W, SIDEBAR_ICON_H, BID_ScrollIcon);
+		DrawBmpID(hDlg, xpos+(SIDEBAR_W-SIDEBAR_ICON_W)/2, ypos+SIDEBAR_YDIS, SIDEBAR_ICON_W, SIDEBAR_ICON_H, BID_ScrollIcon);
 	}
 	else
 	{
 		if (curSelect == count-1)
 		{
 			ypos = SIDEBAR_DOWN_ICON_Y;
-			DrawBmpID(hDlg, xpos+(SIDEBAR_W-SIDEBAR_ICON_W)/2-2, ypos, SIDEBAR_ICON_W, SIDEBAR_ICON_H, BID_ScrollIcon);
+			DrawBmpID(hDlg, xpos+(SIDEBAR_W-SIDEBAR_ICON_W)/2, ypos, SIDEBAR_ICON_W, SIDEBAR_ICON_H, BID_ScrollIcon);
 		}
 		else
 		{
@@ -3611,7 +3611,7 @@ uint8 pageCount, uint8 count, uint8 keystate, uint8 select, uint32 curSelect)
 			#else				
 			ypos = ypos + (curSelect*SIDEBAR_SCRLEN)/count;
 			#endif
-			DrawBmpID(hDlg, xpos+(SIDEBAR_W-SIDEBAR_ICON_W)/2-2, ypos, SIDEBAR_ICON_W, SIDEBAR_ICON_H, BID_ScrollIcon);
+			DrawBmpID(hDlg, xpos+(SIDEBAR_W-SIDEBAR_ICON_W)/2, ypos, SIDEBAR_ICON_W, SIDEBAR_ICON_H, BID_ScrollIcon);
 		}
 	}
 }

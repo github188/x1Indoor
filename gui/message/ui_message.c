@@ -355,7 +355,7 @@ static void CreateListCtrl(HWND hDlg)
 	g_ListCtrl.SideBarMode = 1;
 	g_ListCtrl.KeyCallBack = (SidebarKeyCallBack)get_Sidebar_key;
 	g_ListCtrl.Drawcallback = (SidebarCallBack)draw_Sidebar;	// 侧边栏
-	g_ListCtrl.fonttype = Font16X16;				// 文字显示大小
+	g_ListCtrl.fonttype = LIST_CTRL_FONT;				// 文字显示大小
 	g_ListCtrl.HeadInfo.Image = BID_ListCtrl_Title;
 	g_ListCtrl.HeadInfo.TextID = SID_MainInfo;
 	#if (_LCD_DPI_ == _LCD_800480_)
@@ -364,10 +364,10 @@ static void CreateListCtrl(HWND hDlg)
 	g_ListCtrl.Width[2] = 120;
 	g_ListCtrl.Width[3] = 200;
 	#elif (_LCD_DPI_ == _LCD_1024600_)
-	g_ListCtrl.Width[0] = 40;
-	g_ListCtrl.Width[1] = 120;
-	g_ListCtrl.Width[2] = 120;
-	g_ListCtrl.Width[3] = 200;
+	g_ListCtrl.Width[0] = 50;
+	g_ListCtrl.Width[1] = 150;
+	g_ListCtrl.Width[2] = 150;
+	g_ListCtrl.Width[3] = 250;
 	#endif
 	
 	#if (_UI_STYLE_ == _E81S_UI_STYLE_)
