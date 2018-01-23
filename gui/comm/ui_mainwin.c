@@ -44,6 +44,7 @@
 #elif (_LCD_DPI_ == _LCD_1024600_)
 #endif
 
+#define TEST_TOUCH_KEY
 
 #ifdef _IP_MODULE_
 #define IPMODULE_XPOS			(NET_XPOS + NET_W + IP_NET_DISX)
@@ -1418,6 +1419,7 @@ static void create_ctrls(HWND hDlg)
 	CreateRightCtrl(hDlg);
 }
 
+#ifdef TEST_TOUCH_KEY
 /*************************************************
   Function:		hook_msg_proc
   Description: 	钩子信号处理
@@ -1477,7 +1479,7 @@ static int hook_msg_proc(void* context, HWND hWnd, int message, WPARAM wParam, L
 	}
 	return HOOK_GOON;
 }
-
+#endif
 
 #ifdef _ENABLE_TOUCH_
 /*************************************************
@@ -1566,8 +1568,10 @@ static int WindowProc(HWND hDlg, int message, WPARAM wParam, LPARAM lParam)
 		case MSG_CREATE:
 			set_skin(SKIN_1);						// 设置皮肤方案
 			create_ctrls(hDlg);
+#ifdef TEST_TOUCH_KEY
 			RegisterKeyMsgHook(hDlg, hook_msg_proc);	// 注册钩子
 			RegisterMouseMsgHook(hDlg, hook_msg_proc);
+#endif
 			break;
 		
 		case MSG_INITDIALOG:
