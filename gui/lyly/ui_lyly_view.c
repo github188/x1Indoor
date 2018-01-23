@@ -127,7 +127,7 @@ static void draw_dev_hint(HDC hdc)
 	rc.left = LYLY_TEXT_LEFT_2;
 	rc.top = LYLY_TEXT_TOP_1;
 	rc.right = rc.left + 132;
-	rc.bottom = rc.top + Font16X16;
+	rc.bottom = rc.top + WIN_COMM_FONT;
 	if (g_lylylist->LylyInfo[g_index].DevType == DEVICE_TYPE_ROOM)
 	{
 		DrawText(hdc, devtext, -1, &rc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
@@ -143,7 +143,7 @@ static void draw_dev_hint(HDC hdc)
 	rc.left = LYLY_TEXT_LEFT_2;
 	rc.top = LYLY_TEXT_TOP_2;
 	rc.right = rc.left + LYLY_TEXT_LEN;
-	rc.bottom = rc.top + Font16X16;
+	rc.bottom = rc.top + WIN_COMM_FONT;
 	DrawText(hdc, time, -1, &rc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 }
 

@@ -172,7 +172,7 @@ static void CreateListCtrl(HWND hDlg)
 	g_listctrl.Width[0] = 70;
 	g_listctrl.Width[1] = 250;
 #elif (_LCD_DPI_ == _LCD_1024600_)
-	=g_listctrl.Width[0] = 88;
+	g_listctrl.Width[0] = 88;
 	g_listctrl.Width[1] = 313;
 #endif
 

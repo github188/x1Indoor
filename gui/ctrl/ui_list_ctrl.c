@@ -1405,7 +1405,7 @@ static uint32 ui_listctrl_creat(HWND hDlg , WPARAM wParam, LPARAM lParam)
 	
 	if (WObj->fonttype == 0)
 	{
-		WObj->fonttype = Font16X16;
+		WObj->fonttype = WIN_COMM_FONT;
 	}
 	
 	ui_reflash_ctrl(hDlg, wParam, lParam);

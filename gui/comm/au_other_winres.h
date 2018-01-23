@@ -124,11 +124,12 @@ extern "C" {
 #define FORM_LEFT_H				LCD_H					// 左边窗体高度
 
 
-//#define DEFAULT_STYLE	  		(WS_VISIBLE | WS_NONE)	// 默认窗体的风格
-//#define DEFAULT_STYLE_EX  	(WS_EX_NONE)			// 默认窗体的扩展风格
+//#define DEFAULT_STYLE	  		(WS_VISIBLE | WS_NONE)		// 默认窗体的风格
+//#define DEFAULT_STYLE_EX  	(WS_EX_NONE)				// 默认窗体的扩展风格
 #define DEFAULT_BN_STYLE		(WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON | BS_NOTIFY)
 
 #define TEXT_X              	15
+#define	 WIN_COMM_FONT			FONT_22						//子菜单内容字体大小
 
 // 输入框宏定义
 #define KEYDOWN  				1
@@ -159,7 +160,7 @@ extern "C" {
 #define RIGHT_CTRL_H			FORM_RIGHT_H
 
 // 列表控件宏定义
-#define LIST_CTRL_FONT			FONT_22									// 列表控件字体大小
+#define LIST_CTRL_FONT			FONT_22						// 列表控件字体大小
 #define LIST_CTRL_X				0
 #define LIST_CTRL_Y				0
 #define LIST_CTRL_W				FORM_LEFT_W

@@ -98,19 +98,19 @@ static void show_win(HWND hdc)
 
 	if (storage_get_language() != ENGLISH)
 	{
-		SelectFont(hdc, GetFont(FONT_16));
+		SelectFont(hdc, GetFont(WIN_COMM_FONT));
 	}
 	else
 	{
-		SelectFont(hdc, GetFont_ABC(FONT_16));
+		SelectFont(hdc, GetFont_ABC(WIN_COMM_FONT));
 	}
 	SetTextColor(hdc, COLOR_BLACK);
 
 	DrawBmpID(hdc, 0, 0, 0, 0, BID_Set_BK);
 	TextRc.left = TOP_TEXT_XPOS ;
-	TextRc.top =  (TEXT_BK_H - Font16X16)/2 ;
+	TextRc.top =  (TEXT_BK_H - WIN_COMM_FONT)/2 ;
 	TextRc.right = TextRc.left + CHAR_LEN+100;
-	TextRc.bottom = TextRc.top + Font16X16;
+	TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 	DrawText(hdc, get_str(SID_Set_System_Storage), -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
 	storage[0] = (storage_get_msg_allsize()/1024);
@@ -139,15 +139,15 @@ static void show_win(HWND hdc)
 		}
 
 		TextRc.left = xpos+TOP_TEXT_XPOS+10;
-		TextRc.top = ypos + (TEXT_BK_H+TEXT_BK_YPOS - Font16X16)/2;
+		TextRc.top = ypos + (TEXT_BK_H+TEXT_BK_YPOS - WIN_COMM_FONT)/2;
 		TextRc.right =  TextRc.left + CHAR_LEN;
-		TextRc.bottom = TextRc.top + Font16X16;
+		TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 		DrawText(hdc, get_str(TextID[i]), -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
 		TextRc.left = TEXT1_XPOS_DIS;
-		TextRc.top = ypos + (TEXT_BK_H+TEXT_BK_YPOS - Font16X16)/2;
+		TextRc.top = ypos + (TEXT_BK_H+TEXT_BK_YPOS - WIN_COMM_FONT)/2;
 		TextRc.right =  TextRc.left + CHAR_LEN;
-		TextRc.bottom = TextRc.top + Font16X16;
+		TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 		memset(tmp, 0, sizeof(tmp));
 		sprintf(tmp, "%d KB", storage[i]);
 		DrawText(hdc, tmp, -1, &TextRc, DT_RIGHT| DT_VCENTER | DT_SINGLELINE);
@@ -270,7 +270,7 @@ static void CreateRightCtrl(HWND hDlg)
 	g_rightCtrl.VideoMode = 0;
 	g_rightCtrl.MaxNum = RIGHT_NUM_MAX;
 	g_rightCtrl.BmpBk = BID_RightCtrlBK;
-	g_rightCtrl.TextSize = RIGHT_CTRL_FONT;
+	g_rightCtrl.TextSize = LIST_CTRL_FONT;
 	for(i = 0; i < g_rightCtrl.MaxNum; i++)
 	{
 		g_rightCtrl.buttons[i].Enabled = TRUE;

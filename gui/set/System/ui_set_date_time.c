@@ -86,9 +86,9 @@ static void draw_string(HDC hdc)
 
 	DrawBmpID(hdc, 0, 0, 0, 0, BID_Set_BK);
 	TextRc.left = TOP_TEXT_XPOS ;
-	TextRc.top =  (TOP_TEXT_H - Font16X16)/2 ;
+	TextRc.top =  (TOP_TEXT_H - WIN_COMM_FONT)/2 ;
 	TextRc.right = TextRc.left + 300;
-	TextRc.bottom = TextRc.top + Font16X16;
+	TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 	DrawText(hdc, get_str(SID_Set_System_Time), -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 	DrawBmpID(hdc, HEAD_XPOS, HEAD_YPOS, 0, 0, BID_ListCtrl_TopBK5_0);
 	DrawBmpID(hdc, HEAD_XPOS, HEAD_YPOS+HEAD_H, 0, 0, BID_ListCtrl_BK5_0);

@@ -1765,14 +1765,6 @@ typedef enum
 	SID_MAX
 }STRID_E;
 
-typedef enum _FontType
-{
-    Font12X12 = 12, 
-    Font16X16 = 16,
-    Font20X20 = 20,
-    Font24X24 = 24
-}FontType;
-
 /*************************************************
   Function:		get_str
   Description: 	根据字符ID获取字符

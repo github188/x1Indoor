@@ -18,20 +18,20 @@
 #if (_LCD_DPI_ == _LCD_800480_)
 #define TOP_TEXT_H				52	
 #define TOP_TEXT_XPOS			40	
-#define TOP_TEXT_YPOS			((TOP_TEXT_H-Font16X16)/2)	
+#define TOP_TEXT_YPOS			((TOP_TEXT_H-FONT_16)/2)	
 #define SYS_TEXT_XPOS			50	
 #define SYS_TEXT_YPOS			(TOP_TEXT_H+20)	
-#define TEXT_YPOS_DIS			(10+Font16X16)
+#define TEXT_YPOS_DIS			(10+FONT_16)
 #define TEXT_XPOS_DIS			200
 #define CHAR_LEN				200
 #define MAX_ITEM				SYS_INFO_MAX			
 #elif (_LCD_DPI_ == _LCD_1024600_)
 #define TOP_TEXT_H				52	
 #define TOP_TEXT_XPOS			40	
-#define TOP_TEXT_YPOS			((TOP_TEXT_H-Font16X16)/2)	
+#define TOP_TEXT_YPOS			((TOP_TEXT_H-WIN_COMM_FONT)/2)	
 #define SYS_TEXT_XPOS			50	
 #define SYS_TEXT_YPOS			(TOP_TEXT_H+20)	
-#define TEXT_YPOS_DIS			(10+Font16X16)
+#define TEXT_YPOS_DIS			(10+WIN_COMM_FONT)
 #define TEXT_XPOS_DIS			200
 #define CHAR_LEN				200
 #define MAX_ITEM				SYS_INFO_MAX	
@@ -309,11 +309,11 @@ static void show_win(HDC hdc)
 	
 	if (storage_get_language() != ENGLISH)
 	{
-		SelectFont(hdc, GetFont(FONT_16));
+		SelectFont(hdc, GetFont(WIN_COMM_FONT));
 	}
 	else
 	{
-		SelectFont(hdc, GetFont_ABC(FONT_16));
+		SelectFont(hdc, GetFont_ABC(WIN_COMM_FONT));
 	}
 	SetTextColor(hdc, COLOR_BLACK);
 	
@@ -321,7 +321,7 @@ static void show_win(HDC hdc)
 	TextRc.left = TOP_TEXT_XPOS;
 	TextRc.top = TOP_TEXT_YPOS;
 	TextRc.right = TextRc.left + CHAR_LEN;
-	TextRc.bottom = TextRc.top + Font16X16;
+	TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 	DrawText(hdc, get_str(SID_Set_System_Info), -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
 	init_data(hdc);
@@ -341,7 +341,7 @@ static void show_win(HDC hdc)
 			TextRc.left = xpos;
 			TextRc.top = ypos;
 			TextRc.right = TextRc.left + CHAR_LEN;
-			TextRc.bottom = TextRc.top + Font16X16;
+			TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 			DrawText(hdc, temp1, -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 		}	
 		
@@ -352,7 +352,7 @@ static void show_win(HDC hdc)
 			TextRc.left = xpos;
 			TextRc.top = ypos;
 			TextRc.right = TextRc.left + CHAR_LEN;
-			TextRc.bottom = TextRc.top + Font16X16;
+			TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 			DrawText(hdc, tmp, -1, &TextRc, DT_CALCRECT | DT_LEFT| DT_VCENTER | DT_SINGLELINE);
 			DrawText(hdc, tmp, -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 		}
@@ -464,7 +464,7 @@ static void CreateRightCtrl(HWND hDlg)
 	g_rightCtrl.VideoMode = 0;
 	g_rightCtrl.MaxNum = RIGHT_NUM_MAX;
 	g_rightCtrl.BmpBk = BID_RightCtrlBK;
-	g_rightCtrl.TextSize = RIGHT_CTRL_FONT;
+	g_rightCtrl.TextSize = LIST_CTRL_FONT;
 	for (i = 0; i < g_rightCtrl.MaxNum; i++)
 	{
 		g_rightCtrl.buttons[i].Enabled = TRUE;

@@ -159,9 +159,9 @@ static void draw_aurine_hit(HDC hdc)
 		{
 			Textrc.left = HIT_TEXT_XPOS;
 		}
-		Textrc.top = (FORM_HIT_H - Font16X16)/2;
+		Textrc.top = (FORM_HIT_H - WIN_COMM_FONT)/2;
 		Textrc.right = Textrc.left+200;
-		Textrc.bottom = Textrc.top+Font16X16;
+		Textrc.bottom = Textrc.top+WIN_COMM_FONT;
 		DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT);
 	}
 }
@@ -191,26 +191,26 @@ static void draw_aurine_msg(HDC hdc)
 			if (strlen(get_str(g_pData.TextID)) > 25)
 			{
 				Textrc.left = MSG_ICON_X + ICON_W + MSG_TEXT_DIS;
-                Textrc.top = MSG_ICON_Y + (ICON_H - Font16X16)/2 - 17;
+                Textrc.top = MSG_ICON_Y + (ICON_H - WIN_COMM_FONT)/2 - 17;
                 Textrc.right = (FORM_MSG_W - (MSG_ICON_X + MSG_TEXT_DIS));
-                Textrc.bottom = Textrc.top + Font16X16;
+                Textrc.bottom = Textrc.top + WIN_COMM_FONT;
                 DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT|DT_WORDBREAK );
 			}
 			else
 			{
 				Textrc.left = MSG_ICON_X + ICON_W + MSG_TEXT_DIS;
-                Textrc.top = MSG_ICON_Y + (ICON_H - Font16X16)/2;
+                Textrc.top = MSG_ICON_Y + (ICON_H - WIN_COMM_FONT)/2;
                 Textrc.right = (FORM_MSG_W - (MSG_ICON_X + MSG_TEXT_DIS));
-                Textrc.bottom = Textrc.top + Font16X16;
+                Textrc.bottom = Textrc.top + WIN_COMM_FONT;
                 DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CENTER);            
 			}
 		}
 		else
 		{
 			Textrc.left = MSG_ICON_X + ICON_W + MSG_TEXT_DIS;
-			Textrc.top = MSG_ICON_Y + (ICON_H - Font16X16)/2;
+			Textrc.top = MSG_ICON_Y + (ICON_H - WIN_COMM_FONT)/2;
 			Textrc.right = MSG_TEXT_RIGHT;
-			Textrc.bottom = Textrc.top + Font16X16;
+			Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 			DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CENTER);
 		}
 	}
@@ -239,7 +239,7 @@ static void draw_aurine_query(HDC hdc)
 			Textrc.left = QUERY_TEXT_LEFT+40;
 			Textrc.top = QUERY_TEXT_TOP+30;
 			Textrc.right = Textrc.left + QUERY_TEXT_DISX;
-			Textrc.bottom = Textrc.top + Font16X16;
+			Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 			DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CALCRECT);
 			DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT);
 	}
@@ -265,12 +265,12 @@ static void draw_aurine_query(HDC hdc)
 	Textrc.left = QUERY_YES_LEFT1;
 	Textrc.top = QUERY_YES_TOP1+20;
 	Textrc.right = Textrc.left + QUERY_YES_DISX;
-	Textrc.bottom = Textrc.top + Font16X16;
+	Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 
 	Textrc1.left = QUERY_NO_LEFT1;
 	Textrc1.top = QUERY_YES_TOP1+20;
 	Textrc1.right = Textrc1.left + QUERY_YES_DISX;
-	Textrc1.bottom = Textrc1.top + Font16X16;
+	Textrc1.bottom = Textrc1.top + WIN_COMM_FONT;
 
     if(0 == g_pData.Select)
     {
@@ -409,7 +409,7 @@ static void draw_query(HDC hdc)
 		Textrc.left = QUERY_TEXT_LEFT;
 		Textrc.top = QUERY_TEXT_TOP;
 		Textrc.right = Textrc.left + QUERY_TEXT_DISX;
-		Textrc.bottom = Textrc.top + Font16X16;
+		Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 		DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CALCRECT);
 		DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT);
 	}
@@ -437,24 +437,24 @@ static void draw_query(HDC hdc)
 		Textrc.left = QUERY_YES_LEFT1;
 		Textrc.top = QUERY_YES_TOP1;
 		Textrc.right = Textrc.left + QUERY_YES_DISX;
-		Textrc.bottom = Textrc.top + Font16X16;
+		Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 
 		Textrc1.left = QUERY_NO_LEFT1;
 		Textrc1.top = QUERY_YES_TOP1;
 		Textrc1.right = Textrc1.left + QUERY_YES_DISX;
-		Textrc1.bottom = Textrc1.top + Font16X16;
+		Textrc1.bottom = Textrc1.top + WIN_COMM_FONT;
 	}
 	else
 	{
 		Textrc.left = QUERY_YES_LEFT2;
 		Textrc.top = QUERY_YES_TOP2;
 		Textrc.right = Textrc.left + QUERY_YES_DISX;
-		Textrc.bottom = Textrc.top + Font16X16;
+		Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 
 		Textrc1.left = QUERY_NO_LEFT2;
 		Textrc1.top = QUERY_YES_TOP2;
 		Textrc1.right = Textrc1.left + QUERY_YES_DISX;
-		Textrc1.bottom = Textrc1.top + Font16X16;
+		Textrc1.bottom = Textrc1.top + WIN_COMM_FONT;
 	}
 	
 	DrawText(hdc, get_str(SID_Msg_Yes), -1, &Textrc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);

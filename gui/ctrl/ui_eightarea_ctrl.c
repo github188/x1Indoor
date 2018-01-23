@@ -61,7 +61,7 @@ void draw_eightareas(HDC hdc,PEIGHTAREACTRL_INFO WObj)
 	
 	for (i = 0; i < WObj->MaxNum; i++)
 	{	
-		y = ICON_DIS_Y + (ICON_BIG + Font16X16) * (i/4) + ICON_DIS_Y * (i/4);
+		y = ICON_DIS_Y + (ICON_BIG + WIN_COMM_FONT) * (i/4) + ICON_DIS_Y * (i/4);
 		x =	ICON_TOLETT_DIS_X + ICON_DIS_X * (i%4);
 
 		if (WObj->Index == i && WObj->State == AREA_KEYDOWN)
@@ -96,28 +96,28 @@ void draw_eightareas(HDC hdc,PEIGHTAREACTRL_INFO WObj)
 			DrawBmpID(hdc, x + (ICON_BIG-ICON_SMALL)/2, y + (ICON_BIG-ICON_SMALL)/2, ICON_SMALL, ICON_SMALL, WObj->Areas[i].ImageID);//need modify later
 		}
 
-		if ((strlen(get_str(WObj->Areas[i].TextID)) * Font16X16/2) > ICON_BIG)
+		if ((strlen(get_str(WObj->Areas[i].TextID)) * WIN_COMM_FONT/2) > ICON_BIG)
 		{
-			textRect.left = x - ((strlen(get_str(WObj->Areas[i].TextID)) * Font16X16/2) - ICON_BIG)/2;
+			textRect.left = x - ((strlen(get_str(WObj->Areas[i].TextID)) * WIN_COMM_FONT/2) - ICON_BIG)/2;
 		}
 		else
 		{
 			textRect.left = x;
 		}
 		textRect.top= y + ICON_BIG + TXT_TO_TOPAREA;
-		if ((strlen(get_str(WObj->Areas[i].TextID)) * Font16X16/2) > ICON_BIG)
+		if ((strlen(get_str(WObj->Areas[i].TextID)) * WIN_COMM_FONT/2) > ICON_BIG)
 		{
-			textRect.right= textRect.left + strlen(get_str(WObj->Areas[i].TextID)) * Font16X16/2;
+			textRect.right= textRect.left + strlen(get_str(WObj->Areas[i].TextID)) * WIN_COMM_FONT/2;
 		}
 		else
 		{
 			textRect.right= textRect.left +ICON_BIG ;
 		}
-		textRect.bottom= textRect.top + Font16X16;
+		textRect.bottom= textRect.top + WIN_COMM_FONT;
 		if(WObj->Areas[i].TextID != 0)
 		{
 			SetTextColor(hdc, COLOR_BUTTON_TEXT);
-			SelectFont(hdc, GetFont(Font16X16));
+			SelectFont(hdc, GetFont(WIN_COMM_FONT));
 			DrawText(hdc, get_str(WObj->Areas[i].TextID), -1, &textRect, DT_CENTER | DT_BOTTOM | DT_VCENTER);
 		}
 	}

@@ -105,11 +105,11 @@ static void draw_string(HDC hdc)
 								   SID_Set_Pass_DoorUser,SID_Set_Pass_DoorServer,SID_Set_Pass_Server};
 
 	SetTextColor(hdc, COLOR_BLACK);
-	SelectFont(hdc, GetFont(FONT_16));
+	SelectFont(hdc, GetFont(WIN_COMM_FONT));
 	TextRc.left = LIST_ITEM_DISX;
-	TextRc.top = (LIST_TOP_H - Font16X16)/2;
+	TextRc.top = (LIST_TOP_H - WIN_COMM_FONT)/2;
 	TextRc.right =TextRc.left + PW_TEXT;
-	TextRc.bottom = TextRc.top + FONT_16;
+	TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 	DrawText(hdc, get_str(Title[g_type]), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 	DrawText(hdc, get_str(Title[g_type]), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 	
@@ -122,7 +122,7 @@ static void draw_string(HDC hdc)
 				TextRc.left = PW_TEXT_LEFT1 + (i * PW_TEXT_DISX);
 				TextRc.top = PW_TEXT_TOP1;
 				TextRc.right =TextRc.left + PW_TEXT;
-				TextRc.bottom = TextRc.top + FONT_16;
+				TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 				DrawText(hdc, get_str(SID_Set_Pass_New +i), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 				DrawText(hdc, get_str(SID_Set_Pass_New +i), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 			}
@@ -134,7 +134,7 @@ static void draw_string(HDC hdc)
 			TextRc.left = PW_TEXT_LEFT2;
 			TextRc.top = PW_TEXT_TOP2;
 			TextRc.right = TextRc.left + PW_TEXT;
-			TextRc.bottom = TextRc.top + FONT_16;
+			TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 			DrawText(hdc, get_str(SID_Set_Pass_New), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 			DrawText(hdc, get_str(SID_Set_Pass_New), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 			break;

@@ -78,14 +78,14 @@ static void draw_string_hint(HDC hdc)
 		Textrc.left = DT_TEXT_LEFT;
 		Textrc.top = DT_TEXT_TOP1;
 		Textrc.right = Textrc.left + DT_TEXT_DISX;
-		Textrc.bottom = Textrc.top + Font16X16;
+		Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 		DrawText(hdc, get_str(SID_Msg_Dianti_Hit1), -1, &Textrc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 		DrawText(hdc, get_str(SID_Msg_Dianti_Hit1), -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
 		
 		Textrc.left = DT_TEXT_LEFT;
 		Textrc.top = DT_TEXT_TOP2;
 		Textrc.right = Textrc.left + DT_TEXT_DISX;
-		Textrc.bottom = Textrc.top + Font16X16;
+		Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 		DrawText(hdc, get_str(SID_Msg_Dianti_Hit2), -1, &Textrc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 		DrawText(hdc, get_str(SID_Msg_Dianti_Hit2), -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
 	}
@@ -94,14 +94,14 @@ static void draw_string_hint(HDC hdc)
 		Textrc.left = DT_TEXT_LEFT;
 		Textrc.top = DT_TEXT_TOP3;
 		Textrc.right = Textrc.left + DT_TEXT_DISX;
-		Textrc.bottom = Textrc.top + Font16X16;
+		Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 		DrawText(hdc, get_str(SID_Msg_Dianti_Hit1), -1, &Textrc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 		DrawText(hdc, get_str(SID_Msg_Dianti_Hit1), -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
 		
 		Textrc.left = DT_TEXT_LEFT;
 		Textrc.top = DT_TEXT_TOP4;
 		Textrc.right = Textrc.left + DT_TEXT_DISX;
-		Textrc.bottom = Textrc.top + Font16X16;
+		Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 		DrawText(hdc, get_str(SID_Msg_Dianti_Hit2), -1, &Textrc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 		DrawText(hdc, get_str(SID_Msg_Dianti_Hit2), -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
 	}

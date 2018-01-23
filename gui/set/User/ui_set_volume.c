@@ -18,7 +18,7 @@
 #if (_LCD_DPI_ == _LCD_800480_)
 #define TOP_TEXT_H				52	
 #define TOP_TEXT_XPOS			40	
-#define TOP_TEXT_YPOS			((TOP_TEXT_H-Font16X16)/2)	
+#define TOP_TEXT_YPOS			((TOP_TEXT_H-FONT_16)/2)	
 #define DIS_BMP					16
 #define CENTER_W				210
 #define CENTER_H				48
@@ -37,7 +37,7 @@
 #elif (_LCD_DPI_ == _LCD_1024600_)
 #define TOP_TEXT_H				52	
 #define TOP_TEXT_XPOS			40	
-#define TOP_TEXT_YPOS			((TOP_TEXT_H-Font16X16)/2)	
+#define TOP_TEXT_YPOS			((TOP_TEXT_H-WIN_COMM_FONT)/2)	
 #define DIS_BMP					16
 #define CENTER_W				210
 #define CENTER_H				48
@@ -106,15 +106,15 @@ static uint32 show_win(HDC hdc)
 	Rect.left = TOP_TEXT_XPOS;
 	Rect.top = TOP_TEXT_YPOS;
 	Rect.right = Rect.left + CHAR_LEN;
-	Rect.bottom = Rect.top + Font16X16;
+	Rect.bottom = Rect.top + WIN_COMM_FONT;
 	DrawText(hdc, get_str(SID_Set_User_Volume), -1, &Rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
 	// 铃声音量
 	DrawBmpID_EX(hdc, 0, TOP_TEXT_H,  LIST_CTRL_W,  TOPBK5_H, BID_ListCtrl_TopBK5_0);
 	Rect.left = CHOSE_XPOS;
-	Rect.top = TOP_TEXT_H+(TOPBK5_H-Font16X16)/2;
+	Rect.top = TOP_TEXT_H+(TOPBK5_H-WIN_COMM_FONT)/2;
 	Rect.right = Rect.left + CHAR_LEN;
-	Rect.bottom = Rect.top + Font16X16;
+	Rect.bottom = Rect.top + WIN_COMM_FONT;
 	DrawText(hdc, get_str(SID_Set_volume_ring), -1, &Rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 	
 	xpos = BMP_X;
@@ -149,9 +149,9 @@ static uint32 show_win(HDC hdc)
 	// 通话音量
 	DrawBmpID_EX(hdc, 0, TOP_TEXT_H+TOPBK5_H, LIST_CTRL_W, TOPBK5_H, BID_ListCtrl_BK5_0);
 	Rect.left = CHOSE_XPOS;
-	Rect.top = TOP_TEXT_H+TOPBK5_H+(TOPBK5_H-Font16X16)/2;
+	Rect.top = TOP_TEXT_H+TOPBK5_H+(TOPBK5_H-WIN_COMM_FONT)/2;
 	Rect.right = Rect.left + CHAR_LEN;
-	Rect.bottom= Rect.top + Font16X16;
+	Rect.bottom= Rect.top + WIN_COMM_FONT;
 	DrawText(hdc, get_str(SID_Set_volume_talk), -1, &Rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 	
 	xpos = BMP_X;
@@ -195,9 +195,9 @@ static uint32 show_win(HDC hdc)
 	}
 
 	Rect.left = CHOSE_XPOS+CHOSE_H+10;
-	Rect.top = TOP_TEXT_H+TOPBK5_H*2+(TOPBK5_H-Font16X16)/2;
+	Rect.top = TOP_TEXT_H+TOPBK5_H*2+(TOPBK5_H-WIN_COMM_FONT)/2;
 	Rect.right = Rect.left + CHAR_LEN;
-	Rect.bottom = Rect.top + Font16X16;
+	Rect.bottom = Rect.top + WIN_COMM_FONT;
 	DrawText(hdc, get_str(SID_Set_volume_key), -1, &Rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
 	if (g_itemIndex == 0)

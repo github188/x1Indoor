@@ -109,9 +109,9 @@ static void draw_text(HDC hdc)
 	SetTextColor(hdc, COLOR_BLACK);
 	SelectFont(hdc, GetFont(FONT_16));
 	rc.left = LEFT_ICON_DIS_X;
-	rc.top = (CPATION_ITEM_H - Font16X16)/2;
+	rc.top = (CPATION_ITEM_H - WIN_COMM_FONT)/2;
 	rc.right = rc.left + TOP_TEXT_SIZE;
-	rc.bottom = rc.top + Font16X16;
+	rc.bottom = rc.top + WIN_COMM_FONT;
 	if (0xff == g_pMsgList->pinfo_data[g_index].Head.title[0])
 	{
 		DrawText(hdc, get_str(SID_Info_Sms), -1, &rc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);

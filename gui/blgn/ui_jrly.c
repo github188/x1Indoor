@@ -18,7 +18,7 @@
 #define LIST_CTRL_H			(480-TOP_TEXT_H)
 	
 #define TOP_TEXT_XPOS		30	
-#define TOP_TEXT_YPOS		((TOP_TEXT_H-Font16X16)/2)	
+#define TOP_TEXT_YPOS		((TOP_TEXT_H-WIN_COMM_FONT)/2)	
 
 #define BUTTON_DISX			10
 #define BUTTON_W			100
@@ -171,21 +171,21 @@ static uint32 jrlyrecordPaint(HDC hdc)
 	Textrc.left = TOP_TEXT_XPOS;
 	Textrc.top = TOP_TEXT_YPOS;
 	Textrc.right = Textrc.left + DT_TEXT_DISX;
-	Textrc.bottom = Textrc.top + Font16X16;
+	Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 	DrawText(hdc, get_str(SID_Bl_Jrly), -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
 
 	Textrc.left = PROC_XPOS - 41;
-	Textrc.top = PROC_YPOS + (PROC_H - Font16X16)/2;
+	Textrc.top = PROC_YPOS + (PROC_H - WIN_COMM_FONT)/2;
 	Textrc.right = Textrc.left + DT_TEXT_DISX;
-	Textrc.bottom = Textrc.top + Font16X16;
+	Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 	memset(tmp, 0, sizeof(tmp));
 	sprintf(tmp, "00:00", null);
 	DrawText(hdc, tmp, -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 	
 	Textrc.left = PROC_XPOS + PROC_W + 10;
-	Textrc.top = PROC_YPOS + (PROC_H - Font16X16)/2;
+	Textrc.top = PROC_YPOS + (PROC_H - WIN_COMM_FONT)/2;
 	Textrc.right = Textrc.left + DT_TEXT_DISX;
-	Textrc.bottom = Textrc.top + Font16X16;
+	Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 	min = g_jrlyinfo->showtime/60;
 	sec = g_jrlyinfo->showtime%60;
 	memset(tmp, 0, sizeof(tmp));

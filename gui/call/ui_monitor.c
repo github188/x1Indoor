@@ -141,7 +141,7 @@ static void draw_string_hint(HDC hdc)
 	Textrc.left = TEXT_XPOS;
 	Textrc.top = TEXT_YPOS;
 	Textrc.right = Textrc.left + TEXT_LEN;
-	Textrc.bottom = Textrc.top + Font16X16;
+	Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 	DrawText(hdc, DevDesc, -1, &Textrc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 	DrawText(hdc, DevDesc, -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 	
@@ -150,7 +150,7 @@ static void draw_string_hint(HDC hdc)
 		Textrc.left = 0;
 		Textrc.top = TEXT_YPOS;
 		Textrc.right = FORM_W - RIGHT_CTRL_W;
-		Textrc.bottom = Textrc.top + Font16X16;
+		Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 		if (g_ErrHintTxtID)
 		{
 			DrawText(hdc, get_str(g_ErrHintTxtID), -1, &Textrc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
@@ -165,7 +165,7 @@ static void draw_string_hint(HDC hdc)
 		Textrc.left = Textrc.right + TEXT_DISX;
 		Textrc.top = TEXT_YPOS;
 		Textrc.right = Textrc.left + TEXT_LEN;
-		Textrc.bottom = Textrc.top + Font16X16;
+		Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 		if (g_ErrHintTxtID)
 		{
 			DrawText(hdc, get_str(g_ErrHintTxtID), -1, &Textrc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);

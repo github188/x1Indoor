@@ -25,7 +25,7 @@
 #define INPUT_ICON_W			102
 #define INPUT_ICON_H			42
 #endif
-#define TOP_TEXT_YPOS			((TOP_TEXT_H-Font16X16)/2)	
+#define TOP_TEXT_YPOS			((TOP_TEXT_H-WIN_COMM_FONT)/2)	
 #define CHAR_LEN				200
 #define INPUT_ICON_X			(FORM_W - RIGHT_CTRL_W - INPUT_ICON_W)/2
 #define INPUT_ICON_Y			(TOP_TEXT_H + 30)
@@ -75,7 +75,7 @@ static void draw_string(HDC hdc)
 	TextRc.left = TOP_TEXT_XPOS;
 	TextRc.top = TOP_TEXT_YPOS;
 	TextRc.right = TextRc.left + CHAR_LEN;
-	TextRc.bottom = TextRc.top + Font16X16;
+	TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 	DrawText(hdc, get_str(SID_Set_binding_code1), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 }
 

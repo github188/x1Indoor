@@ -712,7 +712,7 @@ static void draw_string_hint(HDC hdc)
 	TextRc.left = TEXT_XPOS;
 	TextRc.top = TEXT_YPOS;
 	TextRc.right = TextRc.left + TEXT_LEN;
-	TextRc.bottom = TextRc.top + Font16X16;
+	TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 	DrawText(hdc, DevDesc, -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 	DrawText(hdc, DevDesc, -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 
@@ -722,7 +722,7 @@ static void draw_string_hint(HDC hdc)
 		TextRc.left = TextRc.right + TEXT_DISX;
 		TextRc.top = TEXT_YPOS;
 		TextRc.right = TextRc.left + TEXT_LEN;
-		TextRc.bottom = TextRc.top + Font16X16;
+		TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 		DrawText(hdc, get_str(StrId), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 		DrawText(hdc, get_str(StrId), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
 	}	
@@ -757,7 +757,7 @@ static void draw_string_hint(HDC hdc)
 		TextRc.left = TEXT_XPOS;
 		TextRc.top = TEXT_YPOS + TEXT_DISY;
 		TextRc.right = TextRc.left + TEXT_LEN;
-		TextRc.bottom = TextRc.top + Font16X16;
+		TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 		DrawText(hdc, DevDesc, -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 		DrawText(hdc, DevDesc, -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 		
@@ -766,7 +766,7 @@ static void draw_string_hint(HDC hdc)
 			TextRc.left = TextRc.right + TEXT_DISX;
 			TextRc.top = TEXT_YPOS + TEXT_DISY;
 			TextRc.right = TextRc.left + TEXT_LEN;
-			TextRc.bottom = TextRc.top + Font16X16;
+			TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 			DrawText(hdc, get_str(StrId), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 			DrawText(hdc, get_str(StrId), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
 		}

@@ -19,20 +19,20 @@
 #if (_LCD_DPI_ == _LCD_800480_)
 #define TOP_TEXT_H				52	
 #define TOP_TEXT_XPOS			40	
-#define TOP_TEXT_YPOS			((TOP_TEXT_H-Font20X20)/2)	
+#define TOP_TEXT_YPOS			((TOP_TEXT_H-FONT_20)/2)	
 #define SYS_TEXT_XPOS			50	
 #define SYS_TEXT_YPOS			(TOP_TEXT_H+20)	
-#define TEXT_YPOS_DIS			(10+Font16X16)
+#define TEXT_YPOS_DIS			(10+FONT_16)
 #define TEXT_XPOS_DIS			200
 #define CHAR_LEN				220
 #define MAX_ITEM				SYS_INFO_MAX			
 #elif (_LCD_DPI_ == _LCD_1024600_)
 #define TOP_TEXT_H				52	
 #define TOP_TEXT_XPOS			40	
-#define TOP_TEXT_YPOS			((TOP_TEXT_H-Font20X20)/2)	
+#define TOP_TEXT_YPOS			((TOP_TEXT_H-WIN_COMM_FONT)/2)	
 #define SYS_TEXT_XPOS			50	
 #define SYS_TEXT_YPOS			(TOP_TEXT_H+20)	
-#define TEXT_YPOS_DIS			(10+Font16X16)
+#define TEXT_YPOS_DIS			(10+FONT_24)
 #define TEXT_XPOS_DIS			200
 #define CHAR_LEN				220
 #define MAX_ITEM				SYS_INFO_MAX	
@@ -376,17 +376,17 @@ static void show_win(HDC hdc)
 	TextRc.left = TOP_TEXT_XPOS;
 	TextRc.top = TOP_TEXT_YPOS;
 	TextRc.right = TextRc.left + CHAR_LEN;
-	TextRc.bottom = TextRc.top + Font20X20;
+	TextRc.bottom = TextRc.top + FONT_24;
 	DrawText(hdc, get_str(SID_Set_System_Info), -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
     //系统信息
     if (storage_get_language() != ENGLISH)
     {
-        SelectFont(hdc, GetFont(FONT_16));
+        SelectFont(hdc, GetFont(WIN_COMM_FONT));
     }
     else
     {
-        SelectFont(hdc, GetFont_ABC(FONT_16));
+        SelectFont(hdc, GetFont_ABC(WIN_COMM_FONT));
     }
     SetTextColor(hdc, COLOR_BLACK);
 	init_data(hdc);
@@ -406,7 +406,7 @@ static void show_win(HDC hdc)
 			TextRc.left = xpos;
 			TextRc.top = ypos;
 			TextRc.right = TextRc.left + CHAR_LEN;
-			TextRc.bottom = TextRc.top + Font16X16;
+			TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 			DrawText(hdc, temp1, -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 		}	
 		
@@ -417,7 +417,7 @@ static void show_win(HDC hdc)
 			TextRc.left = xpos;
 			TextRc.top = ypos;
 			TextRc.right = TextRc.left + CHAR_LEN;
-			TextRc.bottom = TextRc.top + Font16X16;
+			TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 			DrawText(hdc, tmp, -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 		}
 		xpos = SYS_TEXT_XPOS;

@@ -60,9 +60,9 @@ static void draw_bk(HDC hdc)
 	
 	DrawBmpID(hdc, 0, 0, 0, 0, BID_Set_BK);
 	SetTextColor(hdc, COLOR_BLACK);
-	SelectFont(hdc, GetFont(FONT_16));
+	SelectFont(hdc, GetFont(WIN_COMM_FONT));
 	TextRc.left = LIST_ITEM_DISX;
-	TextRc.top = (LIST_TOP_H - Font16X16)/2;
+	TextRc.top = (LIST_TOP_H - WIN_COMM_FONT)/2;
 	TextRc.right = TextRc.left + 50;
 	TextRc.bottom = TextRc.top + FONT_16;
 	
