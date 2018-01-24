@@ -19,22 +19,22 @@
 #if (_LCD_DPI_ == _LCD_800480_)
 #define TOP_TEXT_H				52	
 #define TOP_TEXT_XPOS			40	
-#define TOP_TEXT_YPOS			((TOP_TEXT_H-FONT_20)/2)	
+#define TOP_TEXT_YPOS			((TOP_TEXT_H - FONT_20)/2)	
 #define SYS_TEXT_XPOS			50	
-#define SYS_TEXT_YPOS			(TOP_TEXT_H+20)	
-#define TEXT_YPOS_DIS			(10+FONT_16)
+#define SYS_TEXT_YPOS			(TOP_TEXT_H + 20)	
+#define TEXT_YPOS_DIS			(10 + FONT_16)
 #define TEXT_XPOS_DIS			200
 #define CHAR_LEN				220
 #define MAX_ITEM				SYS_INFO_MAX			
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define TOP_TEXT_H				52	
-#define TOP_TEXT_XPOS			40	
+#define TOP_TEXT_H				65	
+#define TOP_TEXT_XPOS			50	
 #define TOP_TEXT_YPOS			((TOP_TEXT_H-WIN_COMM_FONT)/2)	
-#define SYS_TEXT_XPOS			50	
-#define SYS_TEXT_YPOS			(TOP_TEXT_H+20)	
-#define TEXT_YPOS_DIS			(10+FONT_24)
-#define TEXT_XPOS_DIS			200
-#define CHAR_LEN				220
+#define SYS_TEXT_XPOS			65	
+#define SYS_TEXT_YPOS			(TOP_TEXT_H + 25)	
+#define TEXT_YPOS_DIS			(13 + WIN_COMM_FONT)
+#define TEXT_XPOS_DIS			250
+#define CHAR_LEN				275
 #define MAX_ITEM				SYS_INFO_MAX	
 #endif
 

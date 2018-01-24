@@ -38,7 +38,7 @@
 #define SYS_TEXT_YPOS			(TOP_TEXT_H+25)	
 #define TEXT_YPOS_DIS			(13+WIN_COMM_FONT)
 #define TEXT_XPOS_DIS			250
-#define CHAR_LEN				200
+#define CHAR_LEN				250
 #define MAX_ITEM				SYS_INFO_MAX	
 #ifdef _USE_NEW_CENTER_
 #define TEXT_XPOS_DIS			183

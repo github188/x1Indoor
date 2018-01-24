@@ -27,7 +27,7 @@
 #elif (_LCD_DPI_ == _LCD_1024600_)
 #define ITEM_LEN				63
 #define LIST_ITEM_DISX			50
-#define LIST_TOP_H				52
+#define LIST_TOP_H				65
 #define DEV_ICON_W				254
 #define DEV_ICON_H				52
 #define INPUT_CTRL_XPOS			(FORM_W - RIGHT_CTRL_W - DEV_ICON_W)/2
