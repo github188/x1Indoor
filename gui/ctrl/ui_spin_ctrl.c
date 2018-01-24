@@ -18,14 +18,14 @@
 #define SPIN_ICON_W				50
 #define SPIN_ICON_DISX			16
 #define SPIN_ICON_XPOS			36 					// 窗口起始坐标到第一个输入框的距离 
-#define	SP_TEXT_XPOS			47
+#define SP_TEXT_XPOS			47
 #define SP_TEXT_YPOS			5
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define SPIN_ICON_W				50
-#define SPIN_ICON_DISX			16
-#define SPIN_ICON_XPOS			36 					// 窗口起始坐标到第一个输入框的距离 
-#define	SP_TEXT_XPOS			47
-#define SP_TEXT_YPOS			5
+#define SPIN_ICON_W				64
+#define SPIN_ICON_DISX			24
+#define SPIN_ICON_XPOS			38 					// 窗口起始坐标到第一个输入框的距离 
+#define	 SP_TEXT_XPOS			53
+#define SP_TEXT_YPOS			10
 #endif
 
 /*************************************************

@@ -100,7 +100,7 @@ static void CreateListCtrl(HWND hDlg)
 	g_listctrl.Mode = LIST_MODE_COMMON;				// 抬起释放，没有高亮显示
 	g_listctrl.Caption = 1;							// 是否有标题栏
 	g_listctrl.SideBarMode = 1;
-	g_listctrl.fonttype = FONT_26;					// 文字显示大小
+	g_listctrl.fonttype = WIN_COMM_FONT;					// 文字显示大小
 	g_listctrl.HeadInfo.Image = BID_ListCtrl_Title;
 	g_listctrl.HeadInfo.TextID = SID_Bj_Security_Settings;
 	#if (_LCD_DPI_ == _LCD_800480_)

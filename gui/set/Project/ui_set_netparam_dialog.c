@@ -21,12 +21,12 @@
 #define SPIN_CTRL_X				(FORM_W - RIGHT_CTRL_W - SPIN_CTRL_W)/2
 #define SPIN_CTRL_Y				(LIST_TOP_H + 30)
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define LIST_ITEM_DISX			40
-#define LIST_TOP_H				52
-#define SPIN_CTRL_W				320
-#define SPIN_CTRL_H				40
+#define LIST_ITEM_DISX			50
+#define LIST_TOP_H				65
+#define SPIN_CTRL_W				408
+#define SPIN_CTRL_H				52
 #define SPIN_CTRL_X				(FORM_W - RIGHT_CTRL_W - SPIN_CTRL_W)/2
-#define SPIN_CTRL_Y				(LIST_TOP_H + 30)
+#define SPIN_CTRL_Y				(LIST_TOP_H + 38)
 #endif
 
 static SPIN_INFO g_spin;
