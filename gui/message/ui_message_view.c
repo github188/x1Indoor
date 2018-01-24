@@ -107,7 +107,7 @@ static void draw_text(HDC hdc)
 	
 	// БъЬт
 	SetTextColor(hdc, COLOR_BLACK);
-	SelectFont(hdc, GetFont(FONT_16));
+	SelectFont(hdc, GetFont(WIN_COMM_FONT));
 	rc.left = LEFT_ICON_DIS_X;
 	rc.top = (CPATION_ITEM_H - WIN_COMM_FONT)/2;
 	rc.right = rc.left + TOP_TEXT_SIZE;

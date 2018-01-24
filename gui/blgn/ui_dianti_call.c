@@ -71,7 +71,7 @@ static void draw_string_hint(HDC hdc)
 	RECT Textrc;
 	
 	SetTextColor(hdc, COLOR_BLACK);
-	SelectFont(hdc, GetFont(FONT_16));
+	SelectFont(hdc, GetFont(WIN_COMM_FONT));
 	uint8 language = storage_get_language();
 	if (language == ENGLISH)
 	{

@@ -71,7 +71,7 @@ static void draw_string(HDC hdc)
 	RECT TextRc;
 	
 	SetTextColor(hdc, COLOR_BLACK);
-	SelectFont(hdc, GetFont(FONT_16));
+	SelectFont(hdc, GetFont(WIN_COMM_FONT));
 	TextRc.left = TOP_TEXT_XPOS;
 	TextRc.top = TOP_TEXT_YPOS;
 	TextRc.right = TextRc.left + CHAR_LEN;

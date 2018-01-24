@@ -708,7 +708,7 @@ static void draw_string_hint(HDC hdc)
 	
     // 画设备描述和状态提示
 	SetTextColor(hdc, COLOR_green);
-	SelectFont(hdc, GetBoldFont(FONT_16));
+	SelectFont(hdc, GetBoldFont(WIN_COMM_FONT));
 	TextRc.left = TEXT_XPOS;
 	TextRc.top = TEXT_YPOS;
 	TextRc.right = TextRc.left + TEXT_LEN;
@@ -753,7 +753,7 @@ static void draw_string_hint(HDC hdc)
 		
 	    // 画设备描述和状态提示
 		SetTextColor(hdc, COLOR_green);
-		SelectFont(hdc, GetBoldFont(FONT_16));
+		SelectFont(hdc, GetBoldFont(WIN_COMM_FONT));
 		TextRc.left = TEXT_XPOS;
 		TextRc.top = TEXT_YPOS + TEXT_DISY;
 		TextRc.right = TextRc.left + TEXT_LEN;

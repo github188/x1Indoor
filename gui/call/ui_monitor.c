@@ -137,7 +137,7 @@ static void draw_string_hint(HDC hdc)
 	
     // 画设备描述和状态提示: 若有出错信息，画出错信息，否则画监视状态
 	SetTextColor(hdc, COLOR_green);
-	SelectFont(hdc, GetBoldFont(FONT_16));
+	SelectFont(hdc, GetBoldFont(WIN_COMM_FONT));
 	Textrc.left = TEXT_XPOS;
 	Textrc.top = TEXT_YPOS;
 	Textrc.right = Textrc.left + TEXT_LEN;

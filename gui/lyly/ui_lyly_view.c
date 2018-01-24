@@ -121,7 +121,7 @@ static void draw_dev_hint(HDC hdc)
 	memset(time, 0, sizeof(time));
 	
 	SetTextColor(hdc, COLOR_GREEN);
-	SelectFont(hdc, GetFont(FONT_16));
+	SelectFont(hdc, GetFont(WIN_COMM_FONT));
 	get_dev_description(g_lylylist->LylyInfo[g_index].DevType, g_lylylist->LylyInfo[g_index].DevNo, devtext, 50);
 	
 	rc.left = LYLY_TEXT_LEFT_2;

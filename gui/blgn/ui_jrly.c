@@ -158,11 +158,11 @@ static uint32 jrlyrecordPaint(HDC hdc)
 	RECT Textrc;
 	if (storage_get_language() != ENGLISH)
 	{
-		SelectFont(hdc, GetFont(FONT_16));
+		SelectFont(hdc, GetFont(WIN_COMM_FONT));
 	}
 	else
 	{
-		SelectFont(hdc, GetFont_ABC(FONT_16));
+		SelectFont(hdc, GetFont_ABC(WIN_COMM_FONT));
 	}		
 	SetTextColor(hdc, COLOR_BLACK);
 	DrawBmpID(hdc, 0, 0, 0, 0, BID_Set_BK);

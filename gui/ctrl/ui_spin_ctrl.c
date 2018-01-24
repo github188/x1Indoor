@@ -69,7 +69,7 @@ static uint32 draw_mode_ip (HWND hDlg, HDC hdc)
 	}
 	
 	SetTextColor(hdc, COLOR_BLACK);
-	SelectFont(hdc, GetFont(FONT_16));
+	SelectFont(hdc, GetFont(WIN_COMM_FONT));
 	
 	#if 0
 	Image[0] = pData->ImageId[0];

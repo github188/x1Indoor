@@ -63,8 +63,8 @@ static void draw_bk(HDC hdc)
 	SelectFont(hdc, GetFont(WIN_COMM_FONT));
 	TextRc.left = LIST_ITEM_DISX;
 	TextRc.top = (LIST_TOP_H - WIN_COMM_FONT)/2;
-	TextRc.right = TextRc.left + 50;
-	TextRc.bottom = TextRc.top + FONT_16;
+	TextRc.right = TextRc.left + 63;
+	TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 	
 	if (0 == g_dev_type)
 	{

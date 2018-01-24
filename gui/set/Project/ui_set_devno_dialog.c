@@ -67,11 +67,11 @@ static void draw_bk(HDC hdc)
 	DrawBmpID(hdc, 0, 0, 0, 0, BID_Set_BK);
 	
 	SetTextColor(hdc, COLOR_BLACK);
-	SelectFont(hdc, GetFont(FONT_16));
+	SelectFont(hdc, GetFont(WIN_COMM_FONT));
 	TextRc.left = LIST_ITEM_DISX;
 	TextRc.top = (LIST_TOP_H - WIN_COMM_FONT)/2;
 	TextRc.right =TextRc.left + ITEM_LEN;
-	TextRc.bottom = TextRc.top + FONT_16;
+	TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 	DrawText(hdc, get_str(g_PageTextID), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 	DrawText(hdc, get_str(g_PageTextID), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 }

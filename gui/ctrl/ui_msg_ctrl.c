@@ -148,7 +148,7 @@ static void draw_aurine_hit(HDC hdc)
 	DrawBmpID(hdc, 0, 0, 0, 0, g_pData.MsgBk);
 
 	SetTextColor(hdc, COLOR_WHITE);
-	SelectFont(hdc, GetBoldFont(FONT_16));
+	SelectFont(hdc, GetBoldFont(WIN_COMM_FONT));
 	if (g_pData.TextID > 0)
 	{
 		if (ENGLISH == storage_get_language())
@@ -182,7 +182,7 @@ static void draw_aurine_msg(HDC hdc)
 	DrawBmpID(hdc, MSG_ICON_X, MSG_ICON_Y, 0, 0, g_pData.MsgIcon);
 	
 	SetTextColor(hdc, COLOR_WHITE);
-	SelectFont(hdc, GetBoldFont(FONT_16));
+	SelectFont(hdc, GetBoldFont(WIN_COMM_FONT));
 	if (g_pData.TextID > 0)
 	{	
 		// 单行可容纳25个字符
@@ -233,7 +233,7 @@ static void draw_aurine_query(HDC hdc)
 	DrawBmpID(hdc, MSG_ICON_X, MSG_ICON_Y, 0, 0, g_pData.MsgIcon);
 	
 	SetTextColor(hdc, COLOR_WHITE);
-	SelectFont(hdc, GetBoldFont(FONT_16));
+	SelectFont(hdc, GetBoldFont(WIN_COMM_FONT));
 	if (g_pData.TextID > 0)
 	{
 			Textrc.left = QUERY_TEXT_LEFT+40;
@@ -311,7 +311,7 @@ static void draw_hit(HDC hdc)
 	DrawBmpID(hdc, 0, 0, 0, 0, g_pData.MsgBk);
 	DrawBmpID(hdc, HIT_ICON_XPOS, HIT_ICON_YPOS, 0, 0, g_pData.MsgIcon);
 	SetTextColor(hdc, COLOR_WHITE);
-	SelectFont(hdc, GetBoldFont(FONT_16));
+	SelectFont(hdc, GetBoldFont(WIN_COMM_FONT));
 
 	if (g_pData.TextID > 0)
 	{
@@ -339,7 +339,7 @@ static void draw_msg(HDC hdc)
 	DrawBmpID(hdc, MSG_ICON_XPOS, MSG_ICON_YPOS, 0, 0, g_pData.MsgIcon);
 	
 	SetTextColor(hdc, COLOR_WHITE);
-	SelectFont(hdc, GetBoldFont(FONT_16));
+	SelectFont(hdc, GetBoldFont(WIN_COMM_FONT));
 	if (g_pData.TextID > 0)
 	{	
 		// 单行可容纳25个字符
@@ -403,7 +403,7 @@ static void draw_query(HDC hdc)
 	DrawBmpID(hdc, QUERY_ICON_XPOS, QUERY_ICON_YPOS, 0, 0, g_pData.MsgIcon);
 	
 	SetTextColor(hdc, COLOR_WHITE);
-	SelectFont(hdc, GetBoldFont(FONT_16));
+	SelectFont(hdc, GetBoldFont(WIN_COMM_FONT));
 	if (g_pData.TextID > 0)
 	{
 		Textrc.left = QUERY_TEXT_LEFT;

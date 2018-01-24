@@ -114,7 +114,7 @@ static void draw_dev_hint(HDC hdc)
 	memset(time, 0, sizeof(time));
 	
 	SetTextColor(hdc, COLOR_GREEN);
-	SelectFont(hdc, GetFont(FONT_16));
+	SelectFont(hdc, GetFont(WIN_COMM_FONT));
 	get_dev_description(g_photolist->PhotoInfo[g_index].Type, g_photolist->PhotoInfo[g_index].DevNo, devtext, 50);	
 	rc.left = TEXT_LEFT1;
 	rc.top = TEXT_TOP1;

@@ -361,11 +361,11 @@ static void show_win(HDC hdc)
 	
 	if (storage_get_language() != ENGLISH)
 	{
-		SelectFont(hdc, GetFont(FONT_16));
+		SelectFont(hdc, GetFont(WIN_COMM_FONT));
 	}
 	else
 	{
-		SelectFont(hdc, GetFont_ABC(FONT_16));
+		SelectFont(hdc, GetFont_ABC(WIN_COMM_FONT));
 	}
 	
 	DrawBmpID(hdc, 0, 0, 0, 0, BID_Set_BK);
