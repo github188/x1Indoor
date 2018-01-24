@@ -335,7 +335,7 @@ static void Init_Key(void)
 	add_rightctrl_win(g_RightWin, RIGHT_KEY0, g_KeybordWin, WM_Key_Left, 0, 0);
 	add_rightctrl_win(g_RightWin, RIGHT_KEY1, g_KeybordWin, WM_Key_Right, 0, 0);
 	add_rightctrl_win(g_RightWin, RIGHT_KEY2, g_KeybordWin, WM_Key_Ok, 0, 0);
-	add_rightctrl_win(g_RightWin, RIGHT_KEY3, g_InputWin, WM_Input_Send_Value, 0, 0);	
+	add_rightctrl_win(g_RightWin, RIGHT_KEY3, g_InputWin,   WM_Input_Send_Value, 0, 0);	
 }
 
 /*************************************************

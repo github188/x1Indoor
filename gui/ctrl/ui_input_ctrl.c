@@ -176,7 +176,7 @@ static uint32 draw_inputctrl_num(HWND hDlg,HDC hdc, WPARAM wParam, LPARAM lParam
 			#if (_LCD_DPI_ == _LCD_800480_)
 			SelectFont(hdc, GetFont(FONT_20));
 			#elif (_LCD_DPI_ == _LCD_1024600_)
-			SelectFont(hdc, GetFont(FONT_20));
+			SelectFont(hdc, GetFont(FONT_22));
 			#endif
 			TextRc.left = INPUT_TEXT_X;
 			TextRc.top = INPUT_TEXT_Y;
