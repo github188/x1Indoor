@@ -227,7 +227,7 @@ static void CreateListCtrl(HWND hDlg)
 	g_listCtrl.PageCount = 8;						// ÏÔÊ¾¸öÊý
 	g_listCtrl.ImageTopBk = BID_ListCtrl_TopBK8_0;
 	g_listCtrl.ImageBk = BID_ListCtrl_BK8_0;
-	g_listCtrl.Width[0] = 125;
+	g_listCtrl.Width[0] = 150;
 	g_listCtrl.Width[1] = 250;
 	#endif
 	g_listCtrl.HeadInfo.Image = BID_ListCtrl_Title;
