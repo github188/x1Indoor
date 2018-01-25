@@ -252,7 +252,7 @@ static void get_filename(BMP_ID_E id, char * filename)
 		get_file(BID_Num8,                           UI_PIC_DIR_PATH"/ctrl/input/Num8.png");
 		get_file(BID_Num9,                           UI_PIC_DIR_PATH"/ctrl/input/Num9.png");
 		get_file(BID_NumXin,                         UI_PIC_DIR_PATH"/ctrl/input/NumXin.png");
-		get_file(BID_NumJin,                         UI_PIC_DIR_PATH"/ctrl/input/NumXin.png");
+		get_file(BID_NumJin,                         UI_PIC_DIR_PATH"/ctrl/input/NumJin.png");
 		get_file(BID_Input_Ctrl,                     UI_PIC_DIR_PATH"/ctrl/input/Input_Ctrl.png");	
 		get_file(BID_Input_Black,                    UI_PIC_DIR_PATH"/ctrl/input/Input_Black.png");
 		get_file(BID_InputButton_date1,              UI_PIC_DIR_PATH"/ctrl/input/InputButton_date1.png");

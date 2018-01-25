@@ -214,7 +214,7 @@ static uint32 draw_inputctrl_num(HWND hDlg,HDC hdc, WPARAM wParam, LPARAM lParam
 						}
 						else
 						{
-							DrawBmpID(hdc, xpos, ypos, 0, 0, BID_Num0+num[i-1]-'0');
+							DrawBmpID(hdc, xpos, ypos, 0, 0, BID_Num0 + num[i-1] - '0');
 						}						
 						break;
 

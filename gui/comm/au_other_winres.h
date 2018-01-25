@@ -167,18 +167,18 @@ extern "C" {
 #define LIST_CTRL_H				FORM_LEFT_H
 
 // 主叫、被叫、监视提示字位置
-#define TEXT_XPOS           	40
-#define TEXT_YPOS          		20
-#define TEXT_DISX               12
-#define TEXT_DISY				30	
-#define TEXT_LEN          		200
+#define TEXT_XPOS           	50
+#define TEXT_YPOS          		25
+#define TEXT_DISX               15
+#define TEXT_DISY				38	
+#define TEXT_LEN          		250
 
 // 音量设置
 #define MUTE_ICON_XPOS			181
 #define MUTE_ICON_YPOS			240
 #define VOLUME_ICON_XPOS    	249
 #define VOLUME_ICON_YPOS    	240
-#define VOLUME_TOTAL_H			48					// 音量图标总高度
+#define VOLUME_TOTAL_H			48					   		// 音量图标总高度
 #define VOLUME_TOTAL_W			(210+48+20)
 #define VOLUME_ALL_ICON_Y		((VIDEO_WIN_H-VOLUME_TOTAL_H)/2+150)
 #endif
