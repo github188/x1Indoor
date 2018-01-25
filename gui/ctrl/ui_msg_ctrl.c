@@ -53,42 +53,42 @@
 #define HIT_TEXT_RIGHT			FORM_MSG_W
 #define HIT_TEXT_BOTTOM			FORM_MSG_H
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define MSG_ICON_W				40
-#define MSG_ICON_H				40
-#define MSG_ICON_XPOS			(FORM_MSG_W-MSG_ICON_W)/2
-#define MSG_ICON_YPOS			(68+(132-MSG_ICON_H)/2)
+#define MSG_ICON_W				50
+#define MSG_ICON_H				50
+#define MSG_ICON_XPOS			(FORM_MSG_W - MSG_ICON_W) / 2
+#define MSG_ICON_YPOS			(86 + (167 - MSG_ICON_H) / 2)
 #define MSG_TEXT_LEFT			0
-#define MSG_TEXT_TOP1			9
-#define MSG_TEXT_TOP2			26
+#define MSG_TEXT_TOP1			12
+#define MSG_TEXT_TOP2			33
 #define MSG_TEXT_RIGHT			FORM_MSG_W
-#define MSG_TEXT_BOTTOM			68
+#define MSG_TEXT_BOTTOM			85
 
-#define QUERY_ICON_XPOS			15
-#define QUERY_ICON_YPOS			(68-MSG_ICON_H)/2
-#define QUERY_TEXT_LEFT			70
-#define QUERY_TEXT_TOP			(68-16)/2
+#define QUERY_ICON_XPOS			19
+#define QUERY_ICON_YPOS			(86 - MSG_ICON_H) / 2
+#define QUERY_TEXT_LEFT			88
+#define QUERY_TEXT_TOP			(88 - 20)/2
 #define QUERY_TEXT_DISX			(FORM_MSG_W-QUERY_TEXT_LEFT)
 
-#define QUERY_BUTTON_W			100
-#define QUERY_BUTTON_H			52
-#define QUERY_BUTTON_XPOS		((FORM_MSG_W-2*QUERY_BUTTON_W)/3)
-#define QUERY_BUTTONON_XPOS		2*QUERY_BUTTON_XPOS + QUERY_BUTTON_W
-#define QUERY_BUTTON_YPOS		(68+(132-QUERY_BUTTON_H)/2)
+#define QUERY_BUTTON_W			128
+#define QUERY_BUTTON_H			66
+#define QUERY_BUTTON_XPOS		((FORM_MSG_W - 2 * QUERY_BUTTON_W) / 3)
+#define QUERY_BUTTONON_XPOS		2 * QUERY_BUTTON_XPOS + QUERY_BUTTON_W
+#define QUERY_BUTTON_YPOS		(86 + (167 - QUERY_BUTTON_H) / 2)
 
 #define QUERY_YES_DISX			QUERY_BUTTON_W
-#define QUERY_YES_LEFT1			QUERY_BUTTON_XPOS+42	// 显示中文时的坐标
-#define QUERY_YES_TOP1			(68+(132-16)/2)
-#define QUERY_NO_LEFT1			QUERY_BUTTONON_XPOS+42
-#define QUERY_YES_LEFT2			QUERY_BUTTON_XPOS+42	// 显示英文时的坐标
-#define QUERY_YES_TOP2			(68+(132-16)/2)
-#define QUERY_NO_LEFT2			QUERY_BUTTONON_XPOS+42
+#define QUERY_YES_LEFT1			QUERY_BUTTON_XPOS + 53	// 显示中文时的坐标
+#define QUERY_YES_TOP1			(86 + (167 - 20) / 2)
+#define QUERY_NO_LEFT1			QUERY_BUTTONON_XPOS + 53
+#define QUERY_YES_LEFT2			QUERY_BUTTON_XPOS + 53	// 显示英文时的坐标
+#define QUERY_YES_TOP2			(86 + (167 - 20) / 2)
+#define QUERY_NO_LEFT2			QUERY_BUTTONON_XPOS + 53
 
-#define HIT_ICON_W				72
-#define HIT_ICON_H				72
-#define HIT_ICON_XPOS			(FORM_MSG_W-HIT_ICON_W)/2
-#define HIT_ICON_YPOS			(FORM_MSG_H-68-HIT_ICON_H)/2
+#define HIT_ICON_W				92
+#define HIT_ICON_H				92
+#define HIT_ICON_XPOS			(FORM_MSG_W - HIT_ICON_W) / 2
+#define HIT_ICON_YPOS			(FORM_MSG_H - 86 - HIT_ICON_H) / 2
 #define HIT_TEXT_LEFT			0
-#define HIT_TEXT_TOP			132+(68-16)/2
+#define HIT_TEXT_TOP			167 + (86 - 20) / 2
 #define HIT_TEXT_RIGHT			FORM_MSG_W
 #define HIT_TEXT_BOTTOM			FORM_MSG_H
 #endif
@@ -160,8 +160,8 @@ static void draw_aurine_hit(HDC hdc)
 			Textrc.left = HIT_TEXT_XPOS;
 		}
 		Textrc.top = (FORM_HIT_H - WIN_COMM_FONT)/2;
-		Textrc.right = Textrc.left+200;
-		Textrc.bottom = Textrc.top+WIN_COMM_FONT;
+		Textrc.right = Textrc.left + 250;
+		Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 		DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT);
 	}
 }
@@ -263,12 +263,12 @@ static void draw_aurine_query(HDC hdc)
     DrawBmpID(hdc, QUERY_BUTTONON_XPOS, QUERY_BUTTON_YPOS+20, 0, 0, Image2);
 
 	Textrc.left = QUERY_YES_LEFT1;
-	Textrc.top = QUERY_YES_TOP1+20;
+	Textrc.top = QUERY_YES_TOP1 + 25;
 	Textrc.right = Textrc.left + QUERY_YES_DISX;
 	Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 
 	Textrc1.left = QUERY_NO_LEFT1;
-	Textrc1.top = QUERY_YES_TOP1+20;
+	Textrc1.top = QUERY_YES_TOP1 + 25;
 	Textrc1.right = Textrc1.left + QUERY_YES_DISX;
 	Textrc1.bottom = Textrc1.top + WIN_COMM_FONT;
 

@@ -15,10 +15,18 @@
 #define __UI_MSG_CTRL_H__
 
 #if (_UI_STYLE_ == _V6_UI_STYLE_)
+#if (_LCD_DPI_ == _LCD_800480_)
 #define FORM_MSG_W				360					// 窗体大小
 #define FORM_MSG_H				200
 #define FORM_MSG_X				(SCREEN_WIDTH-FORM_MSG_W-RIGHT_CTRL_W)/2
 #define FORM_MSG_Y				(SCREEN_HEIGHT-FORM_MSG_H)/2
+#elif (_LCD_DPI_ == _LCD_1024600_)
+#define FORM_MSG_W				461					// 窗体大小
+#define FORM_MSG_H				253
+#define FORM_MSG_X				(SCREEN_WIDTH-FORM_MSG_W-RIGHT_CTRL_W)/2
+#define FORM_MSG_Y				(SCREEN_HEIGHT-FORM_MSG_H)/2
+#endif
+
 #elif (_UI_STYLE_ == _E81S_UI_STYLE_)
 #define FORM_MSG_W				360
 #define FORM_MSG_H				136
