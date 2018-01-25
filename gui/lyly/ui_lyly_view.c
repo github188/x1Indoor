@@ -33,15 +33,15 @@
 #define LYLY_PIC_RIGHT			640
 #define LYLY_PIC_BOTTOM	    	480
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define LYLY_TEXT_LEFT_1		280	
-#define LYLY_TEXT_TOP_1			400	
-#define LYLY_TEXT_LEFT_2		254		
-#define LYLY_TEXT_TOP_2			420	
-#define LYLY_TEXT_LEN			150
+#define LYLY_TEXT_LEFT_1		330	
+#define LYLY_TEXT_TOP_1			500	
+#define LYLY_TEXT_LEFT_2		315		
+#define LYLY_TEXT_TOP_2			525	
+#define LYLY_TEXT_LEN			188
 #define LYLY_PIC_LEFT			0
 #define LYLY_PIC_TOP			0
-#define LYLY_PIC_RIGHT			640
-#define LYLY_PIC_BOTTOM	    	480
+#define LYLY_PIC_RIGHT			820
+#define LYLY_PIC_BOTTOM	    	600
 #endif
 
 /************************变量定义************************/
@@ -124,9 +124,9 @@ static void draw_dev_hint(HDC hdc)
 	SelectFont(hdc, GetFont(WIN_COMM_FONT));
 	get_dev_description(g_lylylist->LylyInfo[g_index].DevType, g_lylylist->LylyInfo[g_index].DevNo, devtext, 50);
 	
-	rc.left = LYLY_TEXT_LEFT_2;
+	rc.left = LYLY_TEXT_LEFT_1;
 	rc.top = LYLY_TEXT_TOP_1;
-	rc.right = rc.left + 132;
+	rc.right = rc.left + 165;
 	rc.bottom = rc.top + WIN_COMM_FONT;
 	if (g_lylylist->LylyInfo[g_index].DevType == DEVICE_TYPE_ROOM)
 	{
