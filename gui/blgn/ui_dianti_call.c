@@ -27,12 +27,12 @@
 #define DT_TEXT_TOP4			431
 #define DT_TEXT_DISX			150
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define DT_TEXT_LEFT			190
-#define DT_TEXT_TOP1			400
-#define DT_TEXT_TOP2			428
-#define DT_TEXT_TOP3			398
-#define DT_TEXT_TOP4			431
-#define DT_TEXT_DISX			150
+#define DT_TEXT_LEFT			238
+#define DT_TEXT_TOP1			500
+#define DT_TEXT_TOP2			535
+#define DT_TEXT_TOP3			498
+#define DT_TEXT_TOP4			539
+#define DT_TEXT_DISX			188
 #endif
 
 /************************变量定义************************/
