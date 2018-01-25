@@ -25,8 +25,7 @@
 #define MESSAGE_PIC_BOTTOM			324
 #endif
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define CPATION_ITEM_H				45
-#define CPATION_ITEM_H				52
+#define CPATION_ITEM_H				65
 #if 0
 #define MESSAGE_PIC_LEFT			104
 #define MESSAGE_PIC_TOP				103
@@ -134,13 +133,13 @@ static void draw_text(HDC hdc)
 		}
 
 		SetTextColor(hdc, COLOR_BLACK);
-		SelectFont(hdc, GetFont(FONT_20));
+		SelectFont(hdc, GetFont(WIN_COMM_FONT));
 		memset(text, 0, sizeof(text));
 		sprintf(text, "%s%s",text1,content);
-		rc.left = TEXT_X + 23;
-		rc.top = (CPATION_ITEM_H + 20);
+		rc.left = TEXT_X + 30;
+		rc.top = (CPATION_ITEM_H + 25);
 		rc.right = FORM_W - RIGHT_CTRL_W - rc.left;
-		rc.bottom = rc.top + 9*FONT_20;
+		rc.bottom = rc.top + 9*WIN_COMM_FONT;
 		DrawText(hdc, text, -1, &rc, DT_LEFT);
 		
 		free(content);
