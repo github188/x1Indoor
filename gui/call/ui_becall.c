@@ -25,13 +25,13 @@
 #define VIDEO_WIN_W				640
 #define VIDEO_WIN_H				480
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define VIDEO_WIN_W				640
-#define VIDEO_WIN_H				480
+#define VIDEO_WIN_W				820
+#define VIDEO_WIN_H				600
 #endif
 #define VIDEO_WIN_X				0	
 #define VIDEO_WIN_Y				0
-#define INTER_INFO_DIS_Y		12
-#define INTER_TIME_W			30
+#define INTER_INFO_DIS_Y		15
+#define INTER_TIME_W			38
 #define INTER_TIME_X			(VIDEO_WIN_X+(VIDEO_WIN_W-INTER_TIME_W))
 #define INTER_TIME_Y			(VIDEO_WIN_Y+INTER_INFO_DIS_Y)
 
