@@ -44,22 +44,22 @@ typedef struct
 	MSMediaDesc* VideoRtpSend;
 	MSMediaDesc* VideoRtpRecv;
 	MSMediaDesc* AudioDec;
+	MSMediaDesc* AudioEnc;
 	MSMediaDesc* AudioAi;
 	MSMediaDesc* AudioAo;	
-	MSMediaDesc* AudioEnc;
 	MSMediaDesc* AudioRtpSend;
 	MSMediaDesc* AudioRtpRecv;
-	MSMediaDesc* FilePlayer;
+	MSMediaDesc* WavPlayer;
+	MSMediaDesc* WavRecord;
 	MSMediaDesc* JpegDec;
 	MSMediaDesc* JpegEnc;
 	MSMediaDesc* AlawAgc;	
     MSMediaDesc* Speex; 
-	MSMediaDesc* AviPlay; 
-	MSMediaDesc* AviRecord;
-	MSMediaDesc* WavRecord; 
-	MSMediaDesc* Mp3Play; 
-	MSMediaDesc* RtspPlay;
+	MSMediaDesc* LylyPlay; 
+	MSMediaDesc* LylyRecord;
 	MSMediaDesc* LylyHitPlay;
+	MSMediaDesc* Mp3Play; 
+	MSMediaDesc* RtspPlay;	
 	#ifdef _ENABLE_CLOUD_
 	MSMediaDesc* VideoCloudSend;
 	MSMediaDesc* AudioCloudSend;
@@ -216,6 +216,7 @@ typedef struct _MEDIA_LYLY_CTRL
 	PMEDIA_CALLBACK callback;						// »Øµ÷
 }MEDIA_LYLY_CTRL, * PMEDIA_LYLY_CTRL;
 
+typedef void (*MsCloudDataFunc)(char* data, int len, int keyframe, unsigned int id);
 
 
 /*************************************************

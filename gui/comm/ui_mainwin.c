@@ -79,6 +79,7 @@
 #endif
 
 #elif (_UI_STYLE_ == _E81S_UI_STYLE_)
+#if (_LCD_DPI_ == _LCD_800480_)
 #define TOP_DISY				20					// 图标距顶部的间距
 #define MAIN_RIGHT_W			160					// 右边控件宽度
 #define MAIN_ICON_DISX			94					// 图标X轴间距
@@ -91,6 +92,20 @@
 #define NEW_HIT_DISX			47+13				// 新事件提示X轴间距
 #define NEW_HIT_DISY			 -8					// 新事件提示Y轴间距
 #define MAIN_NET_W 				30					//网络图标横坐标
+#elif (_LCD_DPI_ == _LCD_1024600_)
+#define TOP_DISY				20					// 图标距顶部的间距
+#define MAIN_RIGHT_W			160					// 右边控件宽度
+#define MAIN_ICON_DISX			94					// 图标X轴间距
+#define MAIN_ICON_DISY			40					// 图标Y轴间距
+#define MAIN_ICON_W				88					// 图标宽
+#define MAIN_ICON_H				88					// 图标高
+#define ICON_TEXT_DISY      	0 					// 字与图标间距
+
+#define ICON_SEL_DIS			2					// 选中框间距
+#define NEW_HIT_DISX			47+13				// 新事件提示X轴间距
+#define NEW_HIT_DISY			 -8					// 新事件提示Y轴间距
+#define MAIN_NET_W 				30					//网络图标横坐标
+#endif
 #endif
 #define MAIN_ICON_XPOS			(FORM_W-MAIN_RIGHT_W-MAIN_ICON_DISX*2-MAIN_ICON_W*3)/2	// 图标X轴起点
 

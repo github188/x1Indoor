@@ -36,6 +36,6 @@ typedef struct _Mp3PlayParam{
 
 #define MS_MP3_PLAY_OPEN	MS_MEDIA_METHOD(MS_MP3_PLAY_ID, 0x00, const char)
 #define MS_MP3_PLAY_CLOSE	MS_MEDIA_METHOD_NO_ARG(MS_MP3_PLAY_ID, 0x01)
-#define MS_MP3_PLAY_STATE   MS_MEDIA_METHOD(MS_MP3_PLAY_ID, 0x02, AviPlayState)   
+#define MS_MP3_PLAY_STATE   MS_MEDIA_METHOD(MS_MP3_PLAY_ID, 0x02, const char)   
 
 #endif

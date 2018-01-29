@@ -39,7 +39,7 @@ typedef struct
 }WAV_AUDIO_PARAM, *PWAV_AUDIO_PARAM;
 
 
-typedef struct _AudioPlayState
+typedef struct _WavPlayState
 {
 	int StreamID;
 	WAV_AUDIO_PARAM audio_param;
@@ -47,14 +47,14 @@ typedef struct _AudioPlayState
 	AUDIOPLAY_PARAM AudioPlay_Param;
 	MSThread msplaythread;
 
-}AudioPlayState;
+}WavPlayState;
 
 
 
-#define MS_AUDIO_PLAY_OPEN		MS_MEDIA_METHOD(MS_FILE_PLAYER_ID, 0x01, const char)
-#define MS_AUDIO_PLAY_PARAM		MS_MEDIA_METHOD(MS_FILE_PLAYER_ID, 0x02, const char)
-#define MS_AUDIO_PLAY_CONTROL   MS_MEDIA_METHOD(MS_FILE_PLAYER_ID, 0x03, const char)   
-#define MS_AUDIO_PLAY_CLOSE		MS_MEDIA_METHOD_NO_ARG(MS_FILE_PLAYER_ID, 0x01)
+#define MS_WAV_PLAY_OPEN		MS_MEDIA_METHOD(MS_WAV_PLAYER_ID, 0x01, const char)
+#define MS_WAV_PLAY_PARAM		MS_MEDIA_METHOD(MS_WAV_PLAYER_ID, 0x02, const char)
+#define MS_WAV_PLAY_CONTROL   	MS_MEDIA_METHOD(MS_WAV_PLAYER_ID, 0x03, const char)   
+#define MS_WAV_PLAY_CLOSE		MS_MEDIA_METHOD_NO_ARG(MS_WAV_PLAYER_ID, 0x01)
 
 #endif
 

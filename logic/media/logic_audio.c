@@ -235,6 +235,40 @@ static int audio_enc_close(void)
 }
 
 /*************************************************
+  Function:    	audio_local_enc_open
+  Description: 		
+  Input:		无
+  Output:		无
+  Return:		无		
+  Others:		本地编码 用于本地录制保存
+*************************************************/
+int audio_local_enc_open(void)
+{
+	AudioParam.isPack = 1;
+	ms_filter_call_method(mMediaStream.AudioEnc, MS_AUDIO_SF_ENC_PARAM, &AudioParam);
+	
+	int ret = ms_filter_call_method(mMediaStream.AudioEnc, MS_AUDIO_SF_ENC_OPEN, NULL);	
+	if (-1 != ret)
+	{
+		ms_filter_call_method(mMediaStream.AudioEnc, MS_AUDIO_SF_ENC_LOCAL, NULL);
+	}
+	return ret;
+}
+
+/*************************************************
+  Function:    	audio_local_enc_close
+  Description: 		
+  Input:		无
+  Output:		无
+  Return:		无		
+  Others:
+*************************************************/
+int audio_local_enc_close(void)
+{
+	return ms_filter_call_method(mMediaStream.AudioEnc, MS_AUDIO_SF_ENC_CLOSE, NULL);	
+}
+
+/*************************************************
   Function:    	audio_dec_enable
   Description: 		
   Input:		无
@@ -384,7 +418,7 @@ int audio_ai_disable(void)
   Return:		无		
   Others:
 *************************************************/
-static int audio_ai_open(void)
+int audio_ai_open(void)
 {
 	ms_filter_call_method(mMediaStream.AudioAi, MS_AUDIO_AI_PARAM, &AudioParam);
 	return ms_filter_call_method(mMediaStream.AudioAi, MS_AUDIO_AI_OPEN, NULL);	
@@ -398,7 +432,7 @@ static int audio_ai_open(void)
   Return:		无		
   Others:
 *************************************************/
-static int audio_ai_close(void)
+int audio_ai_close(void)
 {
 	return ms_filter_call_method(mMediaStream.AudioAi, MS_AUDIO_AI_CLOSE, NULL);	
 }
@@ -430,6 +464,55 @@ int audio_aec_disable(void)
 	unsigned char flg = FALSE;
 	return ms_filter_call_method(mMediaStream.AudioAi, MS_AUDIO_AI_AEC_ENABLE, &flg);	
 }
+
+/*************************************************
+  Function:    	audio_wav_record_open
+  Description: 		
+  Input:		
+  	mode		0本地录制 1网络录制
+  Output:		无
+  Return:		无		
+  Others:
+*************************************************/
+static int audio_wav_record_open(int mode, char * FileName)
+{
+	AUDIORECORD_PARAM param;
+	memset(&param, 0, sizeof(AUDIORECORD_PARAM));
+	strcpy(param.filename, FileName);	
+	param.u16Channels = 1;
+	param.u32SamplingRate = AIO_SAMPLE_RATE_8;
+	if (0 == mode)
+	{
+		param.format = eWAVE_FORMAT_PCM;
+		param.u16BitsPerSample = AIO_BIT_WIDTH_16;
+	}
+	else
+	{
+		param.format = eWAVE_FORMAT_G711_ALAW;
+		param.u16BitsPerSample = AIO_BIT_WIDTH_8;
+	}
+	
+	int ret = ms_filter_call_method(mMediaStream.WavRecord, MS_WAV_RECORD_PARAM, &param);
+	if (ret == RT_SUCCESS)
+	{
+		return ms_filter_call_method(mMediaStream.WavRecord, MS_WAV_RECORD_OPEN, NULL);
+	}
+	return ret;
+}
+
+/*************************************************
+  Function:    	audio_wav_record_close
+  Description: 		
+  Input:		无
+  Output:		无
+  Return:		无		
+  Others:
+*************************************************/
+static int audio_wav_record_close(void)
+{
+	return ms_filter_call_method(mMediaStream.WavRecord, MS_WAV_RECORD_CLOSE, NULL);
+}
+
 
 /*************************************************
   Function:    		audio_lyly_hint_init
@@ -485,11 +568,26 @@ int audio_lyly_hint_uninit(void)
 *************************************************/
 static int audio_jrly_record_start(char * FileName)
 {
-	int ret = ms_filter_call_method(mMediaStream.WavRecord, MS_WAV_RECORD_PARAM, FileName);
-	if (ret == RT_SUCCESS)
+	int ret = audio_wav_record_open(0, FileName);
+	if (ret != RT_SUCCESS)
 	{
-		ret = ms_filter_call_method(mMediaStream.WavRecord, MS_WAV_RECORD_OPEN, NULL);
+		printf(" audio_wav_record_open return error!!! \n");
+		goto erraudio0;
 	}
+	
+	ret = audio_ai_open();
+	if (ret != RT_SUCCESS)
+	{
+		printf(" audio_ai_open return error!!! \n");
+		goto erraudio1;
+	}
+	ms_media_link(mMediaStream.AudioAi, mMediaStream.WavRecord);	
+	return ret;
+
+erraudio1:
+	audio_wav_record_close();
+	
+erraudio0:
 	return ret;
 }
 
@@ -502,8 +600,68 @@ static int audio_jrly_record_start(char * FileName)
   Others:
 *************************************************/
 static int audio_jrly_record_stop(void)
+{	
+	int ret;
+	ret = audio_ai_close();
+	log_printf("audio_ai_close return ==%d\n",ret);
+	
+	ret = audio_wav_record_close();
+	log_printf("audio_wav_record_close return ==%d\n",ret);
+
+	ms_media_unlink(mMediaStream.AudioAi, mMediaStream.WavRecord);	
+}
+
+/*************************************************
+  Function:			audio_net_record_start
+  Description:		
+  Input:			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int audio_net_record_start(char * FileName, uint32 address)
 {
-	return ms_filter_call_method(mMediaStream.WavRecord, MS_WAV_RECORD_CLOSE, NULL);
+	int ret = audio_wav_record_open(1, FileName);
+	if (ret != RT_SUCCESS)
+	{
+		printf(" audio_wav_record_open return error!!! \n");
+		goto erraudio0;
+	}
+	
+	ret = audio_rtp_recv_open(address);
+	if (ret != 0)
+	{
+		printf("audio_rtp_recv_open return error!!! \n");
+		goto erraudio1;
+	}
+	ms_media_link(mMediaStream.AudioRtpRecv, mMediaStream.WavRecord);	
+	return ret;
+
+erraudio1:
+	audio_wav_record_close();
+	
+erraudio0:
+	return ret;
+}
+
+/*************************************************
+  Function:			audio_net_record_stop
+  Description:		
+  Input:			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int audio_net_record_stop(void)
+{	
+	int ret;
+	ret = audio_rtp_recv_close();
+	log_printf("audio_rtp_recv_close return ==%d\n",ret);
+	
+	ret = audio_wav_record_close();
+	log_printf("audio_wav_record_close return ==%d\n",ret);
+
+	ms_media_unlink(mMediaStream.AudioRtpRecv, mMediaStream.WavRecord);	
 }
 
 /*************************************************
@@ -525,16 +683,19 @@ static int audio_file_play_start(char * FileName, int IsRepeat, void * proc)
 		|| (media_stream_FileExtCmp((const uint8*)FileName, ".WAV")) == 0)
 	{
 		PlayParam.FileType = FILE_WAVE;
-		PlayParam.callback = (AudioPlay_CallBack)proc;
 		PlayParam.IsRepeat  = IsRepeat;
-		//memcpy(PlayParam.filename, filename, sizeof(PlayParam.filename));
 		strcpy(PlayParam.filename, FileName);
-		
-		ret = ms_filter_call_method(mMediaStream.FilePlayer, MS_AUDIO_PLAY_PARAM, &PlayParam);
+
+		ret = ms_filter_set_notify_callback(mMediaStream.WavPlayer, proc);
+		if (ret != RT_SUCCESS)
+		{
+			return ret;
+		}
+	
+		ret = ms_filter_call_method(mMediaStream.WavPlayer, MS_WAV_PLAY_PARAM, &PlayParam);
 		if (ret == RT_SUCCESS)
 		{
-			ret = ms_filter_call_method(mMediaStream.FilePlayer, MS_AUDIO_PLAY_OPEN, NULL);
-
+			ret = ms_filter_call_method(mMediaStream.WavPlayer, MS_WAV_PLAY_OPEN, NULL);
 		}
 	}
 	else							
@@ -558,7 +719,8 @@ static int audio_file_play_start(char * FileName, int IsRepeat, void * proc)
 *************************************************/
 static int audio_file_play_stop(void)
 {
-	return ms_filter_call_method(mMediaStream.FilePlayer, MS_AUDIO_PLAY_CLOSE, NULL);
+	// 目前只有WAV播放 
+	return ms_filter_call_method(mMediaStream.WavPlayer, MS_WAV_PLAY_CLOSE, NULL);
 }
 
 /*************************************************
@@ -1074,6 +1236,14 @@ int open_audio_mode(AUDIO_STATE_E mode, void* arg1, void *arg2, void *arg3)
 			}
 			break;
 			
+		case AS_NET_RECORD:
+			{
+				char *filename = (char *)arg1;
+				uint32 address = *(uint32 *)arg2;
+				ret = audio_net_record_start(filename, address);
+			}
+			break;
+			
 		#ifdef _ENABLE_CLOUD_
 		case AS_CLOUD_TALK:								// 云端对讲模式
 			//AudioParam.AiAgc = 6.0;
@@ -1089,6 +1259,10 @@ int open_audio_mode(AUDIO_STATE_E mode, void* arg1, void *arg2, void *arg3)
 	{
 		//driver_speak_on();
 		g_audio_mode &= mode;
+	}
+	else
+	{
+		log_printf("open mode[%d] err !!!", mode);
 	}
 	AUDIO_MUTEX_UNLOCK;
 	return ret;
@@ -1124,6 +1298,12 @@ int close_audio_mode(AUDIO_STATE_E mode)
 		case AS_JRLY_RECORD:
 			{
 				ret = audio_jrly_record_stop();
+			}
+			break;
+
+		case AS_NET_RECORD:
+			{
+				ret = audio_net_record_stop();
 			}
 			break;
 			

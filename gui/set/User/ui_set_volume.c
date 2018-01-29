@@ -61,11 +61,19 @@
 #undef CENTER_H
 #undef BMP_X
 #undef SEL_XPOS
+#if (_LCD_DPI_ == _LCD_800480_)
 #define DIS_BMP					6
 #define CENTER_W				312
 #define CENTER_H				26
 #define BMP_X					120
 #define SEL_XPOS				580
+#elif (_LCD_DPI_ == _LCD_1024600_)
+#define DIS_BMP					6
+#define CENTER_W				312
+#define CENTER_H				26
+#define BMP_X					120
+#define SEL_XPOS				580
+#endif
 #endif
 
 CREATE_FORM(FrmSetVolume);

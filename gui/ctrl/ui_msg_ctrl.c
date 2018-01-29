@@ -94,6 +94,7 @@
 #endif
 
 #if (_UI_STYLE_ == _E81S_UI_STYLE_)
+#if (_LCD_DPI_ == _LCD_800480_)
 #define MSG_ICON_Y				44					// 图标Y位置
 #define MSG_ICON_X				44					// 图标X位置
 #define MSG_TEXT_DIS			30
@@ -109,6 +110,23 @@
 #define ICON_H					48
 #define HIT_TEXT_XPOS			116
 #define FORM_HIT_H				100
+#elif (_LCD_DPI_ == _LCD_1024600_)
+#define MSG_ICON_Y				44					// 图标Y位置
+#define MSG_ICON_X				44					// 图标X位置
+#define MSG_TEXT_DIS			30
+#define FORM_QUERY_W	
+#define YES_ICON_W				98
+#define YES_ICON_H				38		
+#define YES_ICON_DIS			40
+#define YES_ICON_XPOS			(FORM_QUERY_W-YES_ICON_H-2*YES_ICON_W)/2
+#define YES_ICON_YPOS			136
+#define NO_ICON_XPOS			(YES_ICON_XPOS+YES_ICON_W+YES_ICON_DIS)
+
+#define ICON_W					48
+#define ICON_H					48
+#define HIT_TEXT_XPOS			116
+#define FORM_HIT_H				100
+#endif
 #endif
 
 /************************变量定义************************/

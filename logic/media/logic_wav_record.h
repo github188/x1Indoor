@@ -17,6 +17,17 @@
 
 #include "logic_include.h"
 #include "logic_media_core.h"
+#include "wav_record.h"
+
+// 音频文件播放参数
+typedef struct
+{
+	char 	filename[50];					// 文件名称(加上路径)
+	E_WavFormatTag format;					// 数据源格式
+	unsigned int	u32SamplingRate;		// 采样率
+	unsigned short	u16Channels;			// 通道数
+	unsigned short	u16BitsPerSample;		// 采样位宽
+}AUDIORECORD_PARAM, *PAUDIORECORD_PARAM;
 
 #define MS_WAV_RECORD_OPEN		MS_MEDIA_METHOD(MS_WAV_RECORD_ID, 0x00, const char)
 #define MS_WAV_RECORD_CLOSE		MS_MEDIA_METHOD_NO_ARG(MS_WAV_RECORD_ID, 0x01)

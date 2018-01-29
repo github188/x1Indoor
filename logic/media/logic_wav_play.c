@@ -41,7 +41,7 @@ static unsigned int g_ChunkSize = CHUNK_SIZE;
   Return:			无
   Others:
 *************************************************/
-static int get_AudioParam(AudioPlayState *s)
+static int get_AudioParam(WavPlayState *s)
 {
 	int ret = RT_FAILURE;
 	AUDIOPLAY_PARAM *PlayParam = &(s->AudioPlay_Param);
@@ -71,7 +71,7 @@ static int get_AudioParam(AudioPlayState *s)
 			break;
 	}
 
-	log_printf("bit_width : %d, channels : %d, rate: %d\n", audio_param->bit_width, audio_param->channels, audio_param->rate);
+	log_printf("g_Format_tag :%d, bit_width : %d, channels : %d, rate: %d\n", g_Format_tag, audio_param->bit_width, audio_param->channels, audio_param->rate);
 	if (ret == 0)
 	{
 		log_printf("g_ReadBuf->size : %d, g_ReadBuf->iget: %d\n", g_ReadBuf->size, g_ReadBuf->iget);
@@ -80,18 +80,18 @@ static int get_AudioParam(AudioPlayState *s)
 }
 
 /*************************************************
-  Function:		audio_play_param_reset
+  Function:		audio_wav_param_reset
   Description:	
   Input:		无
   Output:		无
   Return:		无
   Others:		
 *************************************************/
-static int audio_play_param_reset(AudioPlayState *data)
+static int audio_wav_param_reset(WavPlayState *data)
 {	
 	ms_return_val_if_fail(data, -1);
 	
-	memset(data, 0, sizeof(AudioPlayState));		
+	memset(data, 0, sizeof(WavPlayState));		
 	data->Play_State = AUDIO_STATE_STOP;
 
 	data->audio_param.channels = 1;
@@ -100,7 +100,6 @@ static int audio_play_param_reset(AudioPlayState *data)
 	
 	data->AudioPlay_Param.IsRepeat = FALSE;
 	data->AudioPlay_Param.FileType = FILE_NONE;
-	data->AudioPlay_Param.callback = NULL;
 
 	data->msplaythread.thread = -1;
 	data->msplaythread.thread_run = 0;
@@ -109,7 +108,7 @@ static int audio_play_param_reset(AudioPlayState *data)
 }
 
 /*************************************************
-  Function:			lyly_err_callback
+  Function:			ms_wav_play_callback
   Description:		错误回调
   Input: 	
   	1.f				
@@ -121,24 +120,23 @@ static int audio_play_param_reset(AudioPlayState *data)
   Others:
   (int cmd, int time, int percent)
 *************************************************/
-void ms_audio_play_callback(struct _MSMediaDesc * f, int cmd, int time, int percent)
+void ms_wav_play_callback(struct _MSMediaDesc * f, int cmd, int time, int percent)
 {
-	AudioPlayState *s = (AudioPlayState *)f->private;	
-	if (s->AudioPlay_Param.callback)
+	if (f->notify)
 	{
-		s->AudioPlay_Param.callback(cmd, time, percent);
+		f->notify(cmd, time, percent);
 	}
 }
 
 /*************************************************
-  Function:		ms_audio_play_start
+  Function:		ms_wav_play_start
   Description: 	 
   Input: 	
   Output:		
   Return:		 
   Others:
 *************************************************/
-static int ms_audio_play_start(AudioPlayState* s)
+static int ms_wav_play_start(WavPlayState* s)
 {
 	int  Bitwidth = 16;
 	int  Volume = 100;
@@ -157,18 +155,19 @@ static int ms_audio_play_start(AudioPlayState* s)
 }
 
 /*************************************************
-  Function:		ms_avi_play_stop
+  Function:		ms_wav_play_stop
   Description: 	 
   Input: 	
   Output:		
   Return:		 
   Others:
 *************************************************/
-static void ms_audio_play_stop(struct _MSMediaDesc * f)
+static void ms_wav_play_stop(struct _MSMediaDesc * f)
 {
-	log_printf("****************** ms_audio_play_stop *******************\n");
-	AudioPlayState *data = (AudioPlayState*)f->private;
+	log_printf("****************** ms_wav_play_stop *******************\n");
+	WavPlayState *data = (WavPlayState*)f->private;
 	f->mcount = 0;
+	f->notify = NULL;
 	switch (data->AudioPlay_Param.FileType)
 	{
 		case FILE_WAVE:
@@ -186,35 +185,47 @@ static void ms_audio_play_stop(struct _MSMediaDesc * f)
 	Alsa_Play_Close();
 	data->Play_State = AUDIO_STATE_STOP;
 	data->msplaythread.thread = -1;
-	audio_play_param_reset(data);
+	audio_wav_param_reset(data);
 	usleep(1000);
 }
 
 /*************************************************
-  Function:		ms_avi_play_process
+  Function:		ms_wav_play_thread
   Description: 	
   Input: 		
   Output:		
   Return:		 
   Others:
 *************************************************/
-static void* ms_audio_play_thread(void *arg)
+static void* ms_wav_play_thread(void *arg)
 {
 	ms_return_val_if_fail(arg, NULL);
 	int state = 0;
+	int audio_len = 0;
+	int audio_chunk = 0;
+	int  Bitwidth = 16;
 	MSMediaDesc *f = (MSMediaDesc *)arg;
-	AudioPlayState *data = (AudioPlayState*)f->private;	
+	WavPlayState *data = (WavPlayState*)f->private;	
 	uint8 IsRepeat = data->AudioPlay_Param.IsRepeat;
-	
-	int  SamplesPerBlock = (data->audio_param.rate)*BLOCKTIME/1000;	// 320
-	g_ChunkSize = SamplesPerBlock * (data->audio_param.channels) * ((data->audio_param.bit_width) / 8);
+
+	if (g_Format_tag == AUDIO_A_LAW || g_Format_tag == AUDIO_U_LAW)
+	{
+		Bitwidth = (data->audio_param.bit_width)*2;
+	}
+	else
+	{
+		Bitwidth = (data->audio_param.bit_width);
+	}
+	int  SamplesPerBlock = (data->audio_param.rate)*BLOCKTIME/1000;	
+	//g_ChunkSize = SamplesPerBlock * (data->audio_param.channels) * ((data->audio_param.bit_width) / 8);
+	g_ChunkSize = SamplesPerBlock * (data->audio_param.channels) * (Bitwidth / 8);
 	log_printf("SamplesPerBlock[%d], g_ChunkSize[%d]\n", SamplesPerBlock, g_ChunkSize);
 	
 	unsigned char *alaw_buf = malloc(g_ChunkSize);
 	unsigned char *ulaw_buf = malloc(g_ChunkSize);
-	unsigned char *pcm_buf = malloc(g_ChunkSize);
-	int audio_len = g_ChunkSize;
-	int audio_chunk = g_ChunkSize;
+	//unsigned char *pcm_buf = malloc(g_ChunkSize);	
+	char *pcm_buf = malloc(g_ChunkSize);	// modi by chenbh 改成有符号字符型
+	
 	if (g_Format_tag == AUDIO_A_LAW || g_Format_tag == AUDIO_U_LAW)
 	{
 		audio_chunk = g_ChunkSize/2;
@@ -228,7 +239,8 @@ static void* ms_audio_play_thread(void *arg)
 	int PreCallbakSize = 0;	// 上次回调时播放的长度
 	int PerSecPlaySize = ((data->audio_param.rate) * (data->audio_param.channels) * ((data->audio_param.bit_width) / 8));
 	int WavFilePlayTime = (g_ReadBuf->size)/((data->audio_param.rate) * (data->audio_param.channels) * ((data->audio_param.bit_width) / 8));
-	ms_audio_play_callback(f, 1, WavFilePlayTime, 0);
+	ms_wav_play_callback(f, 1, WavFilePlayTime, 0);
+	log_printf("g_ReadBuf->size[%d], WavFilePlayTime[%d]\n", g_ReadBuf->size, WavFilePlayTime);
 	
 	while (data->msplaythread.thread_run)
 	{
@@ -266,17 +278,28 @@ static void* ms_audio_play_thread(void *arg)
 		}
 		else
 		{
-			memset(pcm_buf, 0, g_ChunkSize);
+			memset(pcm_buf, 0, g_ChunkSize);			
 			memcpy(pcm_buf, (g_ReadBuf->buffer+g_ReadBuf->iget), audio_len);			
 		}
 
+		// add by chenbh 20180123
+		// 采样位宽8位(alaw或者ulaw要乘2) 无符号需要转成有符号送去播放 否则底层播放有问题
+		if (Bitwidth == AIO_BIT_WIDTH_8)
+		{
+			int index = 0;
+			for (index = 0; index < g_ChunkSize; index++)
+			{
+				pcm_buf[index] -= (char)0x80; 
+			}
+		}
+			
 		Alsa_Play_Func((void *)pcm_buf, g_ChunkSize, &state);
 		
 		if(g_ReadBuf->iget >= g_ReadBuf->size)
 		{
 		    if(!IsRepeat)
 			{
-		        ms_audio_play_callback(f, 1, WavFilePlayTime, 100);
+		        ms_wav_play_callback(f, 1, WavFilePlayTime, 100);
 				break;
 		    } 
 			else 
@@ -290,10 +313,11 @@ static void* ms_audio_play_thread(void *arg)
 			if ((g_ReadBuf->iget - PreCallbakSize) >= (PerSecPlaySize/2))
 			{
 				PreCallbakSize = g_ReadBuf->iget;
-				ms_audio_play_callback(f, 1, WavFilePlayTime, ((g_ReadBuf->iget)*100)/g_ReadBuf->size);
+				ms_wav_play_callback(f, 1, WavFilePlayTime, ((g_ReadBuf->iget)*100)/g_ReadBuf->size);
 			}
 		}
 
+		//get_timeofday();
 		//log_printf("audio_len[%d]\n", audio_len);
 		g_ReadBuf->iget += audio_len;
 	}
@@ -312,7 +336,7 @@ error:
 		free(pcm_buf);
 	}
 	printf(" ms_audio_play_thread exit!!! \n");
-	ms_audio_play_stop(f);	
+	ms_wav_play_stop(f);	
 	data->msplaythread.thread = -1;
 	pthread_detach(pthread_self());
     pthread_exit(NULL);
@@ -328,12 +352,12 @@ error:
   Return:		 
   Others:
 *************************************************/
-static int ms_audio_play_control(struct _MSMediaDesc * f, void * arg)
+static int ms_wav_play_control(struct _MSMediaDesc * f, void * arg)
 {
 	int ret = RT_FAILURE;
 	ms_return_val_if_fail(arg, -1);
 	
-	AudioPlayState *s = (AudioPlayState*)f->private;	
+	WavPlayState *s = (WavPlayState*)f->private;	
 	AUDIO_PLAY_STATE_E state = (AUDIO_PLAY_STATE_E)arg; 
 	log_printf("state : %d \n", state);
 	
@@ -383,10 +407,10 @@ static int ms_audio_play_control(struct _MSMediaDesc * f, void * arg)
   Return:		 
   Others:
 *************************************************/
-static int ms_audio_play_open(struct _MSMediaDesc * f, void * arg)
+static int ms_wav_play_open(struct _MSMediaDesc * f, void * arg)
 {
 	int ret = RT_FAILURE;
-	AudioPlayState *s = (AudioPlayState*)f->private;
+	WavPlayState *s = (WavPlayState*)f->private;
 	WAV_AUDIO_PARAM *audio_param = &(s->audio_param);
 	log_printf("****************** ms_audio_play_open *******************\n");
 	
@@ -400,7 +424,7 @@ static int ms_audio_play_open(struct _MSMediaDesc * f, void * arg)
 			goto error;
 		}
 
-		ret = ms_audio_play_start(s);
+		ret = ms_wav_play_start(s);
 		if (ret == -1)
 		{
 			goto error;
@@ -408,7 +432,7 @@ static int ms_audio_play_open(struct _MSMediaDesc * f, void * arg)
 		
 		// 开启播放线程
 		ms_thread_init(&s->msplaythread,1000);	
-		ret = ms_thread_create(&s->msplaythread, ms_audio_play_thread, f);		
+		ret = ms_thread_create(&s->msplaythread, ms_wav_play_thread, f);		
 		if (ret == RT_FAILURE)
 		{	
 			goto error;
@@ -456,11 +480,11 @@ error:
   Return:		 
   Others:
 *************************************************/
-static int ms_audio_play_close(struct _MSMediaDesc * f, void * arg)
+static int ms_wav_play_close(struct _MSMediaDesc * f, void * arg)
 {
 	int ret = RT_FAILURE;
-	AudioPlayState * data = (AudioPlayState*)f->private;
-	log_printf("****************** ms_audio_play_close *******************\n");
+	WavPlayState * data = (WavPlayState*)f->private;
+	log_printf("****************** ms_wav_play_close *******************\n");
 	
 	ms_media_lock(f);
 	if (f->mcount > 0)
@@ -478,7 +502,7 @@ static int ms_audio_play_close(struct _MSMediaDesc * f, void * arg)
 }
 
 /*************************************************
-  Function:		ms_wav_play_level
+  Function:		ms_wav_play_param
   Description: 	 
   Input: 	
   	1.f			描述
@@ -487,12 +511,12 @@ static int ms_audio_play_close(struct _MSMediaDesc * f, void * arg)
   Return:		 
   Others:
 *************************************************/
-static int ms_audio_play_param(struct _MSMediaDesc * f, void * arg)
+static int ms_wav_play_param(struct _MSMediaDesc * f, void * arg)
 {
 	int ret = RT_FAILURE;
 	ms_return_val_if_fail(arg, -1);
 	
-	AudioPlayState *s = (AudioPlayState*)f->private;	
+	WavPlayState *s = (WavPlayState*)f->private;	
 	AUDIOPLAY_PARAM *AudioParam = (AUDIOPLAY_PARAM *)arg;
 	if (AudioParam->filename == NULL ||
 		AudioParam->FileType != FILE_WAVE)			// 暂时只支持WAV 的播放
@@ -519,12 +543,12 @@ static int ms_audio_play_param(struct _MSMediaDesc * f, void * arg)
   Return:		 
   Others:
 *************************************************/
-static int ms_audio_play_init(struct _MSMediaDesc * f)
+static int ms_wav_play_init(struct _MSMediaDesc * f)
 {
 	if (NULL == f->private)
 	{
-		AudioPlayState *data = (AudioPlayState*)malloc(sizeof(AudioPlayState));	
-		audio_play_param_reset(data);
+		WavPlayState *data = (WavPlayState*)malloc(sizeof(WavPlayState));	
+		audio_wav_param_reset(data);
 		
 		f->private = data;
 		f->mcount = 0;
@@ -541,11 +565,11 @@ static int ms_audio_play_init(struct _MSMediaDesc * f)
   Return:		 
   Others:
 *************************************************/
-static int ms_audio_play_uninit(struct _MSMediaDesc * f)
+static int ms_wav_play_uninit(struct _MSMediaDesc * f)
 {
 	if (f->mcount == 0)
 	{
-		AudioPlayState *data = f->private;
+		WavPlayState *data = f->private;
 		ms_free(data);
 		return RT_SUCCESS;
 	}
@@ -555,23 +579,23 @@ static int ms_audio_play_uninit(struct _MSMediaDesc * f)
 
 static MSMediaMethod methods[] =
 {
-	{MS_AUDIO_PLAY_CONTROL,	ms_audio_play_control},
-	{MS_AUDIO_PLAY_PARAM, 	ms_audio_play_param},
-	{MS_AUDIO_PLAY_OPEN,	ms_audio_play_open},
-	{MS_AUDIO_PLAY_CLOSE,	ms_audio_play_close},
+	{MS_WAV_PLAY_CONTROL,	ms_wav_play_control},
+	{MS_WAV_PLAY_PARAM, 	ms_wav_play_param},
+	{MS_WAV_PLAY_OPEN,		ms_wav_play_open},
+	{MS_WAV_PLAY_CLOSE,		ms_wav_play_close},
 	{0, NULL}
 };
 
 MSMediaDesc ms_file_player_desc =
 {
-	.id = MS_FILE_PLAYER_ID,
+	.id = MS_WAV_PLAYER_ID,
 	.name = "MsAudioPlay",
 	.text = "AUDIO Play",
 	.enc_fmt = "audio",
 	.noutputs = 0,
 	.outputs = NULL,
-	.init = ms_audio_play_init,
-	.uninit = ms_audio_play_uninit,
+	.init = ms_wav_play_init,
+	.uninit = ms_wav_play_uninit,
 	.preprocess = NULL,
 	.process = NULL,
 	.postprocess = NULL,

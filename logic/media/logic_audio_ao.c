@@ -383,7 +383,7 @@ static MSMediaMethod methods[] =
 
 MSMediaDesc ms_audio_ao_desc =
 {
-	.id = MS_ALAW_AO_ID,
+	.id = MS_AUDIO_AO_ID,
 	.name = "MsPCMaO",
 	.text = "Pcm Ao using N32926 Hw",
 	.enc_fmt = "pcm",

@@ -14,6 +14,8 @@
 #include "audio_endec.h"
 
 #ifdef _ENABLE_CLOUD_
+#define BYTES_PER_PACKET_SHORT 		160
+
 
 #define _AUDIO_FILE_SAVE_SEND_		0
 #define _AUDIO_FILE_SAVE_RECV_		0

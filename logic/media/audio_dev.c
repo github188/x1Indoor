@@ -88,10 +88,14 @@ int Alsa_Record_Start(int Channel, int Bitwidth, int SampleRate, int BlockTime, 
 		return 0;
 	}
 
+	pthread_mutex_lock(&alsa_record_info.lock);
 	int  SamplesPerBlock = SampleRate * BlockTime/1000;
 	int StreamID = Audio_Recorder_Open();
 	if (StreamID == 0)
+	{
+		pthread_mutex_unlock(&alsa_record_info.lock);
 		return -1;
+	}
 
 	// Ç°ÃæµÄ¶ªÆú
 	printf("SampleRate[%d], Channel[%d] ,Bitwidth[%d], SamplesPerBlock[%d]\n", SampleRate, Channel ,Bitwidth, SamplesPerBlock);
@@ -106,13 +110,14 @@ int Alsa_Record_Start(int Channel, int Bitwidth, int SampleRate, int BlockTime, 
 		Audio_Recorder_Close(StreamID);
 		StreamID = 0;
 		printf("Audio_Recorder_Start FAILED !!!\n");
+		pthread_mutex_unlock(&alsa_record_info.lock);
 		return -1;
 	}
 
 	alsa_record_info.StreamId = StreamID;
 	alsa_record_info.callback = Func;
 	alsa_record_info.status = ALSA_CAPTURE_START;
-	pthread_mutex_init(&alsa_record_info.lock, NULL);
+	pthread_mutex_unlock(&alsa_record_info.lock);
 	return 0;
 	
 init_record_error:
@@ -141,7 +146,7 @@ int	Alsa_Record_Close(void)
 		printf("===== CX_Alsa_Source_Close ======\n");
 	}
   	pthread_mutex_unlock(&alsa_record_info.lock);
-	pthread_mutex_destroy(&alsa_record_info.lock);
+	
   	return 0;
 }
 
@@ -245,16 +250,22 @@ int	Alsa_Play_Start(int Channel, int Bitwidth, int SampleRate, int BlockTime)
 		return 0;
 	}
 
+	pthread_mutex_lock(&alsa_play_info.lock);
 	int Volume = 100;
 	int  SamplesPerBlock = SampleRate * BlockTime/1000;
 	alsa_play_info.Channel = Channel;
 	alsa_play_info.Bitwidth = Bitwidth;
 	alsa_play_info.SampleRate = SampleRate;
 	alsa_play_info.BlockTime = BlockTime;	
-		
+	printf("%s: Channel[%d], Bitwidth[%d], SampleRate[%d], BlockTime[%d]\n", \
+		__FUNCTION__, Channel, Bitwidth, SampleRate, BlockTime);
+	
 	int StreamID = Audio_Player_Open();
 	if (StreamID == 0)
+	{
+		pthread_mutex_unlock(&alsa_play_info.lock);
 		return -1;
+	}
 	
 	Audio_Player_SetDevice(StreamID, PLAYBAK_DEVNAME);
 	Audio_Player_SetFormat(StreamID, alsa_play_info.Channel, alsa_play_info.Bitwidth, SampleRate);
@@ -268,12 +279,13 @@ int	Alsa_Play_Start(int Channel, int Bitwidth, int SampleRate, int BlockTime)
 		Audio_Player_Close(StreamID);
 		StreamID = 0;
 		printf("Audio_Player_Start FAILED !!!\n");
+		pthread_mutex_unlock(&alsa_play_info.lock);
 		return -1;
 	}
 
 	alsa_play_info.StreamId = StreamID;	
 	alsa_play_info.status = ALSA_PLAYBAK_START;
-	pthread_mutex_init(&alsa_play_info.lock, NULL);
+	pthread_mutex_unlock(&alsa_play_info.lock);
 	return 0;
 	
 init_palyback_error:
@@ -305,10 +317,20 @@ int	Alsa_Play_Close(void)
 	}
 	pthread_mutex_unlock(&alsa_play_info.lock);
 	
-	printf("===== CX_Alsa_Sink_Close [%d] end ======\n",alsa_record_info.status);
-	
-	pthread_mutex_destroy(&alsa_play_info.lock);
+	printf("===== CX_Alsa_Sink_Close [%d] end ======\n",alsa_record_info.status);	
   	return 0;
 }
+
+void Alsa_mutex_uninit(void)
+{
+	pthread_mutex_destroy(&alsa_play_info.lock);
+	pthread_mutex_destroy(&alsa_record_info.lock);
+}
+void Alsa_mutex_init(void)
+{
+	pthread_mutex_init(&alsa_play_info.lock, NULL);
+	pthread_mutex_init(&alsa_record_info.lock, NULL);
+}
+
 
 

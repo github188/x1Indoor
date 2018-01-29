@@ -950,9 +950,7 @@ static void * callout_proc(void *arg)
 			ret = media_start_net_audio(g_CallInfo.address);
 			if (ret == TRUE)
 			{
-				g_CallInfo.IsStartAudio = TRUE;
-				media_enable_audio_aec();
-				media_add_audio_sendaddr(g_CallInfo.address, g_CallInfo.RemoteAudioPort);
+				g_CallInfo.IsStartAudio = TRUE;				
 			}
 			else
 			{
@@ -960,9 +958,10 @@ static void * callout_proc(void *arg)
 			}
 		}
 
+		media_enable_audio_aec();
 		media_enable_audio_dec();
 		media_enable_audio_ai();
-		if (g_PreCallOutState == CALL_STATE_RECORDHINT)
+		if (g_PreCallOutState != CALL_STATE_RECORDING)
 		{			
 			media_add_audio_sendaddr(g_CallInfo.address, g_CallInfo.RemoteAudioPort);
 		}
@@ -1313,7 +1312,7 @@ static void * becall_proc(void *arg)
 		media_stop_net_hint();		
 		
 		// 开启留言录制接口
-		int32 ret = meida_start_net_leave_rec(g_BeCallInfo.LeaveWordMode, CALL_AUDIO_PT, CALL_VIDEO_PT, lvdFile);
+		int32 ret = meida_start_net_leave_rec(g_BeCallInfo.LeaveWordMode, g_BeCallInfo.address, lvdFile);
 		if (ret == FALSE)
 		{
 			log_printf(" meida_start_net_leave_rec return error \n");
@@ -1399,12 +1398,6 @@ static void * becall_proc(void *arg)
 			media_stop_net_leave_rec(FALSE);
 		}
 
-		// 设置通话音量	
-		media_set_talk_volume(g_BeCallInfo.RemoteDeviceType, storage_get_talkvolume());
-
-		// add by luofl 2011-12-07 增加咪头输入设置
-		//media_set_input_volume(storage_get_micvolume());
-
 		data[4] = CALL_STATE_TALK; 
 		set_nethead(g_CallDestNo, PRIRY_DEFAULT);
 		net_direct_send(CMD_CALL_ANSWER, data, 5, g_BeCallInfo.address, g_BeCallInfo.port);
@@ -1413,8 +1406,14 @@ static void * becall_proc(void *arg)
 		// 开启通话接口
 		if (media_start_net_audio(g_BeCallInfo.address) == TRUE)
 		{
+			// 设置通话音量	
+			media_set_talk_volume(g_BeCallInfo.RemoteDeviceType, storage_get_talkvolume());
+
+			// add by luofl 2011-12-07 增加咪头输入设置
+			//media_set_input_volume(storage_get_micvolume());
 			g_BeCallInfo.IsStartAudio = TRUE;
 		}
+		media_enable_audio_aec();
 		media_add_audio_sendaddr(g_BeCallInfo.address, g_BeCallInfo.RemoteAudioPort);
 
 		// 已接记录

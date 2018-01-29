@@ -366,7 +366,7 @@ MSMediaDesc ms_audio_dec_desc =
 	.methods = methods,
 	.mcount = 0,
 	.porcessmode = PROCESS_WORK_UNBLOCK, 
-	.sharebufsize = 1000,		// 1024*sharebufsize
+	.sharebufsize = 100,		// 1024*sharebufsize
 	.sharebufblk = 200,
 	.private = NULL,    		// ´æ´¢Êý¾Ý
 };

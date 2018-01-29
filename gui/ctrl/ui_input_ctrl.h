@@ -39,7 +39,7 @@ typedef struct
 	//WCHAR textw[MAX_CHAR_SHOW];
 	uint32 BkID;									// 背景图片
 	uint32 BkOnID;									// 背景ON图片	
-	FontType Font;									// 字体
+	uint8  Font;									// 字体
 	//TxtStyle txtstyle;							// 字体显示标准
 	uint32 hit;										// 提示
 	uint32 textid;                                  // 提示字的id

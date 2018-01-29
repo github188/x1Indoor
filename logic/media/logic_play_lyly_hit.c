@@ -167,7 +167,7 @@ static int st_lyly_hit_PackStream(MSMediaDesc *f, char *pstStream, int len)
 {
 	mblk_t arg;
 	char buf[512];
-	log_printf("len : %d\n", len);
+	//log_printf("len : %d\n", len);
 
 	// 门口机单包发送会失败 只有对方设备为梯口机 才发送单包
 	if (g_PerFrameNum == 1) 

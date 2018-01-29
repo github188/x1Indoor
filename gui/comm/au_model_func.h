@@ -42,10 +42,18 @@ extern "C" {
 #undef SIDEBAR_YDIS
 #undef SIDEBAR_SCRLEN			
 #undef SIDEBAR_DOWN_ICON_Y		
+#if (_LCD_DPI_ == _LCD_800480_)
 #define SIDEBAR_ICON_W			42
 #define SIDEBAR_YDIS			60
 #define SIDEBAR_SCRLEN			280
 #define SIDEBAR_DOWN_ICON_Y		360
+#elif (_LCD_DPI_ == _LCD_1024600_)
+#define SIDEBAR_ICON_W			42
+#define SIDEBAR_YDIS			60
+#define SIDEBAR_SCRLEN			280
+#define SIDEBAR_DOWN_ICON_Y		360
+#endif
+
 #endif
 
 #define SCREENPORTECT_OFF		0x00				// ÆÁÄ»±£»¤¹Ø

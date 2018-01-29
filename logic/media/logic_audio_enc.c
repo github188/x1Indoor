@@ -333,7 +333,7 @@ static int ms_audio_enc_local(struct _MSMediaDesc * f, void * arg)
 	ms_media_lock(f);
 	if (f->mcount > 0)
 	{	
-		data->isLocalRecord = *(bool *)arg;
+		data->isLocalRecord = TRUE;
 		ms_media_unlock(f);	
 		return 0;
 	}

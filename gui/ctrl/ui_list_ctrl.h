@@ -119,7 +119,7 @@ typedef struct
 	uint8 MoveSelect;								// 移动及选择
 	uint32 ImageBk;								// 背景图片
 	uint32 ImageTopBk;							// 头一张背景图片
-	FontType fonttype;								// 字体 
+	uint8  fonttype;								// 字体 
 	//COLOR HeadTextColor;							// 列表头文字的颜色(仅字符串有效)
 	LISTONE_INFO HeadInfo;							// 列表头信息
 	SidebarCallBack Drawcallback;					// 侧边栏实现回调

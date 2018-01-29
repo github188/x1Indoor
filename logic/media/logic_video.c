@@ -28,8 +28,8 @@
 #include "logic_h264_enc.h"
 #include "logic_jpeg_dec.h"
 #include "logic_jpeg_enc.h"
-#include "logic_avi_play.h"
-#include "logic_avi_record.h"
+#include "logic_lyly_play.h"
+#include "logic_lyly_record.h"
 #include "logic_mp3_play.h"
 #include "logic_tran_rtp.h"
 #include "logic_cloud_itc.h"
@@ -46,7 +46,6 @@ static int g_VideoErrTimes = 0;
 static VIDEO_STATE_E g_video_mode = VS_NONE;
 static JpegDecParam g_JpegDecParam;
 static JpegEncParam g_JpegEncParam;
-static RecordParam  g_RecordParam;
 
 static video_params g_VideoEnc_Param = {
 	.bit_rate = DEFAULT_BIT_RATE,
@@ -299,46 +298,6 @@ int32 get_jpg_dec_param(JpegDecParam *jpgParam)
 }
 
 /*************************************************
-  Function:    	get_avi_record_param
-  Description: 		
-  Input:		
-  Output:		
-  Return:		
-  Others:
-*************************************************/
-static int32 get_avi_record_param(RecordParam *PParam)
-{
-	memset(PParam, 0, sizeof(PParam));
-	PParam->RecordMode = g_RecordParam.RecordMode;
-	PParam->AudioFormat = g_RecordParam.AudioFormat;
-	PParam->VideoFormat = g_RecordParam.VideoFormat;
-	memcpy(PParam->filename, g_RecordParam.filename, sizeof(g_RecordParam.filename));
-	return TRUE;
-}
-
-/*************************************************
-  Function:    	get_avi_record_param
-  Description: 		
-  Input:		
-  Output:		
-  Return:		
-  Others:
-*************************************************/
-int32 set_avi_record_param(uint8 mode, uint8 atp, uint8 vtp, char * filename)
-{
-	if (filename == NULL)
-	{
-		printf("%s error: file is null \n", __FUNCTION__);
-		return FALSE;
-	}
-	memset(&g_RecordParam, 0, sizeof(g_RecordParam));
-	g_RecordParam.RecordMode = mode;
-	g_RecordParam.AudioFormat = atp;
-	g_RecordParam.VideoFormat = vtp;
-	memcpy(g_RecordParam.filename, filename, sizeof(g_RecordParam.filename));
-	return TRUE;
-}
-/*************************************************
   Function:    	video_rtp_send_open
   Description: 		
   Input:		无
@@ -589,6 +548,304 @@ static int video_enc_open(void)
 static int video_enc_close(void)
 {
 	return ms_filter_call_method(mMediaStream.VideoEnc, MS_H264_ENC_CLOSE, NULL);
+}
+
+/*************************************************
+  Function:    		video_lyly_record_open
+  Description: 		
+  Input: 		
+  	mode			0本地录制  1网络录制
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int video_lyly_record_open(char *filename, int mode)
+{	
+	RecordParam param;
+	memset(&param, 0, sizeof(RecordParam));
+	strcpy(param.filename, filename);
+
+	if (0 == mode)
+	{
+		param.VideoParam.bit_rate = g_VideoEnc_Param.bit_rate;
+		param.VideoParam.framerate = g_VideoEnc_Param.framerate;
+		param.VideoParam.width = g_VideoEnc_Param.width;
+		param.VideoParam.height = g_VideoEnc_Param.height;
+		param.VideoParam.VideoFormat = eVIN_FORMAT_H264;
+
+		//param.AudioParam.AudioFormat = eAIN_FORMAT_PCM;	// 本地录制 音频没有经过编码
+		param.AudioParam.AudioFormat = eAIN_FORMAT_ALAW;	// 改为alaw 播放时候可以使用解码线程做缓存
+		param.AudioParam.bit_width = AIO_BIT_WIDTH_16;
+		param.AudioParam.channels = 1;
+		param.AudioParam.rate = AIO_SAMPLE_RATE_8;
+	}
+	else
+	{
+		// 网络视频参数 需要根据网络过来视频流 做解析再确定 此处只是设置了 默认值
+		param.VideoParam.bit_rate = DEFAULT_BIT_RATE;
+		param.VideoParam.framerate = DEFAULT_FRAMERATE;
+		param.VideoParam.width = DEFAULT_WIDTH;
+		param.VideoParam.height = DEFAULT_HEIGHT;
+		param.VideoParam.VideoFormat = eVIN_FORMAT_H264;
+
+		param.AudioParam.AudioFormat = eAIN_FORMAT_ALAW;
+		param.AudioParam.bit_width = AIO_BIT_WIDTH_16;
+		param.AudioParam.channels = 1;
+		param.AudioParam.rate = AIO_SAMPLE_RATE_8;
+	}
+	
+	
+	int ret  = ms_filter_call_method(mMediaStream.LylyRecord, MS_LYLY_RECORD_PARAM, &param);
+	if (RT_SUCCESS == ret)
+	{
+		ret = ms_filter_call_method(mMediaStream.LylyRecord, MS_LYLY_RECORD_OPEN, NULL);
+	}
+	return ret;
+}
+
+/*************************************************
+  Function:    		video_lyly_record_close
+  Description: 		
+  Input: 			
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int video_lyly_record_close(void)
+{
+	return ms_filter_call_method(mMediaStream.LylyRecord, MS_LYLY_RECORD_CLOSE, NULL);
+}
+
+/*************************************************
+  Function:			video_net_lyly_record_start
+  Description:		网络留言录制
+  Input:			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int video_net_lyly_record_start(char * FileName, uint32 address)
+{
+	int ret = RT_FAILURE;
+
+	ret = video_lyly_record_open(FileName, 1);
+	if (ret == -1)
+	{
+		err_printf("video_lyly_record_open return error!!! \n");
+		goto error0;
+	}
+
+	ret = audio_rtp_recv_open(address);
+	if (ret == -1)
+	{
+		err_printf("audio_rtp_recv_open return error!!! \n");
+		goto error1;
+	}
+	
+	ms_media_link(mMediaStream.AudioRtpRecv, mMediaStream.LylyRecord);	
+	ms_media_link_chunk(mMediaStream.VideoRtpRecv, mMediaStream.LylyRecord, 2); // 视频填充到第二缓冲区
+	return ret;	
+	
+error1:
+	video_lyly_record_close();
+	
+error0:
+	return ret;
+}
+
+/*************************************************
+  Function:			video_net_lyly_record_stop
+  Description:		
+  Input:			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int video_net_lyly_record_stop(void)
+{
+	 ms_media_unlink(mMediaStream.VideoRtpRecv, mMediaStream.LylyRecord);
+	 ms_media_unlink(mMediaStream.AudioRtpRecv, mMediaStream.LylyRecord);
+	 audio_rtp_recv_close();	
+	 video_lyly_record_close();
+}	
+
+/*************************************************
+  Function:			video_local_lyly_record_start
+  Description:		模拟门前机留言录制
+  Input:			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int video_local_lyly_record_start(char * FileName)
+{
+	int ret = RT_FAILURE;
+
+	ret = video_lyly_record_open(FileName, 0);
+	if (ret == -1)
+	{
+		err_printf("video_lyly_record_open return error!!! \n");
+		goto error0;
+	}
+
+	ret = video_enc_open();
+	if (ret == -1)
+	{
+		err_printf("video_enc_open return error!!! \n");
+		goto error1;
+	}
+
+	ret = audio_local_enc_open();
+	if (ret == -1)
+	{
+		err_printf("audio_local_enc_open return error!!! \n");
+		goto error2;
+	}
+	
+	ret = audio_ai_open();
+	if (ret == -1)
+	{
+		err_printf("audio_ai_open return error!!! \n");
+		goto error3;
+	}
+
+	ms_media_link(mMediaStream.AudioAi, mMediaStream.AudioEnc);
+	ms_media_link(mMediaStream.AudioEnc, mMediaStream.LylyRecord);	
+	ms_media_link_chunk(mMediaStream.VideoEnc, mMediaStream.LylyRecord, 2); // 视频填充到第二缓冲区
+	return ret;	
+
+error3:
+	audio_local_enc_close();
+	
+error2:
+	video_enc_close();
+	
+error1:
+	video_lyly_record_close();
+	
+error0:
+	return ret;
+}
+
+/*************************************************
+  Function:			video_net_lyly_record_stop
+  Description:		
+  Input:			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int video_local_lyly_record_stop(void)
+{
+	 ms_media_unlink(mMediaStream.AudioAi, mMediaStream.LylyRecord);
+	 ms_media_unlink(mMediaStream.VideoEnc, mMediaStream.LylyRecord);
+	 video_enc_close();
+	 audio_ai_close();
+	 video_lyly_record_close();
+}
+
+/*************************************************
+  Function:			video_lyly_play_start
+  Description:		播放文件
+  Input:			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int video_lyly_play_start(char * FileName, void * proc)
+{
+	int ret = RT_FAILURE;
+
+	ret = ms_filter_set_notify_callback(mMediaStream.LylyPlay, proc);
+	if (ret != RT_SUCCESS)
+	{
+		return ret;
+	}
+
+	char file[128] = {0};
+	memset(file, 0, sizeof(file));
+	strcpy(file, FileName);
+	ret = ms_filter_call_method(mMediaStream.LylyPlay, MS_LYLY_PLAY_PARAM, file);
+	if (ret == RT_SUCCESS)
+	{
+		ret = ms_filter_call_method(mMediaStream.LylyPlay, MS_LYLY_PLAY_OPEN, NULL);
+
+	}
+	
+	return ret;
+
+	
+}
+
+/*************************************************
+  Function:			send_audio_ao
+  Description:		结束文件播放
+  Input:			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int video_lyly_play_stop(void)
+{
+	return ms_filter_call_method(mMediaStream.LylyPlay, MS_LYLY_PLAY_CLOSE, NULL);
+}
+
+/*************************************************
+  Function:			video_lyly_play_pause
+  Description:		
+  Input:			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+int video_lyly_play_pause(void)
+{
+	LYLY_STATE_E state = LYLY_STATE_PAUSE;
+	return ms_filter_call_method(mMediaStream.LylyPlay, MS_LYLY_PLAY_STATE, &state);
+}
+
+/*************************************************
+  Function:    		video_jpeg_show_start
+  Description: 		
+  Input: 			
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int video_jpeg_dec_start(int sync)
+{
+	int ShowSync = sync;
+	ms_filter_call_method(mMediaStream.JpegDec, MS_JPEG_DEC_PARAM, &ShowSync);
+
+	JpegDecParam jpgParam;	
+	get_jpg_dec_param(&jpgParam);
+	return ms_filter_call_method(mMediaStream.JpegDec, MS_JPEG_DEC_OPEN, &jpgParam);
+}
+
+/*************************************************
+  Function:    		video_jpeg_dec_stop
+  Description: 		
+  Input: 			
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+static int video_jpeg_dec_stop(void)
+{
+	return ms_filter_call_method(mMediaStream.JpegDec, MS_JPEG_DEC_CLOSE, NULL);
+}
+
+/*************************************************
+  Function:    		video_jpeg_dec_show
+  Description: 		
+  Input: 			
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+int video_jpeg_dec_show(void)
+{
+	return ms_filter_call_method(mMediaStream.JpegDec, MS_JPEG_DEC_SHOW, NULL);
 }
 
 /*************************************************
@@ -1006,7 +1263,24 @@ int open_video_mode(VIDEO_STATE_E mode, void* arg1, void *arg2, void *arg3)
 		case VS_LOCAL_RECORD:						// 本地录制
 			{
 				char *filename = (char *)arg1;
-				//ret = rk_media_start_mp4_record(filename);
+
+				video_params param;
+				memset(&param, 0 ,sizeof(video_params));
+				param.bit_rate = DEFAULT_BIT_RATE,
+    			param.width = DEFAULT_WIDTH,
+   			 	param.height = DEFAULT_HEIGHT,
+    			param.framerate = DEFAULT_FRAMERATE,
+				set_video_param(&param);
+
+				ret = video_local_lyly_record_start(filename);
+			}
+			break;
+
+		case VS_NET_RECORD:
+			{
+				char *filename = (char *)arg1;
+				uint32 address = *(uint32 *)arg2;
+				ret = video_net_lyly_record_start(filename, address);
 			}
 			break;
 			
@@ -1030,7 +1304,14 @@ int open_video_mode(VIDEO_STATE_E mode, void* arg1, void *arg2, void *arg3)
 			{
 				char *filename = (char *)arg1;
 				void *func = (void *)arg2;
-			 			
+			 	ret = video_lyly_play_start(filename, func);
+			}
+			break;
+
+		case VS_JPEG_SHOW:
+			{
+				int sync = *(int *)arg1;
+				ret = video_jpeg_dec_start(sync);
 			}
 			break;
 			
@@ -1096,7 +1377,11 @@ int close_video_mode(VIDEO_STATE_E mode)
 		#endif
 
 		case VS_LOCAL_RECORD:
-			//rk_media_stop_mp4_record();
+			video_local_lyly_record_stop();
+			break;
+
+		case VS_NET_RECORD:
+			video_net_lyly_record_stop();
 			break;
 			
 		case VS_NET_SNAP:			
@@ -1109,7 +1394,13 @@ int close_video_mode(VIDEO_STATE_E mode)
 
 		case VS_LYLY_PLAY:
 			{
-				//rk_media_stop_mp4_play();
+				video_lyly_play_stop();
+			}
+			break;
+
+		case VS_JPEG_SHOW:
+			{
+				video_jpeg_dec_stop();
 			}
 			break;
 			
@@ -1124,6 +1415,6 @@ int close_video_mode(VIDEO_STATE_E mode)
 		
 	}
 	VIDEO_MUTEX_UNLOCK
-	return ret;
+	return 0;
 }
 

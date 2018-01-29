@@ -19,18 +19,17 @@
 #include "logic_include.h"
 #include "logic_media_core.h"
 
-#define DEFAULT_BIT_RATE			2048000
+#define DEFAULT_BIT_RATE			1024000
 #define DEFAULT_WIDTH				640
 #define DEFAULT_HEIGHT				480
+#define DEFAULT_FRAMERATE 			15
 
 #define DEFAULT_CLOUD_BIT_RATE		512000
 #define DEFAULT_CLOUD_WIDTH			320
 #define DEFAULT_CLOUD_HEIGHT		240
 #define DEFAULT_CLOUD_FRAMERATE 	15
 
-#define DEFAULT_FRAMERATE 			15
 
-#if (_LCD_DPI_ == _LCD_800480_)
 #define JPEG_ENC_W					640
 #define JPEG_ENC_H					480
 
@@ -57,34 +56,6 @@
 #define AVI_DISPLAY_Y 				0
 #define AVI_DISPLAY_W 				640
 #define AVI_DISPLAY_H 				480
-#elif (_LCD_DPI_ == _LCD_1024600_)
-#define JPEG_ENC_W					640
-#define JPEG_ENC_H					480
-
-#define JPEG_DEC_W					640
-#define JPEG_DEC_H					480
-
-// 解码视频显示位置
-#define H264_DISPLAY_X				0
-#define H264_DISPLAY_Y				0
-#define H264_DISPLAY_W				820
-#define H264_DISPLAY_H				600
-#define H264_DISPLAY_W_FULL			1024
-#define H264_DISPLAY_H_FULL			600
-
-
-// RTSP视频显示位置
-#define RTSP_DISPLAY_X 				0
-#define RTSP_DISPLAY_Y 				0
-#define RTSP_DISPLAY_W 				640
-#define RTSP_DISPLAY_H 				480
-
-// 留影留言视频显示位置
-#define AVI_DISPLAY_X 				0
-#define AVI_DISPLAY_Y 				0
-#define AVI_DISPLAY_W 				640
-#define AVI_DISPLAY_H 				480
-#endif
 
 typedef enum
 {
@@ -109,6 +80,7 @@ typedef enum
 	VS_LOCAL_RECORD			= 0x0040,				// 本地数据的录制
 	VS_CLOUD_SEND			= 0x0080,				// 云端发送
 	VS_LYLY_PLAY			= 0x0200,				// 留影留言播放
+	VS_JPEG_SHOW			= 0x0400,				// 图片预览
 }VIDEO_STATE_E;
 
 typedef enum
@@ -168,36 +140,57 @@ typedef struct auRECT_S
 }V_RECT_S, * V_PRECT_S;
 
 
-typedef void (*PAVI_CALLBACK)(uint32 cmd, uint32 time, uint32 percent);
 typedef void (*PMP3_CALLBACK)(uint32 cmd, uint32 time, uint32 percent);
 typedef void (*PRTSP_CALLBACK)(RTSP_STATE_E echo, int param);
-
-typedef struct _AviPlayState{
-	AVI_CMD_E cmd;
-	uint8 filename[100];
-	PAVI_CALLBACK callback;
-	
-}AviPlayState;
 
 typedef struct _Mp3PlayState{
 	AVI_CMD_E cmd;
 	uint8 filename[100];
-	PAVI_CALLBACK callback;
+	PMP3_CALLBACK callback;
 	
 }Mp3PlayState;
 
-typedef struct _RecordParam{
-	uint8 filename[100];
-	uint8 RecordMode;
-	uint8 AudioFormat;
-	uint8 VideoFormat;
-	
-}RecordParam;
+
+/*************************************************
+  Function:    		video_jpeg_dec_show
+  Description: 		
+  Input: 			
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+int video_jpeg_dec_show(void);
+
+/*************************************************
+  Function:			video_lyly_play_pause
+  Description:		
+  Input:			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+int video_lyly_play_pause(void);
 
 
 
+/*************************************************
+  Function:    		open_video_mode
+  Description:		
+  Input: 			
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+int open_video_mode(VIDEO_STATE_E mode, void* arg1, void *arg2, void *arg3);
 
-
-
+/*************************************************
+  Function:    		close_video_mode
+  Description:		
+  Input: 			无
+  Output:			无
+  Return:			无
+  Others:
+*************************************************/
+int close_video_mode(VIDEO_STATE_E mode);
 #endif
 

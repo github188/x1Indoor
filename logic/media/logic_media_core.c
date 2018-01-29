@@ -47,14 +47,19 @@ static MSMediaDesc * ms_media_descs[] =
 	&ms_audio_ao_desc,
 	&ms_jpeg_dec_desc,
 	&ms_jpeg_enc_desc,
-	&ms_avi_play_desc,
-	&ms_rtsp_play_desc,
-	&ms_avi_record_desc,
+	&ms_lyly_play_desc,
+	&ms_lyly_record_desc,
+	&ms_rtsp_play_desc,	
 	&ms_wav_record_desc,
 	//&ms_mp3_play_desc,
-	&ms_lyly_hit_desc,
-	//&ms_h264_enc_desc,
-	//&ms_cloud_h264_enc_desc,
+	&ms_lyly_hit_desc,	
+	#ifdef _ENABLE_CLOUD_
+	&ms_h264_enc_desc,
+	&ms_cloud_send_audio_desc,
+	&ms_cloud_send_video_desc,
+	&ms_cloud_recv_audio_desc,
+	&ms_cloud_h264_enc_desc,
+	#endif
 	NULL,
 };
 

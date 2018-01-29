@@ -127,8 +127,8 @@ int au_settimeofday(int year, int month, int day, int hour, int min, int sec)
 *************************************************/
 void init_rtc_timer(void)
 {
-	g_timer.year  = 2014;
-	g_timer.month = 10;		
+	g_timer.year  = 2018;
+	g_timer.month = 1;		
 	g_timer.day   = 1;
 	g_timer.hour  = 5;
 	g_timer.min   = 1;		

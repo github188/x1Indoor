@@ -49,26 +49,23 @@ typedef enum MSMediaId
 {
 	MS_FILTER_NOT_SET_ID,
 	MS_AUDIO_AI_ID,	
+	MS_AUDIO_AO_ID,
 	MS_ALAW_ENC_ID,
 	MS_ALAW_DEC_ID,
 	MS_H264_ENC_ID,
 	MS_H264_DEC_ID,
-	MS_RTP_SEND_V_ID,	
 	MS_RTP_SEND_A_ID,
 	MS_RTP_RECV_A_ID,
+	MS_RTP_SEND_V_ID,	
 	MS_RTP_RECV_V_ID,	
 	MS_JPEG_DEC_ID,
 	MS_JPEG_ENC_ID,
-	MS_FILE_PLAYER_ID,
-	MS_ALAW_AGC_ID,
-    MS_SPEEX_ID,
-	MS_MEDIA_MAX_ID,
-	MS_ALAW_AO_ID,
-	MS_AVI_PLAY_ID,
-	MS_AVI_RECORD_ID,
-	MS_WAV_RECORD_ID,
-	MS_MP3_PLAY_ID,
 	MS_LYLY_HIT_ID,
+	MS_LYLY_PLAY_ID,
+	MS_LYLY_RECORD_ID,
+	MS_WAV_RECORD_ID,
+	MS_WAV_PLAYER_ID,
+	MS_MP3_PLAY_ID,	
 	MS_RTSP_PLAY_ID,
 	MS_CLOUD_SEND_AUDIO_ID,
 	MS_CLOUD_SEND_VIDEO_ID,
@@ -262,12 +259,16 @@ extern MSMediaDesc ms_echo_cancell_desc;
 extern MSMediaDesc ms_audio_ai_desc;
 extern MSMediaDesc ms_audio_enc_desc;
 extern MSMediaDesc ms_audio_ao_desc;
-extern MSMediaDesc ms_avi_play_desc;
+extern MSMediaDesc ms_lyly_play_desc;
 extern MSMediaDesc ms_rtsp_play_desc;
-extern MSMediaDesc ms_avi_record_desc;
+extern MSMediaDesc ms_lyly_record_desc;
 extern MSMediaDesc ms_wav_record_desc;
 extern MSMediaDesc ms_mp3_play_desc;
 extern MSMediaDesc ms_lyly_hit_desc;
+extern MSMediaDesc ms_cloud_send_audio_desc;
+extern MSMediaDesc ms_cloud_send_video_desc;
+extern MSMediaDesc ms_cloud_recv_audio_desc;
+extern MSMediaDesc ms_cloud_h264_enc_desc;
 
 /*************************************************
   Function:		ms_free

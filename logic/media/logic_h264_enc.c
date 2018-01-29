@@ -15,9 +15,13 @@
 #include "logic_video.h"
 #include "logic_media.h"
 #include "ratecontrol.h"
+#include "video_endec.h"
 #include "logic_h264_enc.h"
 
+#define VIDEO_GOP					25
+#define VIDEO_QU					10
 #define DROP_GOP_COUNT				1		// 丢弃前面一个gop 模拟摄像头刚开启视频不稳定
+
 static int g_CloudKeyCount = 0;
 
 #define _VIDEO_ENC_FILE_SAVE_		0
@@ -275,7 +279,7 @@ static int video_cloud_send_data(unsigned char*data, int size, int keyflg)
   Return:		
   Others:
 *************************************************/
-static int video_enc_param_reset(H264EncState * data)
+static int ms_h264_enc_param_reset(H264EncState * data)
 {
 	ms_return_val_if_fail(data, -1);
 	memset(data, 0, sizeof(H264EncState));
@@ -298,6 +302,46 @@ static int video_enc_param_reset(H264EncState * data)
 }
 
 /*************************************************
+  Function:		ms_h264_enc_thread
+  Description: 	
+  Input: 		
+  Output:		
+  Return:		 
+  Others:
+*************************************************/
+static void * ms_h264_enc_thread(void *ptr)
+{
+	int s32Ret;
+	MSMediaDesc * f = (MSMediaDesc *)ptr;
+	H264EncState * s = (H264EncState *)f->private;
+
+	int property, retlen;
+	char *pdata = (char *)malloc(0x20000);
+
+	g_CloudKeyCount = 0;
+    while (s->thread.thread_run)
+    {
+		retlen = VideoEncFunc(pdata, 0x20000, &property);
+		if (retlen > 0)
+		{	
+			if (MS_H264_ENC_ID == f->id)
+			{
+				video_send_data(pdata, retlen, property);
+			}
+			else
+			{
+				video_cloud_send_data(pdata, retlen, property);
+			}
+		}
+	}
+
+	VideoEncStop();
+	pthread_detach(pthread_self());
+    pthread_exit(NULL);
+    return NULL;
+}
+
+/*************************************************
   Function:		ms_h264_enc_open
   Description: 	
   Input: 		
@@ -313,22 +357,24 @@ static int ms_h264_enc_open(struct _MSMediaDesc * f, void * arg)
 	ms_media_lock(f);
 	if (f->mcount == 0)
 	{		
-		if (MS_H264_ENC_ID == f->id)
-		{
-			//ret = rk_media_start_video_encode(1, (void *)video_send_data);
-		}
-		else
-		{
-			g_CloudKeyCount = 0;
-			//ret = rk_media_start_video_encode(2, (void *)video_cloud_send_data);
-		}
-		
+		ret = VideoEncStart(data->enc_param.width, data->enc_param.height,
+				data->enc_param.framerate, data->enc_param.bit_rate, VIDEO_GOP, VIDEO_QU);
 		if (ret == -1)
 		{
 			goto error0;
 		}
-		f->mcount++;
 
+		ms_thread_init(&data->thread, 100);	
+		ret = ms_thread_create(&data->thread, ms_h264_enc_thread, f);
+		if (HI_SUCCESS != ret)
+		{
+			goto error1;
+		}
+		else
+		{
+			f->mcount++;
+		}
+		
 		#if _VIDEO_ENC_FILE_SAVE_
 		if (MS_H264_ENC_ID == f->id)
 			h264_file_open(0);
@@ -342,6 +388,9 @@ static int ms_h264_enc_open(struct _MSMediaDesc * f, void * arg)
 	}
 	ms_media_unlock(f);
 	return ret;
+	
+error1:
+	VideoEncStop();
 	
 error0:	
 	printf(" ms_h264_enc_open return error!!!! \n");
@@ -367,17 +416,12 @@ static int ms_h264_enc_close(struct _MSMediaDesc * f, void * arg)
 	ms_media_lock(f);
 	if (f->mcount > 0)
 	{	
-		//f->mcount--;
 		f->mcount = 0;
 		if (f->mcount == 0)
-		{
-			if (MS_H264_ENC_ID == f->id)
-			{
-				//rk_media_stop_video_encode(1);
-			}
-			else
-				//rk_media_stop_video_encode(2);
-			video_enc_param_reset(data);
+		{			
+			ms_thread_quit(&data->thread);
+			ms_h264_enc_param_reset(data);
+			
 			#if _VIDEO_ENC_FILE_SAVE_
 			if (MS_H264_ENC_ID == f->id)
 				h264_file_close(0);
@@ -451,21 +495,6 @@ static int ms_h264_enc_param(struct _MSMediaDesc * f, void * arg)
 		log_printf("data->enc_param.width : %d\n", data->enc_param.width);
 		log_printf("data->enc_param.height : %d\n", data->enc_param.height);
 
-		if (MS_H264_ENC_ID == f->id)
-		{
-		/*
-			rk_media_set_video_param(1, data->enc_param.width, data->enc_param.height,	
-				data->enc_param.framerate, data->enc_param.bit_rate);
-				*/
-		}
-		else //if (MS_CLOUD_H264_ENC_ID == f->id)
-		{
-		/*
-			rk_media_set_video_param(2, data->enc_param.width, data->enc_param.height,	
-				data->enc_param.framerate, data->enc_param.bit_rate);
-				*/
-		}
-
 		ret = RT_SUCCESS;
 	}
 	
@@ -488,7 +517,7 @@ static int ms_enc_h264_init(struct _MSMediaDesc * f)
 	if (NULL == f->private)
 	{		
 		H264EncState * data = (H264EncState*)malloc(sizeof(H264EncState));	
-		video_enc_param_reset(data);
+		ms_h264_enc_param_reset(data);
 		f->private= data;		
 		f->mcount = 0;
 	}
@@ -541,7 +570,7 @@ MSMediaDesc ms_h264_enc_desc =
 	.postprocess = NULL,
 	.methods = methods,
 	.mcount = 0,
-	.porcessmode = PROCESS_WORK_BLOCK,
+	.porcessmode = PROCESS_WORK_NONE,
 	.sharebufsize = 0,			// 1024*sharebufsize
 	.sharebufblk = 0,
 	.private = NULL, 
@@ -571,7 +600,7 @@ MSMediaDesc ms_cloud_h264_enc_desc =
 	.postprocess = NULL,
 	.methods = cloud_methods,
 	.mcount = 0,
-	.porcessmode = PROCESS_WORK_BLOCK,
+	.porcessmode = PROCESS_WORK_NONE,
 	.sharebufsize = 0,			// 1024*sharebufsize
 	.sharebufblk = 0,
 	.private = NULL, 

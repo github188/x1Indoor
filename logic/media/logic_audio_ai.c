@@ -455,6 +455,7 @@ static int ms_audio_ai_close(struct _MSMediaDesc * f, void * arg)
 			//ms_thread_quit(&data->aithread);	
 			st_audio_param_reset(data);
 			st_audio_ai_stop(f);
+			AudioCore_SetAecMode(false);
 			ret = HI_SUCCESS;
 		} 
 	}

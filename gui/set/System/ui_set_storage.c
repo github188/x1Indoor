@@ -32,8 +32,13 @@
 #if (_UI_STYLE_ == _E81S_UI_STYLE_)
 #undef TOP_TEXT_XPOS
 #undef TEXT_BK_YPOS
+#if (_LCD_DPI_ == _LCD_800480_)
 #define TOP_TEXT_XPOS			10	
 #define TEXT_BK_YPOS			0
+#elif (_LCD_DPI_ == _LCD_1024600_)
+#define TOP_TEXT_XPOS			10	
+#define TEXT_BK_YPOS			0
+#endif
 #endif
 
 CREATE_FORM(FrmSetstorage);

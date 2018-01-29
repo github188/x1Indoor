@@ -27,22 +27,18 @@
 #include "wav_record.h"
 #include "logic_wav_record.h"
 
-#define WAV_AUDIO_FORMAT		eWAVE_FORMAT_PCM//eWAVE_FORMAT_G711_ALAW
 #define DEF_DISK_SPACE_REQ		1024*1024		// 预留1M空间
 
-#define	BLOCKTIME         		20//40     //每个缓冲数据块的时长（毫秒）
-#define AI_DEV_CHANNELS			1
-#define AI_DEV_BITWIDTH			AIO_BIT_WIDTH_16
-#define AI_DEV_SAMPLERATE		AIO_SAMPLE_RATE_8
 
-typedef struct _WavRecordParam{
-	char filename[100];
+typedef struct _WavRecordParam{	
 	bool record_start;
 	S_WavFileWriteInfo sWavFileInfo;
+	AUDIORECORD_PARAM AudioParam;
 }WavRecordParam;
 
 static int ms_wav_record_callbak(char *DataBuffer, int DataSize)
 {
+#if 0
 	WavRecordParam * data = (WavRecordParam*)(ms_wav_record_desc.private);
 
 	if (data->record_start)
@@ -58,6 +54,7 @@ static int ms_wav_record_callbak(char *DataBuffer, int DataSize)
 			WavFileUtil_Write_WriteData(&(data->sWavFileInfo), alaw, DataSize/2);
 		}
 	}
+#endif
 }
 
 /*************************************************
@@ -70,6 +67,7 @@ static int ms_wav_record_callbak(char *DataBuffer, int DataSize)
 *************************************************/
 static void * ms_wav_record_thread(void *ptr)
 {	
+#if 0
 	MSMediaDesc *f = (MSMediaDesc *)ptr;
 	WavRecordParam * data = (WavRecordParam*)(f->private);
 	
@@ -88,8 +86,9 @@ static void * ms_wav_record_thread(void *ptr)
 	}
 
 	
-	uint16	u16BitsPerSample = (WAV_AUDIO_FORMAT == eWAVE_FORMAT_PCM) ? 16 : 8;
-	if(WavFileUtil_Write_SetFormat(&(data->sWavFileInfo), WAV_AUDIO_FORMAT, 1, AIO_SAMPLE_RATE_8, u16BitsPerSample) == FALSE)
+	uint16	u16BitsPerSample = (data->AudioParam.format == eWAVE_FORMAT_PCM) ? 16 : 8;
+	if(WavFileUtil_Write_SetFormat(&(data->sWavFileInfo), data->AudioParam.format, \
+		data->AudioParam.u16Channels, data->AudioParam.u32SamplingRate, u16BitsPerSample) == FALSE)
 	{
 		WavFileUtil_Write_Finish(&(data->sWavFileInfo));
 		log_printf("Set WAV file format failed!\n");
@@ -109,6 +108,7 @@ static void * ms_wav_record_thread(void *ptr)
 	
 err:
 	log_printf(" return err !!!\n");
+#endif
 
 }
 
@@ -120,16 +120,75 @@ err:
   Return:		 
   Others:
 *************************************************/
-static int ms_wav_record_start(struct _MSMediaDesc * arg)
+static int ms_wav_record_start(struct _MSMediaDesc * f)
 {
 	uint64 freeDisk = FSCheckSpareSpace("nand");
 	log_printf("freeDisk[%ld]\n", freeDisk);
-	if (freeDisk >= DEF_DISK_SPACE_REQ)
+	if (freeDisk < DEF_DISK_SPACE_REQ)
 	{
-		return Alsa_Record_Start(AI_DEV_CHANNELS, AI_DEV_BITWIDTH, AI_DEV_SAMPLERATE, BLOCKTIME, ms_wav_record_callbak);
-	}
-	else
+		err_printf("freedisk is not enuf !!\n");
 		return HI_FAILURE;
+	}
+
+	WavRecordParam * data = (WavRecordParam*)(f->private);	
+	if (data->AudioParam.filename == NULL)
+	{		
+		return HI_FAILURE;
+	}
+
+	char pchFilePath[256] = {0};	
+	memset(pchFilePath, 0, sizeof(pchFilePath));
+	sprintf(pchFilePath, "%s.wav", data->AudioParam.filename); 
+
+	if(WavFileUtil_Write_Initialize(&(data->sWavFileInfo), pchFilePath) == FALSE){
+		err_printf("Create WAV file failed!\n");
+		return HI_FAILURE;
+	}
+	
+	if(WavFileUtil_Write_SetFormat(&(data->sWavFileInfo), data->AudioParam.format, \
+		data->AudioParam.u16Channels, data->AudioParam.u32SamplingRate, data->AudioParam.u16BitsPerSample) == FALSE)
+	{
+		WavFileUtil_Write_Finish(&(data->sWavFileInfo));
+		err_printf("Set WAV file format failed!\n");
+		return HI_FAILURE;
+	}
+	
+	data->record_start = TRUE;
+	return HI_SUCCESS;
+}
+
+/*************************************************
+  Function:		ms_wav_record_start
+  Description: 	
+  Input: 		
+  Output:		
+  Return:		 
+  Others:
+*************************************************/
+static int ms_wav_record_stop(struct _MSMediaDesc * f)
+{
+	WavRecordParam * data = (WavRecordParam*)(f->private);
+	data->record_start = FALSE;
+	
+	WavFileUtil_Write_Finish(&(data->sWavFileInfo));
+}
+
+/*************************************************
+  Function:		ms_wav_record_proc
+  Description:	
+  Input:		无
+  Output:		无
+  Return:		无
+  Others:
+*************************************************/
+void ms_wav_record_proc(struct _MSMediaDesc * f, mblk_t * arg)
+{
+	WavRecordParam * data = (WavRecordParam*)(f->private);
+
+	if (data->record_start)
+	{
+		WavFileUtil_Write_WriteData(&(data->sWavFileInfo), arg->address, arg->len);		
+	}
 }
 
 /*************************************************
@@ -155,13 +214,10 @@ static int ms_wav_record_open(struct _MSMediaDesc * f, void * arg)
 		else
 		{
 			f->mcount++;
-			ms_thread_init(&f->thread,20);	
-			ret = ms_thread_create(&f->thread, ms_wav_record_thread, f);
-			if(HI_SUCCESS != ret)
+			if (f->preprocess)
 			{
-				Alsa_Record_Close();
-				goto End_NSRecord;
-			}
+				f->preprocess(f);
+			} 
 		}
 	}
 	ms_media_unlock(f);
@@ -195,8 +251,11 @@ static int ms_wav_record_close(struct _MSMediaDesc * f, void * arg)
 		f->mcount = 0;
 		if(f->mcount == 0)
 		{
-			Alsa_Record_Close();
-			ms_thread_quit(&f->thread);
+			if (f->postprocess)
+			{
+				f->postprocess(f);
+			}
+			ms_wav_record_stop(f);
 			ret = RT_SUCCESS;
 		} 
 	}
@@ -215,7 +274,7 @@ static int ms_wav_record_close(struct _MSMediaDesc * f, void * arg)
 static int ms_wav_record_param(struct _MSMediaDesc * f, void * arg)
 {
 	WavRecordParam *s = (WavRecordParam *)(f->private);
-	char *filename = (char *)arg;
+	AUDIORECORD_PARAM *param = (AUDIORECORD_PARAM *)arg;
 	if (arg == NULL)
 	{
 		return RT_FAILURE;
@@ -224,9 +283,14 @@ static int ms_wav_record_param(struct _MSMediaDesc * f, void * arg)
 	ms_media_lock(f);
 	if (f->mcount == 0)
 	{		
-		memset(s, 0, sizeof(WavRecordParam));
-		strcpy(s->filename, filename);
-		log_printf("s->filename[%s]\n", s->filename);
+		memset(&(s->AudioParam), 0, sizeof(AUDIORECORD_PARAM));
+		memcpy(&(s->AudioParam), param, sizeof(AUDIORECORD_PARAM));
+		
+		log_printf("AudioParam.filename[%s]\n", s->AudioParam.filename);
+		log_printf("AudioParam.format[%d]\n", s->AudioParam.format);
+		log_printf("AudioParam.u16BitsPerSample[%d]\n", s->AudioParam.u16BitsPerSample);
+		log_printf("AudioParam.u16Channels[%d]\n", s->AudioParam.u16Channels);
+		log_printf("AudioParam.u32SamplingRate[%d]\n", s->AudioParam.u32SamplingRate);
 		ms_media_unlock(f);	
 		return RT_SUCCESS;
 	}
@@ -297,13 +361,13 @@ MSMediaDesc ms_wav_record_desc =
 	.init = ms_wav_record_init,
 	.uninit = ms_wav_record_uninit,
 	.preprocess = NULL,
-	.process = NULL,
+	.process = ms_wav_record_proc,
 	.postprocess = NULL,
 	.methods = methods,
 	.mcount = 0,
-	.porcessmode = PROCESS_WORK_NONE,
-	.sharebufsize = 2000,							// 1024*sharebufsize
-	.sharebufblk = 500,
+	.porcessmode = PROCESS_WORK_UNBLOCK,
+	.sharebufsize = 100,							// 1024*sharebufsize
+	.sharebufblk = 100,
 	.private = NULL, 
 };	
 

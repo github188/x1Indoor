@@ -555,6 +555,7 @@ LabChange:
 			log_printf("media_start_net_audio return ok\n ");
 			g_Audio_Start = 1;
 			uint8 volume = storage_get_talkvolume();
+			media_enable_audio_aec();
 			media_set_talk_volume(g_MonitorInfo.DevType, volume);			
 			media_add_audio_sendaddr(g_MonitorInfo.address, g_MonitorInfo.RemoteAudioPort);
 		}	

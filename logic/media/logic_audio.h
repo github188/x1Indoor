@@ -62,7 +62,8 @@ typedef enum
 	AS_PLAY			= 0x02,							// 本机播放模式
 	AS_HINT_LYLY 	= 0x04,							// 播放留言提示音模式
 	AS_JRLY_RECORD  = 0x08,							// 本地录制模式
-	AS_CLOUD_TALK	= 0x10,							// 云端对讲
+	AS_NET_RECORD   = 0x10,							// 网络录制模式
+	AS_CLOUD_TALK	= 0x20,							// 云端对讲
 }AUDIO_STATE_E;			
 
 // 音频参数
@@ -115,16 +116,33 @@ typedef enum
 	AM_LYLY_PLAY									// 留影留言播放
 }AUDIO_MODE_E;	
 
-typedef void (*AudioPlay_CallBack)(int cmd, int time, int percent);
-
 // 音频文件播放参数
 typedef struct
 {
 	char filename[50];					// 文件名称(加上路径)
 	uint8 IsRepeat;						// 是否循环
 	FILE_TYPE_E FileType;				// 文件类型
-	AudioPlay_CallBack callback;		// 文件播放回调函数
 }AUDIOPLAY_PARAM, *PAUDIOPLAY_PARAM;
+
+/*************************************************
+  Function:    	audio_local_enc_open
+  Description: 		
+  Input:		无
+  Output:		无
+  Return:		无		
+  Others:		本地编码 用于本地录制保存
+*************************************************/
+int audio_local_enc_open(void);
+
+/*************************************************
+  Function:    	audio_local_enc_close
+  Description: 		
+  Input:		无
+  Output:		无
+  Return:		无		
+  Others:
+*************************************************/
+int audio_local_enc_close(void);
 
 /*************************************************
   Function:    	audio_dec_enable
