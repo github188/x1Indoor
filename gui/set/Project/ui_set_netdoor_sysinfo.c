@@ -377,7 +377,7 @@ static void show_win(HDC hdc)
 	TextRc.top = TOP_TEXT_YPOS;
 	TextRc.right = TextRc.left + CHAR_LEN;
 	TextRc.bottom = TextRc.top + FONT_24;
-	DrawText(hdc, get_str(SID_Set_System_Info), -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(SID_Set_System_Info), -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
     //系统信息
     if (storage_get_language() != ENGLISH)
@@ -407,7 +407,7 @@ static void show_win(HDC hdc)
 			TextRc.top = ypos;
 			TextRc.right = TextRc.left + CHAR_LEN;
 			TextRc.bottom = TextRc.top + WIN_COMM_FONT;
-			DrawText(hdc, temp1, -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+			DrawTextFont(hdc, temp1, -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 		}	
 		
 		xpos += TEXT_XPOS_DIS;
@@ -418,7 +418,7 @@ static void show_win(HDC hdc)
 			TextRc.top = ypos;
 			TextRc.right = TextRc.left + CHAR_LEN;
 			TextRc.bottom = TextRc.top + WIN_COMM_FONT;
-			DrawText(hdc, tmp, -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+			DrawTextFont(hdc, tmp, -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 		}
 		xpos = SYS_TEXT_XPOS;
 		ypos += TEXT_YPOS_DIS;	

@@ -118,7 +118,7 @@ void draw_eightareas(HDC hdc,PEIGHTAREACTRL_INFO WObj)
 		{
 			SetTextColor(hdc, COLOR_BUTTON_TEXT);
 			SelectFont(hdc, GetFont(WIN_COMM_FONT));
-			DrawText(hdc, get_str(WObj->Areas[i].TextID), -1, &textRect, DT_CENTER | DT_BOTTOM | DT_VCENTER);
+			DrawTextFont(hdc, get_str(WObj->Areas[i].TextID), -1, &textRect, DT_CENTER | DT_BOTTOM | DT_VCENTER);
 		}
 	}
 }

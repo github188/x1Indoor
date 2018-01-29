@@ -116,8 +116,8 @@ static uint32 draw_mode_ip (HWND hDlg, HDC hdc)
 		TextRc.right = TextRc.left + 30;
 		TextRc.bottom = TextRc.top + 30;
 		
-		DrawText(hdc, Text, -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-		DrawText(hdc, Text, -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
+		DrawTextFont(hdc, Text, -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+		DrawTextFont(hdc, Text, -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
 	}
 	
 	return TRUE;

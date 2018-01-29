@@ -110,8 +110,8 @@ static void draw_string(HDC hdc)
 	TextRc.top = (LIST_TOP_H - WIN_COMM_FONT)/2;
 	TextRc.right =TextRc.left + PW_TEXT;
 	TextRc.bottom = TextRc.top + WIN_COMM_FONT;
-	DrawText(hdc, get_str(Title[g_type]), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-	DrawText(hdc, get_str(Title[g_type]), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(Title[g_type]), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(Title[g_type]), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 	
 	switch (g_type)
 	{
@@ -123,8 +123,8 @@ static void draw_string(HDC hdc)
 				TextRc.top = PW_TEXT_TOP1;
 				TextRc.right =TextRc.left + PW_TEXT;
 				TextRc.bottom = TextRc.top + WIN_COMM_FONT;
-				DrawText(hdc, get_str(SID_Set_Pass_New +i), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-				DrawText(hdc, get_str(SID_Set_Pass_New +i), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+				DrawTextFont(hdc, get_str(SID_Set_Pass_New +i), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+				DrawTextFont(hdc, get_str(SID_Set_Pass_New +i), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 			}
 			break;
 		
@@ -135,8 +135,8 @@ static void draw_string(HDC hdc)
 			TextRc.top = PW_TEXT_TOP2;
 			TextRc.right = TextRc.left + PW_TEXT;
 			TextRc.bottom = TextRc.top + WIN_COMM_FONT;
-			DrawText(hdc, get_str(SID_Set_Pass_New), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-			DrawText(hdc, get_str(SID_Set_Pass_New), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+			DrawTextFont(hdc, get_str(SID_Set_Pass_New), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+			DrawTextFont(hdc, get_str(SID_Set_Pass_New), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 			break;
 
 		default:

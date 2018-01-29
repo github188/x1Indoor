@@ -120,8 +120,8 @@ static void draw_dev_hint(HDC hdc)
 	rc.top = TEXT_TOP1;
 	rc.right = rc.left + TEXT_LEN;
 	rc.bottom = rc.top + WIN_COMM_FONT;
-	DrawText(hdc, devtext, -1, &rc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-	DrawText(hdc, devtext, -1, &rc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, devtext, -1, &rc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, devtext, -1, &rc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 	
 	sprintf(time,"%04d-%02d-%02d %02d:%02d:%02d",g_photolist->PhotoInfo[g_index].Time.year,g_photolist->PhotoInfo[g_index].Time.month,g_photolist->PhotoInfo[g_index].Time.day
 		,g_photolist->PhotoInfo[g_index].Time.hour,g_photolist->PhotoInfo[g_index].Time.min,g_photolist->PhotoInfo[g_index].Time.sec);
@@ -129,8 +129,8 @@ static void draw_dev_hint(HDC hdc)
 	rc.top = TEXT_TOP2;
 	rc.right = rc.left + TEXT_LEN;
 	rc.bottom = rc.top + WIN_COMM_FONT;
-	DrawText(hdc, time, -1, &rc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-	DrawText(hdc, time, -1, &rc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, time, -1, &rc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, time, -1, &rc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 }
 
 /*************************************************

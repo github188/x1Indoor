@@ -151,6 +151,17 @@ PLOGFONT GetBoldFont(int8 size);
 *************************************************/
 PLOGFONT GetFont_ABC(int8 size);
 
+/*************************************************
+  Function:    		DrawTextFont
+  Description:		因英文ttf字库g、y等字母显示不全，因此重新封装
+  Input: 			无
+  Output:			无
+  Return:			无
+  Others:			无
+*************************************************/
+void  DrawTextFont(HDC hdc, const char* pText, int nCount, RECT* pRect, uint32 nFormat);
+
+
 /********************************************************/
 /*			            皮肤相关函数                    */	
 /********************************************************/

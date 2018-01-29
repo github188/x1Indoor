@@ -37,6 +37,9 @@ extern "C" {
 #define SKIN_3				3						// 皮肤方案3
 #define SKIN_4				4						// 皮肤方案4    
 
+#define ADD_ENGLISH_SIZE	2						// 英语TTF字库g、y显示不全，需增加4像素进行显示。
+
+
 #if (_LCD_DPI_ == _LCD_800480_)
 #define SCREEN_WIDTH	  		800						// 窗体的宽度
 #define SCREEN_HEIGHT     		480						// 窗体的高度

@@ -111,7 +111,7 @@ static void show_win(HWND hdc)
 	TextRc.top =  (TEXT_BK_H - WIN_COMM_FONT)/2 ;
 	TextRc.right = TextRc.left + CHAR_LEN+100;
 	TextRc.bottom = TextRc.top + WIN_COMM_FONT;
-	DrawText(hdc, get_str(SID_Set_System_Storage), -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(SID_Set_System_Storage), -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
 	storage[0] = (storage_get_msg_allsize()/1024);
 	storage[1] = (storage_set_photo_size()/1024);
@@ -142,7 +142,7 @@ static void show_win(HWND hdc)
 		TextRc.top = ypos + (TEXT_BK_H+TEXT_BK_YPOS - WIN_COMM_FONT)/2;
 		TextRc.right =  TextRc.left + CHAR_LEN;
 		TextRc.bottom = TextRc.top + WIN_COMM_FONT;
-		DrawText(hdc, get_str(TextID[i]), -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+		DrawTextFont(hdc, get_str(TextID[i]), -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
 		TextRc.left = TEXT1_XPOS_DIS;
 		TextRc.top = ypos + (TEXT_BK_H+TEXT_BK_YPOS - WIN_COMM_FONT)/2;
@@ -150,7 +150,7 @@ static void show_win(HWND hdc)
 		TextRc.bottom = TextRc.top + WIN_COMM_FONT;
 		memset(tmp, 0, sizeof(tmp));
 		sprintf(tmp, "%d KB", storage[i]);
-		DrawText(hdc, tmp, -1, &TextRc, DT_RIGHT| DT_VCENTER | DT_SINGLELINE);
+		DrawTextFont(hdc, tmp, -1, &TextRc, DT_RIGHT| DT_VCENTER | DT_SINGLELINE);
 		ypos += TEXT_BK_H + TEXT_BK_YPOS;
 	}
 }

@@ -76,7 +76,7 @@ static void draw_string(HDC hdc)
 	TextRc.top = TOP_TEXT_YPOS;
 	TextRc.right = TextRc.left + CHAR_LEN;
 	TextRc.bottom = TextRc.top + WIN_COMM_FONT;
-	DrawText(hdc, get_str(SID_Set_binding_code1), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(SID_Set_binding_code1), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 }
 
 /*************************************************

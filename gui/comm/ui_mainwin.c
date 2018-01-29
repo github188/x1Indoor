@@ -784,7 +784,7 @@ static void draw_top(HDC hdc)
 	rc.bottom = rc.top + FONT_20;
 	memset(temp, 0, sizeof(temp));
 	sprintf(temp, "%04d-%02d-%02d   %02d:%02d", Time.year, Time.month, Time.day, Time.hour, Time.min);
-	DrawText(hdc, temp, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, temp, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
 	
 	SelectFont(hdc, GetFont(FONT_12));
 	rc.left = 510;
@@ -793,7 +793,7 @@ static void draw_top(HDC hdc)
 	rc.bottom = rc.top + FONT_20;
 	memset(temp, 0, sizeof(temp));
 	sprintf(temp, "NO:%s", storage_get_devno_str());
-	DrawText(hdc, temp, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, temp, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
 	
 	#ifdef _IP_MODULE_
 	DrawBmpID(hdc, IPMODULE_XPOS, IPMODULE_YPOS, 0, 0, BID_Ipmodule_Bind_Err+g_IPModuleState);
@@ -896,7 +896,7 @@ static void draw_icon(HDC hdc)
 		rc.top = y+MAIN_ICON_H+ICON_TEXT_DISY;
 		rc.right = rc.left + MAIN_ICON_W+ MAIN_ICON_DISX;
 		rc.bottom = rc.top + FONT_20;
-		DrawText(hdc, get_str(get_icon_text_image(1, i)), -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
+		DrawTextFont(hdc, get_str(get_icon_text_image(1, i)), -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
 		
 		if (i == 2 || i == 5)
 		{

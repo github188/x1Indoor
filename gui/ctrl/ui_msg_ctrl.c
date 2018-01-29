@@ -162,7 +162,7 @@ static void draw_aurine_hit(HDC hdc)
 		Textrc.top = (FORM_HIT_H - WIN_COMM_FONT)/2;
 		Textrc.right = Textrc.left + 250;
 		Textrc.bottom = Textrc.top + WIN_COMM_FONT;
-		DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT);
+		DrawTextFont(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT);
 	}
 }
 
@@ -194,7 +194,7 @@ static void draw_aurine_msg(HDC hdc)
                 Textrc.top = MSG_ICON_Y + (ICON_H - WIN_COMM_FONT)/2 - 17;
                 Textrc.right = (FORM_MSG_W - (MSG_ICON_X + MSG_TEXT_DIS));
                 Textrc.bottom = Textrc.top + WIN_COMM_FONT;
-                DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT|DT_WORDBREAK );
+                DrawTextFont(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT|DT_WORDBREAK );
 			}
 			else
 			{
@@ -202,7 +202,7 @@ static void draw_aurine_msg(HDC hdc)
                 Textrc.top = MSG_ICON_Y + (ICON_H - WIN_COMM_FONT)/2;
                 Textrc.right = (FORM_MSG_W - (MSG_ICON_X + MSG_TEXT_DIS));
                 Textrc.bottom = Textrc.top + WIN_COMM_FONT;
-                DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CENTER);            
+                DrawTextFont(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CENTER);            
 			}
 		}
 		else
@@ -211,7 +211,7 @@ static void draw_aurine_msg(HDC hdc)
 			Textrc.top = MSG_ICON_Y + (ICON_H - WIN_COMM_FONT)/2;
 			Textrc.right = MSG_TEXT_RIGHT;
 			Textrc.bottom = Textrc.top + WIN_COMM_FONT;
-			DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CENTER);
+			DrawTextFont(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CENTER);
 		}
 	}
 }
@@ -240,8 +240,8 @@ static void draw_aurine_query(HDC hdc)
 			Textrc.top = QUERY_TEXT_TOP+30;
 			Textrc.right = Textrc.left + QUERY_TEXT_DISX;
 			Textrc.bottom = Textrc.top + WIN_COMM_FONT;
-			DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CALCRECT);
-			DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT);
+			DrawTextFont(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CALCRECT);
+			DrawTextFont(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT);
 	}
 	
 	Image1 = BID_QueryButton;
@@ -280,8 +280,8 @@ static void draw_aurine_query(HDC hdc)
     {
         SetTextColor(hdc, COLOR_WHITE);
     }
-	DrawText(hdc, get_str(SID_Msg_Yes), -1, &Textrc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-	DrawText(hdc, get_str(SID_Msg_Yes), -1, &Textrc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(SID_Msg_Yes), -1, &Textrc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(SID_Msg_Yes), -1, &Textrc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
 	
     if(1 == g_pData.Select)
     {
@@ -291,8 +291,8 @@ static void draw_aurine_query(HDC hdc)
     {
         SetTextColor(hdc, COLOR_WHITE);
     }
-	DrawText(hdc, get_str(SID_Msg_No), -1, &Textrc1, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-	DrawText(hdc, get_str(SID_Msg_No), -1, &Textrc1, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(SID_Msg_No), -1, &Textrc1, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(SID_Msg_No), -1, &Textrc1, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
 }
 #endif
 
@@ -319,7 +319,7 @@ static void draw_hit(HDC hdc)
 		Textrc.top = HIT_TEXT_TOP;
 		Textrc.right = HIT_TEXT_RIGHT;
 		Textrc.bottom = HIT_TEXT_BOTTOM;
-		DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CENTER);
+		DrawTextFont(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CENTER);
 	}
 }
 
@@ -351,7 +351,7 @@ static void draw_msg(HDC hdc)
 				Textrc.top = MSG_TEXT_TOP1;
 				Textrc.right = MSG_TEXT_RIGHT;
 				Textrc.bottom = MSG_TEXT_BOTTOM;
-				DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT|DT_WORDBREAK );
+				DrawTextFont(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT|DT_WORDBREAK );
 			}
 			else
 			{
@@ -359,7 +359,7 @@ static void draw_msg(HDC hdc)
 				Textrc.top = MSG_TEXT_TOP2;
 				Textrc.right = MSG_TEXT_RIGHT;
 				Textrc.bottom = MSG_TEXT_BOTTOM;
-				DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CENTER);
+				DrawTextFont(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CENTER);
 			}
 		}
 		else
@@ -371,7 +371,7 @@ static void draw_msg(HDC hdc)
 				Textrc.top = MSG_TEXT_TOP1;
 				Textrc.right = MSG_TEXT_RIGHT;
 				Textrc.bottom = MSG_TEXT_BOTTOM;
-				DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT|DT_WORDBREAK );
+				DrawTextFont(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT|DT_WORDBREAK );
 			}
 			else
 			#endif
@@ -380,7 +380,7 @@ static void draw_msg(HDC hdc)
 				Textrc.top = MSG_TEXT_TOP2;
 				Textrc.right = MSG_TEXT_RIGHT;
 				Textrc.bottom = MSG_TEXT_BOTTOM;
-				DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CENTER);
+				DrawTextFont(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CENTER);
 			}
 		}
 	}
@@ -410,8 +410,8 @@ static void draw_query(HDC hdc)
 		Textrc.top = QUERY_TEXT_TOP;
 		Textrc.right = Textrc.left + QUERY_TEXT_DISX;
 		Textrc.bottom = Textrc.top + WIN_COMM_FONT;
-		DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CALCRECT);
-		DrawText(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT);
+		DrawTextFont(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CALCRECT);
+		DrawTextFont(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT);
 	}
 	
 	Image1 = BID_QueryButton;
@@ -457,10 +457,10 @@ static void draw_query(HDC hdc)
 		Textrc1.bottom = Textrc1.top + WIN_COMM_FONT;
 	}
 	
-	DrawText(hdc, get_str(SID_Msg_Yes), -1, &Textrc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-	DrawText(hdc, get_str(SID_Msg_Yes), -1, &Textrc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
-	DrawText(hdc, get_str(SID_Msg_No), -1, &Textrc1, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-	DrawText(hdc, get_str(SID_Msg_No), -1, &Textrc1, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(SID_Msg_Yes), -1, &Textrc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(SID_Msg_Yes), -1, &Textrc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(SID_Msg_No), -1, &Textrc1, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(SID_Msg_No), -1, &Textrc1, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
 }
 
 #if 0

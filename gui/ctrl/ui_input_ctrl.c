@@ -182,7 +182,7 @@ static uint32 draw_inputctrl_num(HWND hDlg,HDC hdc, WPARAM wParam, LPARAM lParam
 			TextRc.top = INPUT_TEXT_Y;
 			TextRc.right = INPUT_TEXT_W;
 			TextRc.bottom = INPUT_TEXT_H;
-			DrawText(hdc, get_str(g_strid[0]), -1, &TextRc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);			
+			DrawTextFont(hdc, get_str(g_strid[0]), -1, &TextRc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);			
 		}
 			
 		if (pData->len > 0)
@@ -292,7 +292,7 @@ static uint32 draw_inputctrl_common(HWND hDlg,HDC hdc, WPARAM wParam, LPARAM lPa
 			TextRc.top = 0;
 			TextRc.right = bmp->bmWidth;
 			TextRc.bottom = bmp->bmHeight;
-			DrawText(hdc, num, -1, &TextRc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);	
+			DrawTextFont(hdc, num, -1, &TextRc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);	
 		}	
   	}
 	

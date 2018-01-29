@@ -713,8 +713,8 @@ static void draw_string_hint(HDC hdc)
 	TextRc.top = TEXT_YPOS;
 	TextRc.right = TextRc.left + TEXT_LEN;
 	TextRc.bottom = TextRc.top + WIN_COMM_FONT;
-	DrawText(hdc, DevDesc, -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-	DrawText(hdc, DevDesc, -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, DevDesc, -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, DevDesc, -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 
 	log_printf("StrId = %ld\n",StrId);
 	if (StrId)
@@ -723,8 +723,8 @@ static void draw_string_hint(HDC hdc)
 		TextRc.top = TEXT_YPOS;
 		TextRc.right = TextRc.left + TEXT_LEN;
 		TextRc.bottom = TextRc.top + WIN_COMM_FONT;
-		DrawText(hdc, get_str(StrId), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-		DrawText(hdc, get_str(StrId), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
+		DrawTextFont(hdc, get_str(StrId), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+		DrawTextFont(hdc, get_str(StrId), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
 	}	
 
 	#if 0
@@ -736,7 +736,7 @@ static void draw_string_hint(HDC hdc)
 		TextRc.top = INTER_TIME_Y;
 		TextRc.right = INTER_TIME_X + INTER_TIME_W;
 		TextRc.bottom = INTER_TIME_Y + Font16X16;
-		DrawText(hdc, time, -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+		DrawTextFont(hdc, time, -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 	}
 	#endif
 
@@ -758,8 +758,8 @@ static void draw_string_hint(HDC hdc)
 		TextRc.top = TEXT_YPOS + TEXT_DISY;
 		TextRc.right = TextRc.left + TEXT_LEN;
 		TextRc.bottom = TextRc.top + WIN_COMM_FONT;
-		DrawText(hdc, DevDesc, -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-		DrawText(hdc, DevDesc, -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+		DrawTextFont(hdc, DevDesc, -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+		DrawTextFont(hdc, DevDesc, -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 		
 		if (StrId)
 		{
@@ -767,8 +767,8 @@ static void draw_string_hint(HDC hdc)
 			TextRc.top = TEXT_YPOS + TEXT_DISY;
 			TextRc.right = TextRc.left + TEXT_LEN;
 			TextRc.bottom = TextRc.top + WIN_COMM_FONT;
-			DrawText(hdc, get_str(StrId), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-			DrawText(hdc, get_str(StrId), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
+			DrawTextFont(hdc, get_str(StrId), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+			DrawTextFont(hdc, get_str(StrId), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
 		}
 	}
 

@@ -78,13 +78,13 @@ static void draw_bk(HDC hdc)
 			#endif
 		#endif
 		#endif
-		DrawText(hdc, get_str(SID_Set_Prj_Net_HostIP + g_iptype), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-		DrawText(hdc, get_str(SID_Set_Prj_Net_HostIP + g_iptype), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
+		DrawTextFont(hdc, get_str(SID_Set_Prj_Net_HostIP + g_iptype), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+		DrawTextFont(hdc, get_str(SID_Set_Prj_Net_HostIP + g_iptype), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
 	}
 	else
 	{
-		DrawText(hdc, get_str(SID_Net_Door_IP + g_iptype), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-		DrawText(hdc, get_str(SID_Net_Door_IP + g_iptype), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
+		DrawTextFont(hdc, get_str(SID_Net_Door_IP + g_iptype), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+		DrawTextFont(hdc, get_str(SID_Net_Door_IP + g_iptype), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
 	}
 
 }

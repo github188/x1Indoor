@@ -72,8 +72,8 @@ static void draw_bk(HDC hdc)
 	TextRc.top = (LIST_TOP_H - WIN_COMM_FONT)/2;
 	TextRc.right =TextRc.left + ITEM_LEN;
 	TextRc.bottom = TextRc.top + WIN_COMM_FONT;
-	DrawText(hdc, get_str(g_PageTextID), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-	DrawText(hdc, get_str(g_PageTextID), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(g_PageTextID), -1, &TextRc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(g_PageTextID), -1, &TextRc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 }
 
 /*************************************************

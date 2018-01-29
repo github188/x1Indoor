@@ -113,13 +113,13 @@ static void draw_text(HDC hdc)
 	rc.bottom = rc.top + WIN_COMM_FONT;
 	if (0xff == g_pMsgList->pinfo_data[g_index].Head.title[0])
 	{
-		DrawText(hdc, get_str(SID_Info_Sms), -1, &rc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+		DrawTextFont(hdc, get_str(SID_Info_Sms), -1, &rc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 	}
 	else
 	{
 		sprintf(text, "%s", g_pMsgList->pinfo_data[g_index].Head.title);
-		DrawText(hdc, text, -1, &rc,DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-		DrawText(hdc, text, -1, &rc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+		DrawTextFont(hdc, text, -1, &rc,DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+		DrawTextFont(hdc, text, -1, &rc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 	}
 
 	// ÎÄ×Ö
@@ -140,7 +140,7 @@ static void draw_text(HDC hdc)
 		rc.top = (CPATION_ITEM_H + 25);
 		rc.right = FORM_W - RIGHT_CTRL_W - rc.left;
 		rc.bottom = rc.top + 9*WIN_COMM_FONT;
-		DrawText(hdc, text, -1, &rc, DT_LEFT);
+		DrawTextFont(hdc, text, -1, &rc, DT_LEFT);
 		
 		free(content);
 	}

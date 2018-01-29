@@ -130,12 +130,12 @@ static void draw_dev_hint(HDC hdc)
 	rc.bottom = rc.top + WIN_COMM_FONT;
 	if (g_lylylist->LylyInfo[g_index].DevType == DEVICE_TYPE_ROOM)
 	{
-		DrawText(hdc, devtext, -1, &rc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-		DrawText(hdc, devtext, -1, &rc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+		DrawTextFont(hdc, devtext, -1, &rc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+		DrawTextFont(hdc, devtext, -1, &rc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 	}
 	else
 	{
-		DrawText(hdc, devtext, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
+		DrawTextFont(hdc, devtext, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
 	}
 	
 	sprintf(time, "%04d-%02d-%02d %02d:%02d:%02d", g_lylylist->LylyInfo[g_index].Time.year, g_lylylist->LylyInfo[g_index].Time.month, g_lylylist->LylyInfo[g_index].Time.day,
@@ -144,7 +144,7 @@ static void draw_dev_hint(HDC hdc)
 	rc.top = LYLY_TEXT_TOP_2;
 	rc.right = rc.left + LYLY_TEXT_LEN;
 	rc.bottom = rc.top + WIN_COMM_FONT;
-	DrawText(hdc, time, -1, &rc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, time, -1, &rc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 }
 
 /*************************************************

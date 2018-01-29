@@ -371,6 +371,25 @@ PLOGFONT GetFont_ABC(int8 size)
 	}
 }
 
+
+/*************************************************
+  Function:    		DrawTextFont
+  Description:		因英文ttf字库g、y等字母显示不全，因此重新封装
+  Input: 			无
+  Output:			无
+  Return:			无
+  Others:			无
+*************************************************/
+void  DrawTextFont(HDC hdc, const char* pText, int nCount, RECT* pRect, uint32 nFormat)
+{
+	if (storage_get_language() == ENGLISH)
+	{
+		pRect->top -= ADD_ENGLISH_SIZE;
+		pRect->bottom += ADD_ENGLISH_SIZE;
+	}
+	DrawText(hdc, pText, nCount, pRect, nFormat);
+}
+
 /********************************************************/
 /*			            皮肤相关函数                    */	
 /********************************************************/
@@ -2619,7 +2638,7 @@ void draw_input(HDC hdc, int CallType, int x, int y, char *str)
     	rc.top = y + (INPUT_CTRL_H-FONT_16)/2;
     	rc.right = rc.left+INPUT_CTRL_W;
     	rc.bottom = rc.top+FONT_16;
-    	DrawText(hdc, text, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);	
+    	DrawTextFont(hdc, text, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);	
 		/*
 		if (g_devtype->Rule.UseCellNo)
 		{
@@ -2634,7 +2653,7 @@ void draw_input(HDC hdc, int CallType, int x, int y, char *str)
 				rc.top = y + (INPUT_CTRL_H-FONT_28)/2;
 				rc.right = rc.left+TextPOS2[i];
 				rc.bottom = rc.top+FONT_28;
-				DrawText(hdc,text, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
+				DrawTextFont(hdc,text, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
 
 				sx += TextPOS2[i];
 				
@@ -2653,7 +2672,7 @@ void draw_input(HDC hdc, int CallType, int x, int y, char *str)
 		    		rc.right = rc.left+FONT_12;
 		    	}
 		    	rc.bottom = rc.top+FONT_12;
-		    	DrawText(hdc,get_str(207+i), -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
+		    	DrawTextFont(hdc,get_str(207+i), -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
 		    	if (i == 1)
 		    	{
 		    		sx += FONT_12*3;
@@ -2677,7 +2696,7 @@ void draw_input(HDC hdc, int CallType, int x, int y, char *str)
 				rc.top = y + (INPUT_CTRL_H-FONT_28)/2;
 				rc.right = rc.left+TextPOS1[i];
 				rc.bottom = rc.top+FONT_28;
-				DrawText(hdc,text, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
+				DrawTextFont(hdc,text, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
 
 				sx += TextPOS1[i];
 				
@@ -2689,7 +2708,7 @@ void draw_input(HDC hdc, int CallType, int x, int y, char *str)
 		    	rc.top = y + (INPUT_CTRL_H-FONT_12)/2;
 		    	rc.right = rc.left+FONT_12;
 		    	rc.bottom = rc.top+FONT_12;
-		    	DrawText(hdc,get_str(TextID1[i]), -1, &rc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+		    	DrawTextFont(hdc,get_str(TextID1[i]), -1, &rc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 		    	sx += FONT_12;
 			}	
 		}
@@ -2711,7 +2730,7 @@ void draw_input(HDC hdc, int CallType, int x, int y, char *str)
     	rc.top = y + (INPUT_CTRL_H-FONT_16)/2;
     	rc.right = rc.left+INPUT_CTRL_W;
     	rc.bottom = rc.top+FONT_16;
-    	DrawText(hdc, text, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);	
+    	DrawTextFont(hdc, text, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);	
 	}
 	else
 	{
@@ -2729,7 +2748,7 @@ void draw_input(HDC hdc, int CallType, int x, int y, char *str)
     	rc.top = y + (INPUT_CTRL_H-FONT_16)/2;
     	rc.right = rc.left+INPUT_CTRL_W;
     	rc.bottom = rc.top+FONT_16;
-    	DrawText(hdc, text, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
+    	DrawTextFont(hdc, text, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
 	}
 }
 #endif
@@ -3209,7 +3228,7 @@ void draw_text_by_myfont(HDC hdc, int x, int y, uint32 TextID)
 		TextRc.top = y;
 		TextRc.bottom = y + FONT_24;
 		SelectFont(hdc, GetBoldFont(FONT_24));
-		DrawText(hdc, get_str(TextID), -1, &TextRc, DT_VCENTER|DT_SINGLELINE);	
+		DrawTextFont(hdc, get_str(TextID), -1, &TextRc, DT_VCENTER|DT_SINGLELINE);	
 	}
 	else
 	{
@@ -3319,7 +3338,7 @@ void draw_num_str2(HDC hdc, char * NumStr, int x, int y, int w, int dis)
 				rc.right = rc.left+6;
 				rc.top = y;
 				rc.bottom = rc.top+12;
-				DrawText(hdc, ":", -1, &rc, DT_CENTER | DT_VCENTER|DT_SINGLELINE);
+				DrawTextFont(hdc, ":", -1, &rc, DT_CENTER | DT_VCENTER|DT_SINGLELINE);
 				//draw_num(hdc, 8, x+(w+dis)*i, y, 16, 8, 5, 1);
 				continue;
 			}	
@@ -3336,7 +3355,7 @@ void draw_num_str2(HDC hdc, char * NumStr, int x, int y, int w, int dis)
 				rc.right = rc.left+6;
 				rc.top = y;
 				rc.bottom = rc.top+12;
-				DrawText(hdc, "-", -1, &rc, DT_CENTER | DT_VCENTER|DT_SINGLELINE);	
+				DrawTextFont(hdc, "-", -1, &rc, DT_CENTER | DT_VCENTER|DT_SINGLELINE);	
 				continue;
 			}
 			else if ( NumStr[i]==' ')

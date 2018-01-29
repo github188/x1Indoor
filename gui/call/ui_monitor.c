@@ -142,8 +142,8 @@ static void draw_string_hint(HDC hdc)
 	Textrc.top = TEXT_YPOS;
 	Textrc.right = Textrc.left + TEXT_LEN;
 	Textrc.bottom = Textrc.top + WIN_COMM_FONT;
-	DrawText(hdc, DevDesc, -1, &Textrc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-	DrawText(hdc, DevDesc, -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, DevDesc, -1, &Textrc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, DevDesc, -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 	
 	if (strlen(DevDesc) == 0)
 	{
@@ -153,11 +153,11 @@ static void draw_string_hint(HDC hdc)
 		Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 		if (g_ErrHintTxtID)
 		{
-			DrawText(hdc, get_str(g_ErrHintTxtID), -1, &Textrc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
+			DrawTextFont(hdc, get_str(g_ErrHintTxtID), -1, &Textrc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
 		}
 		else if (StrId)
 		{
-			DrawText(hdc, get_str(g_ErrHintTxtID), -1, &Textrc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
+			DrawTextFont(hdc, get_str(g_ErrHintTxtID), -1, &Textrc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
 		}
 	}
 	else
@@ -168,13 +168,13 @@ static void draw_string_hint(HDC hdc)
 		Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 		if (g_ErrHintTxtID)
 		{
-			DrawText(hdc, get_str(g_ErrHintTxtID), -1, &Textrc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-			DrawText(hdc, get_str(g_ErrHintTxtID), -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+			DrawTextFont(hdc, get_str(g_ErrHintTxtID), -1, &Textrc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+			DrawTextFont(hdc, get_str(g_ErrHintTxtID), -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 		}
 		else if (StrId)
 		{
-			DrawText(hdc, get_str(StrId), -1, &Textrc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
-			DrawText(hdc, get_str(StrId), -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+			DrawTextFont(hdc, get_str(StrId), -1, &Textrc, DT_CALCRECT|DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+			DrawTextFont(hdc, get_str(StrId), -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 		}
 	}
 }

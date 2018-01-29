@@ -144,15 +144,15 @@ static uint32 ui_listctrl_paint(HDC hdc, RECT * rc, PLISTCTRL_INFO WObj)
 			TextRc.top = ypos+(bmpTop->bmHeight-WObj->fonttype)/2;
 			TextRc.right = TextRc.left+TOP_TEXT_SIZE;
 			TextRc.bottom = TextRc.top+WObj->fonttype;
-			DrawText(hdc, get_str(WObj->HeadInfo.TextID),-1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+			DrawTextFont(hdc, get_str(WObj->HeadInfo.TextID),-1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 		}
 		else if (strlen(WObj->HeadInfo.WText) > 0)
 		{
-			DrawText(hdc, WObj->HeadInfo.WText, -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+			DrawTextFont(hdc, WObj->HeadInfo.WText, -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 		}
 		else if(strlen(WObj->HeadInfo.Text) > 0)
 		{
-			DrawText(hdc,WObj->HeadInfo.Text, -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+			DrawTextFont(hdc,WObj->HeadInfo.Text, -1, &TextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 		}
 		//ypos += bmpItem->bmHeight;
 		ypos += bmpTop->bmHeight;
@@ -344,15 +344,15 @@ static uint32 ui_listctrl_paint(HDC hdc, RECT * rc, PLISTCTRL_INFO WObj)
 						
 						if (pItem->Item[j].TextID > 0)
 						{
-							DrawText(hdc, get_str(pItem->Item[j].TextID), -1, &TextRc, format);
+							DrawTextFont(hdc, get_str(pItem->Item[j].TextID), -1, &TextRc, format);
 						}
 						else if ((strlen(pItem->Item[j].Text)) > 0)
 						{
-							DrawText(hdc, pItem->Item[j].Text, -1, &TextRc, format);
+							DrawTextFont(hdc, pItem->Item[j].Text, -1, &TextRc, format);
 						}
 						else if ((strlen(pItem->Item[j].WText)) > 0)
 						{
-							DrawText(hdc, pItem->Item[j].WText, -1, &TextRc, format);
+							DrawTextFont(hdc, pItem->Item[j].WText, -1, &TextRc, format);
 						}
 					}
 					xpos += pItem->Item[j].Width;

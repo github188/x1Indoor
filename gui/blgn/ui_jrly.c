@@ -172,7 +172,7 @@ static uint32 jrlyrecordPaint(HDC hdc)
 	Textrc.top = TOP_TEXT_YPOS;
 	Textrc.right = Textrc.left + DT_TEXT_DISX;
 	Textrc.bottom = Textrc.top + WIN_COMM_FONT;
-	DrawText(hdc, get_str(SID_Bl_Jrly), -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
+	DrawTextFont(hdc, get_str(SID_Bl_Jrly), -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);	
 
 	Textrc.left = PROC_XPOS - 41;
 	Textrc.top = PROC_YPOS + (PROC_H - WIN_COMM_FONT)/2;
@@ -180,7 +180,7 @@ static uint32 jrlyrecordPaint(HDC hdc)
 	Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 	memset(tmp, 0, sizeof(tmp));
 	sprintf(tmp, "00:00", null);
-	DrawText(hdc, tmp, -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, tmp, -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 	
 	Textrc.left = PROC_XPOS + PROC_W + 10;
 	Textrc.top = PROC_YPOS + (PROC_H - WIN_COMM_FONT)/2;
@@ -190,7 +190,7 @@ static uint32 jrlyrecordPaint(HDC hdc)
 	sec = g_jrlyinfo->showtime%60;
 	memset(tmp, 0, sizeof(tmp));
 	sprintf(tmp, "%02d:%02d", min, sec);
-	DrawText(hdc, tmp, -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
+	DrawTextFont(hdc, tmp, -1, &Textrc, DT_LEFT|DT_VCENTER|DT_SINGLELINE);
 
 	if (MEDIA_JRLY_STATE_PLAY == g_jrlyinfo->mediastate)
 	{

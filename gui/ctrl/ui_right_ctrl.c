@@ -170,7 +170,7 @@ void ui_draw_rightctrl_button(HDC hdc, RECT * rect, PRIGHTCTRL_INFO WButObj)
 			rc.bottom = (y + ICONBK_H)-(ICONBK_H-WButObj->TextSize)/2;
 			SetTextColor(hdc, COLOR_BUTTON_TEXT);
 			SelectFont(hdc, GetFont(WButObj->TextSize));
-			DrawText(hdc, get_str(WButObj->buttons[i].TextID), -1, &rc, DT_CENTER | DT_BOTTOM | DT_VCENTER);
+			DrawTextFont(hdc, get_str(WButObj->buttons[i].TextID), -1, &rc, DT_CENTER | DT_BOTTOM | DT_VCENTER);
 		}
 		
 		y += ICON_DISY + ICONBK_H;

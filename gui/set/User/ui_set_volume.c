@@ -107,7 +107,7 @@ static uint32 show_win(HDC hdc)
 	Rect.top = TOP_TEXT_YPOS;
 	Rect.right = Rect.left + CHAR_LEN;
 	Rect.bottom = Rect.top + WIN_COMM_FONT;
-	DrawText(hdc, get_str(SID_Set_User_Volume), -1, &Rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(SID_Set_User_Volume), -1, &Rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
 	// ¡Â…˘“Ù¡ø
 	DrawBmpID_EX(hdc, 0, TOP_TEXT_H,  LIST_CTRL_W,  TOPBK5_H, BID_ListCtrl_TopBK5_0);
@@ -115,7 +115,7 @@ static uint32 show_win(HDC hdc)
 	Rect.top = TOP_TEXT_H+(TOPBK5_H-WIN_COMM_FONT)/2;
 	Rect.right = Rect.left + CHAR_LEN;
 	Rect.bottom = Rect.top + WIN_COMM_FONT;
-	DrawText(hdc, get_str(SID_Set_volume_ring), -1, &Rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(SID_Set_volume_ring), -1, &Rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 	
 	xpos = BMP_X;
 	ypos = TOP_TEXT_H + (TOPBK5_H - CENTER_H)/2;
@@ -152,7 +152,7 @@ static uint32 show_win(HDC hdc)
 	Rect.top = TOP_TEXT_H+TOPBK5_H+(TOPBK5_H-WIN_COMM_FONT)/2;
 	Rect.right = Rect.left + CHAR_LEN;
 	Rect.bottom= Rect.top + WIN_COMM_FONT;
-	DrawText(hdc, get_str(SID_Set_volume_talk), -1, &Rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(SID_Set_volume_talk), -1, &Rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 	
 	xpos = BMP_X;
 	ypos = TOP_TEXT_H+(TOPBK5_H-CENTER_H)/2 + TOPBK5_H;
@@ -198,7 +198,7 @@ static uint32 show_win(HDC hdc)
 	Rect.top = TOP_TEXT_H+TOPBK5_H*2+(TOPBK5_H-WIN_COMM_FONT)/2;
 	Rect.right = Rect.left + CHAR_LEN;
 	Rect.bottom = Rect.top + WIN_COMM_FONT;
-	DrawText(hdc, get_str(SID_Set_volume_key), -1, &Rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+	DrawTextFont(hdc, get_str(SID_Set_volume_key), -1, &Rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
 	if (g_itemIndex == 0)
 	{
