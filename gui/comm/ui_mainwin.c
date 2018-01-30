@@ -817,7 +817,7 @@ static void draw_top(HDC hdc)
 	DrawTextFont(hdc, temp, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
 	
 	SelectFont(hdc, GetFont(FONT_18));
-	rc.left = 630;
+	rc.left = 645;
 	rc.top = 5;
 	rc.right = rc.left + 150;
 	rc.bottom = rc.top + FONT_18;
