@@ -26,6 +26,7 @@ extern "C" {
 #define FONT_12				12						// 12号字体
 #define FONT_14				14						// 14号字体
 #define FONT_16				16						// 16号字体
+#define FONT_18				18						// 18号字体
 #define FONT_20				20						// 20号字体
 #define FONT_22				22						// 22号字体
 #define FONT_24				24						// 24号字体

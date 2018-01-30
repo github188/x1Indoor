@@ -36,7 +36,7 @@
 /**************************************************************************/
 /*							资源文件路径								  */	
 /**************************************************************************/
-#define UI_PIC_DIR_PATH			CFG_RES_DRIVE"/app/"							// ui图片资源路径
+#define UI_PIC_DIR_PATH			CFG_RES_DRIVE"/app"							// ui图片资源路径
 #define AUDIO_RES_DIR_PATH		CFG_RES_DRIVE"/ring/"							// 铃声路径
 
 

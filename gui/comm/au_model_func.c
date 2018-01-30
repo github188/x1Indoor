@@ -28,12 +28,12 @@ typedef struct hiRECT_S
 #define FONT_ABC_COUNT	3							// 英文数字字体个数
 #define	FORM_COUNT		50							// 窗体最大数
 
-static int g_FontSize[FONT_COUNT] = {FONT_16, FONT_20, FONT_22, FONT_24, FONT_28};		// 逻辑字体大小
+static int g_FontSize[FONT_COUNT] = {FONT_18, FONT_20, FONT_22, FONT_24, FONT_28};		// 逻辑字体大小
 static PLOGFONT g_FontBIG5[FONT_COUNT];				// Big5常规字体
 static PLOGFONT g_FontBIG5Bold[FONT_COUNT];			// Big5粗体字体
 static PLOGFONT g_FontGB[FONT_COUNT];				// GB2312常规字体
 static PLOGFONT g_FontGBBold[FONT_COUNT];			// GB2312粗体字体
-static int g_FontABCSize[FONT_ABC_COUNT] = {FONT_12, FONT_16, FONT_20};			// 英文字体大小  			
+static int g_FontABCSize[FONT_ABC_COUNT] = {FONT_18, FONT_20, FONT_22};			// 英文字体大小  			
 static PLOGFONT g_FontABC[FONT_ABC_COUNT];			// ABC常规字体	
 static PLOGFONT g_FontABCBold[FONT_ABC_COUNT];		// ABC粗体字体
 

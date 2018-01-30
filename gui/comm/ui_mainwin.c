@@ -19,36 +19,7 @@
 
 /************************常量定义************************/
 #if (_LCD_DPI_ == _LCD_800480_)
-#define NET_W					28
-#define NET_H					28
-#define NET_XPOS				10
-#define NET_YPOS				5
-#ifdef _IP_MODULE_
-#define IP_NET_DISX				8
-#define IPMODULE_W				28
-#define IPMODULE_H				28
-#endif
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define NET_W					36
-#define NET_H					36
-#define NET_XPOS				13
-#define NET_YPOS				7
-#ifdef _IP_MODULE_
-#define IP_NET_DISX				8
-#define IPMODULE_W				36
-#define IPMODULE_H				36
-#endif
-#endif
-
-#if (_LCD_DPI_ == _LCD_800480_)
-#elif (_LCD_DPI_ == _LCD_1024600_)
-#endif
-
-#define TEST_TOUCH_KEY
-
-#ifdef _IP_MODULE_
-#define IPMODULE_XPOS			(NET_XPOS + NET_W + IP_NET_DISX)
-#define IPMODULE_YPOS			NET_YPOS
 #endif
 
 #if (_UI_STYLE_ == _V6_UI_STYLE_)
@@ -64,6 +35,16 @@
 #define ICON_SEL_DIS			6					// 选中框间距
 #define NEW_HIT_DISX			70					// 新事件提示X轴间距
 #define NEW_HIT_DISY			10					// 新事件提示Y轴间距
+
+#define NET_W					28
+#define NET_H					28
+#define NET_XPOS				10
+#define NET_YPOS				5
+#ifdef _IP_MODULE_
+#define IP_NET_DISX				8
+#define IPMODULE_W				28
+#define IPMODULE_H				28
+#endif
 #elif (_LCD_DPI_ == _LCD_1024600_)
 #define TOP_DISY				40					// 图标距顶部的间距
 #define MAIN_RIGHT_W			RIGHT_CTRL_W		// 右边控件宽度
@@ -76,6 +57,16 @@
 #define ICON_SEL_DIS			8					// 选中框间距
 #define NEW_HIT_DISX			88					// 新事件提示X轴间距
 #define NEW_HIT_DISY			13					// 新事件提示Y轴间距
+
+#define NET_W					36
+#define NET_H					36
+#define NET_XPOS				13
+#define NET_YPOS				7
+#ifdef _IP_MODULE_
+#define IP_NET_DISX				8
+#define IPMODULE_W				36
+#define IPMODULE_H				36
+#endif
 #endif
 
 #elif (_UI_STYLE_ == _E81S_UI_STYLE_)
@@ -92,37 +83,66 @@
 #define NEW_HIT_DISX			47+13				// 新事件提示X轴间距
 #define NEW_HIT_DISY			 -8					// 新事件提示Y轴间距
 #define MAIN_NET_W 				30					//网络图标横坐标
+
+#define NET_W					28
+#define NET_H					28
+#define NET_XPOS				10
+#define NET_YPOS				5
+#ifdef _IP_MODULE_
+#define IP_NET_DISX				8
+#define IPMODULE_W				28
+#define IPMODULE_H				28
+#endif
+
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define TOP_DISY				20					// 图标距顶部的间距
-#define MAIN_RIGHT_W			160					// 右边控件宽度
-#define MAIN_ICON_DISX			94					// 图标X轴间距
-#define MAIN_ICON_DISY			40					// 图标Y轴间距
-#define MAIN_ICON_W				88					// 图标宽
-#define MAIN_ICON_H				88					// 图标高
+#define TOP_DISY				25					// 图标距顶部的间距
+#define MAIN_RIGHT_W			RIGHT_CTRL_W		// 右边控件宽度
+#define MAIN_ICON_DISX			118					// 图标X轴间距
+#define MAIN_ICON_DISY			50					// 图标Y轴间距
+#define MAIN_ICON_W				112					// 图标宽
+#define MAIN_ICON_H				112					// 图标高
 #define ICON_TEXT_DISY      	0 					// 字与图标间距
 
-#define ICON_SEL_DIS			2					// 选中框间距
-#define NEW_HIT_DISX			47+13				// 新事件提示X轴间距
-#define NEW_HIT_DISY			 -8					// 新事件提示Y轴间距
-#define MAIN_NET_W 				30					//网络图标横坐标
+#define ICON_SEL_DIS			3					// 选中框间距
+#define NEW_HIT_DISX			75					// 新事件提示X轴间距
+#define NEW_HIT_DISY			-10					// 新事件提示Y轴间距
+#define MAIN_NET_W 				38					//网络图标横坐标
+
+#define NET_W					40
+#define NET_H					30
+#define NET_XPOS				13
+#define NET_YPOS				7
+#ifdef _IP_MODULE_
+#define IP_NET_DISX				8
+#define IPMODULE_W				30
+#define IPMODULE_H				30
 #endif
 #endif
+#endif
+
+#define TEST_TOUCH_KEY
+
+#ifdef _IP_MODULE_
+#define IPMODULE_XPOS			(NET_XPOS + NET_W + IP_NET_DISX)
+#define IPMODULE_YPOS			NET_YPOS
+#endif
+
+
 #define MAIN_ICON_XPOS			(FORM_W-MAIN_RIGHT_W-MAIN_ICON_DISX*2-MAIN_ICON_W*3)/2	// 图标X轴起点
 
 #if (_UI_STYLE_ == _E81S_UI_STYLE_)
 #define MAIN_ICON_YPOS			(FORM_H-TOP_DISY-3*MAIN_ICON_H-2*MAIN_ICON_DISY)/2		// 图标Y轴起点
-#else
+#elif (_UI_STYLE_ == _V6_UI_STYLE_)
 #define MAIN_ICON_YPOS			(FORM_H-TOP_DISY-2*MAIN_ICON_H-MAIN_ICON_DISY)/2		// 图标Y轴起点
 #endif
 #define GUI_TIMER_ID			1					// 定时器ID
 #define NET_CHECK_TIME			3
-
 #define PAGE_LEVEL				6
 
 #if (_UI_STYLE_ == _E81S_UI_STYLE_)
 #define MainIconNum     		9
 #define MainCallNum     		2
-#else
+#elif (_UI_STYLE_ == _V6_UI_STYLE_)
 #define MainIconNum     		6
 #define MainCallNum     		3
 #endif
@@ -171,14 +191,14 @@ static uint16 g_keeptime = 0;
 #define TOP_RC(rc)\
         rc.left = 0;\
 		rc.top =  0;\
-		rc.right = rc.left+640;\
-		rc.bottom = rc.top+24
+		rc.right = rc.left+820;\
+		rc.bottom = rc.top+30
 
 #define MAIN_RC(rc)\
         rc.left = 0;\
-		rc.top =  24;\
-		rc.right = rc.left+640;\
-		rc.bottom = 480
+		rc.top =  30;\
+		rc.right = rc.left+820;\
+		rc.bottom = 600
 
 
 // 主窗体初始化
@@ -217,7 +237,6 @@ const uint32 MainIconID[MainIconNum*2] =
 	#endif
 	BID_Main9Setting, SID_MainSet,
 };
-
 const uint32 MainIconID_1[MainIconNum*2] =
 {
 	BID_Main1Alarm_1, SID_MainAlarm,
@@ -234,7 +253,7 @@ const uint32 MainIconID_1[MainIconNum*2] =
 	#endif
 	BID_Main9Setting_1, SID_MainSet,
 };
-#else
+#elif (_UI_STYLE_ == _V6_UI_STYLE_)
 const uint32 MainIconID[MainIconNum*2] =
 {
 	BID_Main1Alarm, SID_MainAlarm,
@@ -252,14 +271,12 @@ const uint32 MainCallIconID[MainCallNum*2] =
 	BID_MainCall_User, SID_MainCall_User,		
 	BID_MainCall_FengJi, SID_MainCall_FengJi,
 };
-
 const uint32 MainCallIconID_1[MainCallNum*2] = 
 {
 	BID_MainCall_User_1, SID_MainCall_User,		
 	BID_MainCall_FengJi_1, SID_MainCall_FengJi,
 };
-
-#else
+#elif (_UI_STYLE_ == _V6_UI_STYLE_)
 const uint32 MainCallIconID[MainCallNum*2] = 
 {
 	BID_MainCall_User, SID_MainCall_User,		
@@ -276,6 +293,7 @@ const uint32 MainCenterIconID[MainCenterNum*2] =
 	BID_MainCenter_3, SID_MainCenter_3,	
 };
 
+
 #if (_UI_STYLE_ == _E81S_UI_STYLE_)
 const uint32 MainMonitorIconID_1[MainMonitorNum*2] = 
 {
@@ -286,7 +304,6 @@ const uint32 MainMonitorIconID_1[MainMonitorNum*2] =
 	BID_MainMonitor3_Camera, SID_MainMonitor_Camera,
 	#endif
 };
-
 const uint32 MainMonitorIconID[MainMonitorNum*2] = 
 {
 	BID_MainMonitor1_Door, SID_MainMonitor_Door,
@@ -296,8 +313,7 @@ const uint32 MainMonitorIconID[MainMonitorNum*2] =
 	BID_MainMonitor3_Camera, SID_MainMonitor_Camera,
 	#endif
 };
-
-#else
+#elif (_UI_STYLE_ == _V6_UI_STYLE_)
 const uint32 MainMonitorIconID[MainMonitorNum*2] = 
 {
 	BID_MainMonitor1_Door, SID_MainMonitor_Door,
@@ -319,7 +335,6 @@ const uint32 MainBianliIconID[MainBianliNum*2] =
 	BID_MainControl_DianTi, SID_MainBianLi_Dianti,  
 	#endif		
 };
-
 const uint32 MainBianliIconID_1[MainBianliNum*2] = 
 {
 	#ifdef _JRLY_MODE_
@@ -329,7 +344,7 @@ const uint32 MainBianliIconID_1[MainBianliNum*2] =
 	BID_MainControl_DianTi_1, SID_MainBianLi_Dianti,  
 	#endif		
 };
-#else
+#elif (_UI_STYLE_ == _V6_UI_STYLE_)
 const uint32 MainBianliIconID[MainBianliNum*2] = 
 {
 	#ifdef _JRLY_MODE_
@@ -793,19 +808,19 @@ static void draw_top(HDC hdc)
 	ZONE_DATE_TIME Time;
 	get_timer(&Time);	
 	SelectFont(hdc, GetFont(FONT_20));
-	rc.left = 210;
-	rc.top = 0;
-	rc.right = rc.left + 220;
+	rc.left = 265;
+	rc.top = 5;
+	rc.right = rc.left + 275;
 	rc.bottom = rc.top + FONT_20;
 	memset(temp, 0, sizeof(temp));
 	sprintf(temp, "%04d-%02d-%02d   %02d:%02d", Time.year, Time.month, Time.day, Time.hour, Time.min);
 	DrawTextFont(hdc, temp, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
 	
-	SelectFont(hdc, GetFont(FONT_12));
-	rc.left = 510;
-	rc.top = 0;
-	rc.right = rc.left + 120;
-	rc.bottom = rc.top + FONT_20;
+	SelectFont(hdc, GetFont(FONT_18));
+	rc.left = 630;
+	rc.top = 5;
+	rc.right = rc.left + 150;
+	rc.bottom = rc.top + FONT_18;
 	memset(temp, 0, sizeof(temp));
 	sprintf(temp, "NO:%s", storage_get_devno_str());
 	DrawTextFont(hdc, temp, -1, &rc, DT_CENTER|DT_VCENTER|DT_SINGLELINE);

@@ -53,7 +53,6 @@ extern "C" {
 #define SIDEBAR_SCRLEN			280
 #define SIDEBAR_DOWN_ICON_Y		360
 #endif
-
 #endif
 
 #define SCREENPORTECT_OFF		0x00				// ÆÁÄ»±£»¤¹Ø

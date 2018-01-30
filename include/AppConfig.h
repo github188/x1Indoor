@@ -51,7 +51,7 @@
 #define AH8_E81S_JHB_VER		3					// AH8_E81S
 
 
-#define SYS_TYPE				ML8_V6S_JHB_VER
+#define SYS_TYPE				AH8_E81S_JHB_VER
 
 // ====屏幕分辨率================================================
 #define _LCD_1024600_			1					//1024*600
@@ -147,7 +147,7 @@
 #define _ALARM_IO_										// 报警直接用IO口	
 #define _USE_TIME_SET_									// 是否启用时间设置
 
-#define	SOFTSUBVER				"AH8-E81S"
+#define	 SOFTSUBVER				"AH8-E81S"
 #define HARDSUBVER				"E81S"
 
 #define _TIMER_REBOOT_NO_LCD_           				// 定时重启时不开背光
