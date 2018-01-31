@@ -98,34 +98,20 @@
 #define MSG_ICON_Y				44					// 图标Y位置
 #define MSG_ICON_X				44					// 图标X位置
 #define MSG_TEXT_DIS			30
-#define FORM_QUERY_W	
-#define YES_ICON_W				98
-#define YES_ICON_H				38		
-#define YES_ICON_DIS			40
-#define YES_ICON_XPOS			(FORM_QUERY_W-YES_ICON_H-2*YES_ICON_W)/2
-#define YES_ICON_YPOS			136
-#define NO_ICON_XPOS			(YES_ICON_XPOS+YES_ICON_W+YES_ICON_DIS)
 
 #define ICON_W					48
 #define ICON_H					48
 #define HIT_TEXT_XPOS			116
 #define FORM_HIT_H				100
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define MSG_ICON_Y				44					// 图标Y位置
-#define MSG_ICON_X				44					// 图标X位置
-#define MSG_TEXT_DIS			30
-#define FORM_QUERY_W	
-#define YES_ICON_W				98
-#define YES_ICON_H				38		
-#define YES_ICON_DIS			40
-#define YES_ICON_XPOS			(FORM_QUERY_W-YES_ICON_H-2*YES_ICON_W)/2
-#define YES_ICON_YPOS			136
-#define NO_ICON_XPOS			(YES_ICON_XPOS+YES_ICON_W+YES_ICON_DIS)
+#define MSG_ICON_Y				55					// 图标Y位置
+#define MSG_ICON_X				55					// 图标X位置
+#define MSG_TEXT_DIS			38
 
-#define ICON_W					48
-#define ICON_H					48
-#define HIT_TEXT_XPOS			116
-#define FORM_HIT_H				100
+#define ICON_W					60
+#define ICON_H					60
+#define HIT_TEXT_XPOS			145
+#define FORM_HIT_H				125
 #endif
 #endif
 
@@ -171,14 +157,14 @@ static void draw_aurine_hit(HDC hdc)
 	{
 		if (ENGLISH == storage_get_language())
 		{
-			Textrc.left = HIT_TEXT_XPOS-20;
+			Textrc.left = HIT_TEXT_XPOS - 25;
 		}
 		else
 		{
 			Textrc.left = HIT_TEXT_XPOS;
 		}
 		Textrc.top = (FORM_HIT_H - WIN_COMM_FONT)/2;
-		Textrc.right = Textrc.left + 250;
+		Textrc.right = Textrc.left + 313;
 		Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 		DrawTextFont(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_LEFT);
 	}
@@ -254,8 +240,8 @@ static void draw_aurine_query(HDC hdc)
 	SelectFont(hdc, GetBoldFont(WIN_COMM_FONT));
 	if (g_pData.TextID > 0)
 	{
-			Textrc.left = QUERY_TEXT_LEFT+40;
-			Textrc.top = QUERY_TEXT_TOP+30;
+			Textrc.left = QUERY_TEXT_LEFT + 50;
+			Textrc.top = QUERY_TEXT_TOP + 33;
 			Textrc.right = Textrc.left + QUERY_TEXT_DISX;
 			Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 			DrawTextFont(hdc, get_str(g_pData.TextID), -1, &Textrc, DT_CALCRECT);
@@ -277,16 +263,16 @@ static void draw_aurine_query(HDC hdc)
 		default:
 			break;
 	}
-	DrawBmpID(hdc, QUERY_BUTTON_XPOS, QUERY_BUTTON_YPOS+20, 0, 0, Image1);	
-    DrawBmpID(hdc, QUERY_BUTTONON_XPOS, QUERY_BUTTON_YPOS+20, 0, 0, Image2);
+	DrawBmpID(hdc, QUERY_BUTTON_XPOS, QUERY_BUTTON_YPOS + 25, 0, 0, Image1);	
+    DrawBmpID(hdc, QUERY_BUTTONON_XPOS, QUERY_BUTTON_YPOS + 25, 0, 0, Image2);
 
 	Textrc.left = QUERY_YES_LEFT1;
-	Textrc.top = QUERY_YES_TOP1 + 25;
+	Textrc.top = QUERY_YES_TOP1 + 15;
 	Textrc.right = Textrc.left + QUERY_YES_DISX;
 	Textrc.bottom = Textrc.top + WIN_COMM_FONT;
 
 	Textrc1.left = QUERY_NO_LEFT1;
-	Textrc1.top = QUERY_YES_TOP1 + 25;
+	Textrc1.top = QUERY_YES_TOP1 + 15;
 	Textrc1.right = Textrc1.left + QUERY_YES_DISX;
 	Textrc1.bottom = Textrc1.top + WIN_COMM_FONT;
 

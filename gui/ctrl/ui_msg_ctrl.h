@@ -26,7 +26,6 @@
 #define FORM_MSG_X				(SCREEN_WIDTH-FORM_MSG_W-RIGHT_CTRL_W)/2
 #define FORM_MSG_Y				(SCREEN_HEIGHT-FORM_MSG_H)/2
 #endif
-
 #elif (_UI_STYLE_ == _E81S_UI_STYLE_)
 #if (_LCD_DPI_ == _LCD_800480_)
 #define FORM_MSG_W				360
@@ -44,18 +43,18 @@
 #define FORM_HIT_X				(SCREEN_WIDTH - FORM_HIT_W)/2
 #define FORM_HIT_Y				(SCREEN_HEIGHT - FORM_HIT_H)/2
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define FORM_MSG_W				360
-#define FORM_MSG_H				136
+#define FORM_MSG_W				460
+#define FORM_MSG_H				172
 #define FORM_MSG_X				(SCREEN_WIDTH - FORM_MSG_W)/2
 #define FORM_MSG_Y				(SCREEN_HEIGHT - FORM_MSG_H)/2
 
-#define FORM_QUERY_W			360
-#define FORM_QUERY_H			200
+#define FORM_QUERY_W			460
+#define FORM_QUERY_H			253
 #define FORM_QUERY_X			(SCREEN_WIDTH - FORM_QUERY_W)/2
 #define FORM_QUERY_Y			(SCREEN_HEIGHT - FORM_QUERY_H)/2
 
-#define FORM_HIT_W				300
-#define FORM_HIT_H				100
+#define FORM_HIT_W				384	
+#define FORM_HIT_H				128
 #define FORM_HIT_X				(SCREEN_WIDTH - FORM_HIT_W)/2
 #define FORM_HIT_Y				(SCREEN_HEIGHT - FORM_HIT_H)/2
 #endif
