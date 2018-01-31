@@ -25,6 +25,7 @@ static HWND g_InputWin[5] = {0};
 static HWND g_KeybordWin = 0;
 #define MAX_INPUT				5					//ÊäÈë¿ò¸öÊý
 
+#if (_LCD_DPI_ == _LCD_800480_)
 #define INPUT_ICON_W			122
 #define INPUT_ICON_H			42
 #define INPUT_CTRL_PW_W			INPUT_ICON_W
@@ -40,6 +41,25 @@ static HWND g_KeybordWin = 0;
 #define INPUT_LINE1_Y			74
 #define INPUT_LINE2_X			(SCREEN_WIDTH -FORM_RIGHT_W - 2*INPUT_ICON_W -INPUT_DISX)/2
 #define INPUT_LINE2_Y			152
+#elif (_LCD_DPI_ == _LCD_1024600_)
+#define INPUT_ICON_W			150
+#define INPUT_ICON_H			52
+#define INPUT_CTRL_PW_W			INPUT_ICON_W
+#define INPUT_CTRL_PW_H			INPUT_ICON_H
+#define TOP_TEXT_H				65	
+#define TOP_TEXT_XPOS			50	
+#define HEAD_H					105	
+#define HEAD_XPOS				0
+#define HEAD_YPOS				65
+
+#define INPUT_DISX				38
+#define INPUT_LINE1_X			(SCREEN_WIDTH -FORM_RIGHT_W - 3*INPUT_ICON_W -2*INPUT_DISX)/2
+#define INPUT_LINE1_Y			93
+#define INPUT_LINE2_X			(SCREEN_WIDTH -FORM_RIGHT_W - 2*INPUT_ICON_W -INPUT_DISX)/2
+#define INPUT_LINE2_Y			190
+#endif
+
+
 
 #define MAX_YEAR				2030
 static ZONE_DATE_TIME g_time;

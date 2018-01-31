@@ -19,6 +19,27 @@ extern "C" {
 #endif
 #include "gui_include.h"
 
+
+
+#if (_UI_STYLE_ == _E81S_UI_STYLE_)	
+#if (_LCD_DPI_ == _LCD_800480_)
+#define SIDEBAR_W				80
+#define SIDEBAR_H				428
+#define SIDEBAR_DOWN_ICON_Y		360
+#define SIDEBAR_ICON_W			42
+#define SIDEBAR_ICON_H			70
+#define SIDEBAR_YDIS			60
+#define SIDEBAR_SCRLEN			280
+#elif (_LCD_DPI_ == _LCD_1024600_)
+#define SIDEBAR_W				102
+#define SIDEBAR_H				535
+#define SIDEBAR_DOWN_ICON_Y		450
+#define SIDEBAR_ICON_W			51
+#define SIDEBAR_ICON_H			77
+#define SIDEBAR_YDIS			75
+#define SIDEBAR_SCRLEN			306
+#endif
+#elif (_UI_STYLE_ == _V6_UI_STYLE_)
 #if (_LCD_DPI_ == _LCD_800480_)
 #define SIDEBAR_W				80
 #define SIDEBAR_H				428
@@ -37,22 +58,6 @@ extern "C" {
 #define SIDEBAR_SCRLEN			480
 #endif
 
-#if (_UI_STYLE_ == _E81S_UI_STYLE_)
-#undef SIDEBAR_ICON_W
-#undef SIDEBAR_YDIS
-#undef SIDEBAR_SCRLEN			
-#undef SIDEBAR_DOWN_ICON_Y		
-#if (_LCD_DPI_ == _LCD_800480_)
-#define SIDEBAR_ICON_W			42
-#define SIDEBAR_YDIS			60
-#define SIDEBAR_SCRLEN			280
-#define SIDEBAR_DOWN_ICON_Y		360
-#elif (_LCD_DPI_ == _LCD_1024600_)
-#define SIDEBAR_ICON_W			42
-#define SIDEBAR_YDIS			60
-#define SIDEBAR_SCRLEN			280
-#define SIDEBAR_DOWN_ICON_Y		360
-#endif
 #endif
 
 #define SCREENPORTECT_OFF		0x00				// ÆÁÄ»±£»¤¹Ø

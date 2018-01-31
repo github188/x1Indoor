@@ -15,10 +15,11 @@
 #include "gui_include.h"
 #include "storage_include.h"
 
+#if (_UI_STYLE_ == _V6_UI_STYLE_)
 #if (_LCD_DPI_ == _LCD_800480_)
 #define TOP_TEXT_H				52	
 #define TOP_TEXT_XPOS			40	
-#define TOP_TEXT_YPOS			((TOP_TEXT_H-FONT_16)/2)	
+#define TOP_TEXT_YPOS			((TOP_TEXT_H - FONT_16) / 2)	
 #define DIS_BMP					16
 #define CENTER_W				210
 #define CENTER_H				48
@@ -32,12 +33,12 @@
 #define CHOSE_XPOS				40
 #define SEL_BMP_H				40
 #define SEL_XPOS				480
-#define SEL_YPOS				TOP_TEXT_H+(TOPBK5_H-SEL_BMP_H)/2
+#define SEL_YPOS				TOP_TEXT_H + (TOPBK5_H - SEL_BMP_H) / 2
 #define CHAR_LEN				110
 #elif (_LCD_DPI_ == _LCD_1024600_)
 #define TOP_TEXT_H				65	
 #define TOP_TEXT_XPOS			50	
-#define TOP_TEXT_YPOS			((TOP_TEXT_H-WIN_COMM_FONT)/2)	
+#define TOP_TEXT_YPOS			((TOP_TEXT_H - WIN_COMM_FONT) / 2)	
 #define DIS_BMP					20
 #define CENTER_W				266
 #define CENTER_H				58
@@ -47,32 +48,52 @@
 #define RIGHT_BMP_W				64
 #define RIGHT_BMP_H				64
 #define BMP_X					188
-#define CHOSE_H					40
+#define CHOSE_H					44
 #define CHOSE_XPOS				50
-#define SEL_BMP_H				50
+#define SEL_BMP_H				51
 #define SEL_XPOS				600
-#define SEL_YPOS				TOP_TEXT_H+(TOPBK5_H-SEL_BMP_H)/2
+#define SEL_YPOS				TOP_TEXT_H + (TOPBK5_H - SEL_BMP_H) / 2
 #define CHAR_LEN				110
 #endif
-
-#if (_UI_STYLE_ == _E81S_UI_STYLE_)
-#undef DIS_BMP
-#undef CENTER_W
-#undef CENTER_H
-#undef BMP_X
-#undef SEL_XPOS
+#elif (_UI_STYLE_ == _E81S_UI_STYLE_)
 #if (_LCD_DPI_ == _LCD_800480_)
+#define TOP_TEXT_H				52	
+#define TOP_TEXT_XPOS			40	
+#define TOP_TEXT_YPOS			((TOP_TEXT_H-FONT_16)/2)	
 #define DIS_BMP					6
 #define CENTER_W				312
 #define CENTER_H				26
+#define TOPBK5_H				84
+#define LEFT_BMP_W				30
+#define LEFT_BMP_H				30
+#define RIGHT_BMP_W				50
+#define RIGHT_BMP_H				50
 #define BMP_X					120
+#define CHOSE_H					32
+#define CHOSE_XPOS				40
+#define SEL_BMP_H				40
 #define SEL_XPOS				580
+#define SEL_YPOS				TOP_TEXT_H + (TOPBK5_H - SEL_BMP_H) / 2
+#define CHAR_LEN				110
 #elif (_LCD_DPI_ == _LCD_1024600_)
-#define DIS_BMP					6
-#define CENTER_W				312
-#define CENTER_H				26
-#define BMP_X					120
-#define SEL_XPOS				580
+#define TOP_TEXT_H				65	
+#define TOP_TEXT_XPOS			50	
+#define TOP_TEXT_YPOS			((TOP_TEXT_H - WIN_COMM_FONT) / 2)	
+#define DIS_BMP					15
+#define CENTER_W				400
+#define CENTER_H				34
+#define TOPBK5_H				84
+#define LEFT_BMP_W				38
+#define LEFT_BMP_H				38
+#define RIGHT_BMP_W				64
+#define RIGHT_BMP_H				64
+#define BMP_X					150
+#define CHOSE_H					44
+#define CHOSE_XPOS				40
+#define SEL_BMP_H				51
+#define SEL_XPOS				735
+#define SEL_YPOS				TOP_TEXT_H + (TOPBK5_H - SEL_BMP_H) / 2
+#define CHAR_LEN				110
 #endif
 #endif
 

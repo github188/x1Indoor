@@ -178,13 +178,13 @@ extern "C" {
 #define TEXT_LEN          		250
 
 // 音量设置
-#define MUTE_ICON_XPOS			181
-#define MUTE_ICON_YPOS			240
-#define VOLUME_ICON_XPOS    	249
-#define VOLUME_ICON_YPOS    	240
-#define VOLUME_TOTAL_H			48					   		// 音量图标总高度
-#define VOLUME_TOTAL_W			(210+48+20)
-#define VOLUME_ALL_ICON_Y		((VIDEO_WIN_H-VOLUME_TOTAL_H)/2+150)
+#define MUTE_ICON_XPOS			227
+#define MUTE_ICON_YPOS			300
+#define VOLUME_ICON_XPOS    	312
+#define VOLUME_ICON_YPOS    	300
+#define VOLUME_TOTAL_H			58					   		// 音量图标总高度
+#define VOLUME_TOTAL_W			(263+58+20)
+#define VOLUME_ALL_ICON_Y		((VIDEO_WIN_H-VOLUME_TOTAL_H)/2+188)
 #endif
 
 // 网络门前机定时器时长
